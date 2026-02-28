@@ -49,7 +49,7 @@ function Header() {
         {/* mobile menu */}
         <div
           class={
-            `sm:hidden flex flex-col w-full items-start py-5 px-5 justify-center gap-3 text-lg text-[#5E656A] select-none bg-white absolute drop-shadow-lg rounded-bl-lg rounded-br-lg overflow-hidden transition-all ease-in-out duration-300` +
+            `sm:hidden flex flex-col z-10 w-full items-start py-5 px-5 justify-center gap-3 text-lg text-[#5E656A] select-none bg-white absolute drop-shadow-lg rounded-bl-lg rounded-br-lg overflow-hidden transition-all ease-in-out duration-300` +
             (expanded ? ' opacity-0 pointer-events-none' : ' opacity-100 pointer-events-auto')
           }
           style={{maxHeight: expanded ? '0px' : '500px'}}
