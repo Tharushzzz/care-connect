@@ -2,7 +2,7 @@ import React from 'react'
 import work1 from '../assets/work1.svg'
 import work2 from '../assets/work2.svg'
 import work3 from '../assets/work3.svg'
-import Workitem from './Workitem'
+import Workitem from './Workitem.jsx'
 
 const Works = () => {
   return (

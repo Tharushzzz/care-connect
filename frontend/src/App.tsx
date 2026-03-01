@@ -1,7 +1,7 @@
 import './App.css'
-import Header from './components/Header'
-import Herosection from './components/Herosection'
-import Works from './components/Works'
+import Header from './components/Header.jsx'
+import Herosection from './components/Herosection.jsx'
+import Works from './components/Works.jsx'
 
 function App() {
 
