@@ -6,7 +6,7 @@ function Header() {
   const [expanded, setExpanded] = React.useState(true);
 
   return (
-    <header>
+    <header className='sticky top-0 z-20'>
         <nav className="flex bg-[#F7FBFE] p-2.5 items-center justify-between drop-shadow-lg">
             <div className="flex items-center gap-2 pl-3">
                 <div className="w-9 h-9">     
