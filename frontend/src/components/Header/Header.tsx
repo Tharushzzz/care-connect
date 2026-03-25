@@ -1,5 +1,5 @@
 import React from 'react'
-import logo1 from '../../assets/logo1.png';
+import logo from '../../assets/logo/Logo.svg';
 
 
 function Header() {
@@ -10,7 +10,7 @@ function Header() {
         <nav className="flex bg-[#F7FBFE] p-2.5 items-center justify-between drop-shadow-lg">
             <div className="flex items-center gap-2 pl-3">
                 <div className="w-9 h-9">     
-                    <img src={logo1} alt="Logo" className="rounded-lg" />
+                    <img src={logo} alt="Logo" className="rounded-lg" />
                 </div>
                 <div className="text-lg font-semibold select-none">
                   CareConnect

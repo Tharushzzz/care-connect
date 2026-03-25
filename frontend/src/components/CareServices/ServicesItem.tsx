@@ -15,7 +15,7 @@ const ServicesItem = ({ icon: Icon, header, description } : { icon: LucideIcon; 
         <div className='pb-5'>
                         <Icon
                             size={60}
-                            className={`p-3 rounded-xl ${isHovered ? 'text-white bg-[#0384c6]' : 'text-[#0686CD] bg-[#f0f7ff]'}`}
+                            className={`p-3 rounded-xl ${isHovered ? 'text-white bg-[#0384c6]' : 'text-[#0686CD] bg-[#f0f7ff]'} transition-colors ease-in-out duration-300`}
                         />
         </div>
         <div className='font-semibold text-2xl'>
