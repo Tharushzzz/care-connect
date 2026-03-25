@@ -6,7 +6,7 @@ import Workitem from './Workitem.js'
 
 const Works = () => {
   return (
-    <div className="flex flex-col pt-20 lg:pt-0 gap-20 items-center justify-center lg:h-screen bg-linear-to-b from-[#e2f1ff83] to-[#a5caca]">
+    <div className="flex flex-col pt-20 lg:pt-16 gap-20 items-center justify-center xl:h-screen bg-linear-to-b from-[#e2f1ff83] to-[#a5caca]">
       
         <section className="flex flex-col items-center justify-center gap-2 p-5 lg:p-0 lg:w-150">
           <div className="text-[#0071A8] text-xl font-semibold">SIMPLE PROCESS</div>
@@ -15,7 +15,7 @@ const Works = () => {
         </section>
 
 
-        <section className="flex w-full gap-10 lg:gap-0 items-center justify-evenly px-10 flex-wrap">
+        <section className="flex w-full gap-10 lg:gap-0  items-center justify-evenly px-10 flex-wrap">
 
           <Workitem svg={work1} header={"Post Your Need"} body={"Describe your situation whether it’s hospital bedside monitoring, home, recovery or elderly companionship. Tell us dates, times, and specific requrements."}/>
           <Workitem svg={work2} header={"Choose a Verified Caregiver"} body={"Browse profiles of background-checked, certified caregivers. Review their experience, ratings, and specialties to find the perfect match for your family."}/>
