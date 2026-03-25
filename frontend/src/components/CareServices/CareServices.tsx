@@ -48,7 +48,13 @@ const CareServices = () => {
             {servicesData.map(service => (
               <ServicesItem icon={service.icon} header={service.header} description={service.description} key={service.id}></ServicesItem>
             ))}
-            
+
+
+            <div className="flex flex-col gap-5 items-center justify-center w-106 h-80.5 bg-linear-to-b from-[#0385BF] to-[#0C938D] rounded-2xl p-6 cursor-pointer">
+              <div className="font-semibold text-2xl text-white">Need something else?</div>
+              <div className="text-xl font-medium text-[#FFFFFFB2] text-center">We offer specialized care plans tailored to unique family needs.</div>
+              <div className="text-center font-semibold text-[#0f6798] text-2xl bg-[#FFFFFF] py-2 px-6 rounded-3xl mt-5 hover:bg-[#eff9ff] hover:shadow-lg">Contact Us</div>
+            </div>
         </div>
     </section>
   )
