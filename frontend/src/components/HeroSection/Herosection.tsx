@@ -1,10 +1,10 @@
 
-import right from "../assets/right.svg";
-import correct from "../assets/correct.svg";
-import hero from "../assets/hero.png";
-import Ellipse1 from "../assets/Ellipse1.svg";
-import Ellipse2 from "../assets/Ellipse2.svg";
-import Ellipse3 from "../assets/Ellipse3.svg"; 
+import right from "../../assets/right.svg";
+import correct from "../../assets/correct.svg";
+import hero from "../../assets/hero.png";
+import Ellipse1 from "../../assets/Ellipse1.svg";
+import Ellipse2 from "../../assets/Ellipse2.svg";
+import Ellipse3 from "../../assets/Ellipse3.svg"; 
 
 const Herosection = () => {
   return (
@@ -62,7 +62,7 @@ const Herosection = () => {
         <div className="relative w-full h-full flex items-end justify-center">
             <img src={hero} alt="hero image" className="object-cover rounded-[30px] relative top-6"></img>
 
-            <div className="bg-[#F1F8FF] rounded-3xl w-[90%]  h-18 absolute flex items-center pl-4">
+            <div className="bg-[#F1F8FF] rounded-3xl md:w-[90%]  md:h-18 absolute md:flex hidden items-center pl-4">
                 <img src={Ellipse1} alt="ellipse1" className="w-12 h-12 "></img>
                 <img src={Ellipse2} alt="ellipse2" className="w-12 h-12 relative right-4"></img>
                 <img src={Ellipse3} alt="ellipse3" className="w-12 h-12 relative right-7"></img>

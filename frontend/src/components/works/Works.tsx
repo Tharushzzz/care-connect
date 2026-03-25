@@ -1,7 +1,7 @@
 
-import work1 from '../assets/work1.svg'
-import work2 from '../assets/work2.svg'
-import work3 from '../assets/work3.svg'
+import work1 from '../../assets/worksIcons/work1.svg'
+import work2 from '../../assets/worksIcons/work2.svg'
+import work3 from '../../assets/worksIcons/work3.svg'
 import Workitem from './Workitem.js'
 
 const Works = () => {

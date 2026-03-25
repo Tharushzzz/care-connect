@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const Workitem = ({ svg, header, body }: { svg: string; header: string; body: string }) => {
+const Workitem = ({ svg, header, body } : { svg: string; header: string; body: string }) => {
 
     const [isHovered, setIsHovered] = useState(false);
 

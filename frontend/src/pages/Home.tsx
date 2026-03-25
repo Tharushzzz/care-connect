@@ -1,6 +1,6 @@
-import Header from '../components/Header.tsx'
-import Herosection from '../components/Herosection.tsx'
-import Works from '../components/Works.tsx'
+import Header from '../components/Header/Header.tsx'
+import Herosection from '../components/HeroSection/Herosection.tsx'
+import Works from '../components/works/Works.tsx'
 
 
 function Home() {
