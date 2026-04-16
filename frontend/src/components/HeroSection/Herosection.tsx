@@ -1,10 +1,10 @@
 
-import right from "../../assets/right.svg";
-import correct from "../../assets/correct.svg";
-import hero from "../../assets/hero.png";
-import Ellipse1 from "../../assets/Ellipse1.svg";
-import Ellipse2 from "../../assets/Ellipse2.svg";
-import Ellipse3 from "../../assets/Ellipse3.svg"; 
+import right from "../../assets/Herosection/right.svg";
+import correct from "../../assets/Herosection/correct.svg";
+import hero from "../../assets/Herosection/hero.png";
+import Ellipse1 from "../../assets/Herosection/Ellipse1.svg";
+import Ellipse2 from "../../assets/Herosection/Ellipse2.svg";
+import Ellipse3 from "../../assets/Herosection/Ellipse3.svg"; 
 
 const Herosection = () => {
   return (

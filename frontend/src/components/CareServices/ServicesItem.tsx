@@ -5,7 +5,7 @@ const ServicesItem = ({ icon: Icon, header, description } : { icon: LucideIcon; 
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div className="flex flex-col gap-4 w-106 h-80.5 bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-shadow ease-in-out cursor-pointer"
+    <div className="flex flex-col gap-4 md:w-106 md:h-80.5 bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-shadow ease-in-out cursor-pointer"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
     >

@@ -15,7 +15,7 @@ const Works = () => {
         </section>
 
 
-        <section className="flex w-full gap-10 lg:gap-0  items-center justify-evenly px-10 flex-wrap">
+        <section className="flex w-full gap-10 lg:gap-0  items-center justify-evenly p-5 md:py-0 md:px-10 flex-wrap">
 
           <Workitem svg={work1} header={"Post Your Need"} body={"Describe your situation whether it’s hospital bedside monitoring, home, recovery or elderly companionship. Tell us dates, times, and specific requrements."}/>
           <Workitem svg={work2} header={"Choose a Verified Caregiver"} body={"Browse profiles of background-checked, certified caregivers. Review their experience, ratings, and specialties to find the perfect match for your family."}/>

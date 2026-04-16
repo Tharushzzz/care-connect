@@ -5,7 +5,7 @@ const Workitem = ({ svg, header, body } : { svg: string; header: string; body: s
     const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div className="flex flex-col gap-4 items-center justify-around w-90 h-90 bg-white/40 shadow-md rounded-2xl p-6 cursor-pointer hover:shadow-xl transition-shadow ease-in-out" 
+    <div className="flex flex-col gap-4 items-center justify-around md:w-90 md:h-90 bg-white/40 shadow-md rounded-2xl p-6 cursor-pointer hover:shadow-xl transition-shadow ease-in-out" 
         onMouseEnter={() => setIsHovered(true)} 
         onMouseLeave={() => setIsHovered(false)}
     >
