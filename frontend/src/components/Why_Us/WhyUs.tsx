@@ -1,7 +1,38 @@
 import whyus from "../../assets/whyus.png";
-import { ShieldCheck } from 'lucide-react';
+import { ShieldCheck, Clock, CreditCard, Heart,  } from 'lucide-react';
+import WhyUsItem from "./WhyUsItem";
 
 const WhyUs = () => {
+
+
+  const OurKeyBenefits = [
+    {
+      id: 1,
+      icon: ShieldCheck,
+      title: "Strictly Vetted Professionals",
+      description: "Identity verification, criminal record checks, and certification validation for every caregiver."
+    },
+    {
+      id: 2,
+      icon: Clock,
+      title: "24/7 Support Team",
+      description: "Our dedicated care team is available around the clock to handle emergencies or questions."
+    },
+    {
+      id: 3,
+      icon: CreditCard,
+      title: "Secure & Transparent Billing",
+      description: "No hidden fees. Automated payments only released when you are satisfied with the service."
+    },
+    {
+      id: 4,
+      icon: Heart,
+      title: "Compassionate Match Guarantee",
+      description: "If you don't connect with your caregiver, we'll find you a replacement immediately at no extra cost."
+    }
+
+  ];
+
   return (
     <section className="flex gap-3 items-center justify-center bg-linear-to-b from-[#F4FEFF] to-[#d0eeee] h-[91vh]">
 
@@ -21,15 +52,17 @@ const WhyUs = () => {
         </div>
 
       {/* Right Content */}
-        <div className="flex w-1/2 h-full justify-center p-7 px-10">
-          <div className="flex flex-col gap-2">
-            <div className="text-[#3386B0] text-2xl font-semibold">Why Families Trust Us</div>
-            <div className="text-4xl text-black font-semibold">Peace of Mind is Our Priority</div>
-            <div className="text-[16px] text-[#00000099] font-medium mt-3">We understand that inviting someone to care for your family is a big decision. That's why we've built a platform centered around safety, transparency, and reliability.</div>
+        <div className="flex flex-col w-1/2 h-full p-7 px-10">
+          <div className="flex flex-col gap-2 mb-8">
+            <div className="text-[#3386B0] text-xl font-semibold">Why Families Trust Us</div>
+            <div className="text-3xl text-black font-semibold">Peace of Mind is Our Priority</div>
+            <div className="text-[15px] text-[#00000099] font-medium w-4/5 mt-1">We understand that inviting someone to care for your family is a big decision. That's why we've built a platform centered around safety, transparency, and reliability.</div>
           </div>
 
-          <div>
-            
+          <div className="flex flex-col gap-4">
+              {OurKeyBenefits.map(benefit => (
+                <WhyUsItem icon={benefit.icon} title={benefit.title} description={benefit.description} key={benefit.id}></WhyUsItem>
+              ) )}
           </div>
         </div>
 
