@@ -8,7 +8,7 @@ import Ellipse3 from "../../assets/Herosection/Ellipse3.svg";
 
 const Herosection = () => {
   return (
-    <div className="flex flex-col lg:flex-row items-center justify-between p-10 lg:px-20 lg:py-24 bg-linear-to-b from-[#FDFEFF] to-[rgba(66,161,153,0.35)]">
+    <div className="flex flex-col lg:flex-row items-center justify-between p-10 lg:px-20 lg:py-24 bg-linear-to-b from-[#FDFEFF] to-[rgba(66,161,153,0.35)] md:min-h-screen">
       <div className="flex flex-col gap-2 lg:w-1/2    lg:justify-end h-full mt-10 ml-10 ">
         <div className="flex items-center gap-2 bg-[#e2f1fc] rounded-3xl w-max px-3 py-0.5">
           <div>

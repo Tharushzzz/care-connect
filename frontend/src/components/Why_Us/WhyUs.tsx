@@ -34,7 +34,7 @@ const WhyUs = () => {
   ];
 
   return (
-    <section className="flex flex-col lg:flex-row gap-3 items-center justify-center bg-linear-to-b from-[#F4FEFF] to-[#d0eeee] lg:h-[91vh]">
+    <section className="flex flex-col lg:flex-row gap-3 items-center justify-center bg-linear-to-b from-[#F4FEFF] to-[#d0eeee] lg:h-158">
 
       {/* Left Content */}
         <div className="flex relative lg:w-1/2 h-full items-center justify-end lg:pr-15 order-2 lg:order-1">
