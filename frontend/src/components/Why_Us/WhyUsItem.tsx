@@ -8,7 +8,7 @@ const WhyUsItem = ({ icon: Icon, title, description }:{ icon: LucideIcon; title:
         </div>
         <div className="flex flex-col gap-1">
             <div className="text-xl font-bold">{title}</div>
-            <div className="text-[16px] text-[#000000B2] font-medium leading-6 w-5/6">{description}</div>
+            <div className="text-[16px] text-[#000000B2] font-medium leading-6 md:w-5/6">{description}</div>
         </div>
     </div>
   )

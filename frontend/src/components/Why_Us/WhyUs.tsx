@@ -34,13 +34,13 @@ const WhyUs = () => {
   ];
 
   return (
-    <section className="flex gap-3 items-center justify-center bg-linear-to-b from-[#F4FEFF] to-[#d0eeee] h-[91vh]">
+    <section className="flex flex-col lg:flex-row gap-3 items-center justify-center bg-linear-to-b from-[#F4FEFF] to-[#d0eeee] lg:h-[91vh]">
 
       {/* Left Content */}
-        <div className="flex relative w-1/2 h-full items-center justify-end pr-15">
-            <img src={whyus} alt="Why Us" className="object-cover h-[90%]" />
+        <div className="flex relative lg:w-1/2 h-full items-center justify-end lg:pr-15 order-2 lg:order-1">
+            <img src={whyus} alt="Why Us" className="object-cover p-4 lg:p-0 lg:h-[90%]" />
 
-            <div className="flex flex-col p-5 pl-6 w-74 h-30 gap-2 absolute bg-white rounded-xl shadow-lg shadow-black  bottom-4 right-6">
+            <div className="flex flex-col lg:p-5 p-3 pl-6 w-74 lg:h-30 h-24 lg:gap-2 absolute bg-white rounded-xl shadow-lg shadow-black bottom-0 right-0  lg:bottom-4 lg:right-6">
                 <div className="flex items-center gap-2">
                     <ShieldCheck size={26} color="#16B8A6" stroke-width="3px" /> 
                     <div className="font-semibold text-xl">100% Verified</div>
@@ -52,11 +52,11 @@ const WhyUs = () => {
         </div>
 
       {/* Right Content */}
-        <div className="flex flex-col w-1/2 h-full p-7 px-10">
+        <div className="flex flex-col lg:w-1/2 h-full p-7 px-10 order-1 lg:order-2">
           <div className="flex flex-col gap-2 mb-8">
             <div className="text-[#3386B0] text-xl font-semibold">Why Families Trust Us</div>
             <div className="text-3xl text-black font-semibold">Peace of Mind is Our Priority</div>
-            <div className="text-[15px] text-[#00000099] font-medium w-4/5 mt-1">We understand that inviting someone to care for your family is a big decision. That's why we've built a platform centered around safety, transparency, and reliability.</div>
+            <div className="text-[15px] text-[#00000099] font-medium md:w-4/5 mt-1">We understand that inviting someone to care for your family is a big decision. That's why we've built a platform centered around safety, transparency, and reliability.</div>
           </div>
 
           <div className="flex flex-col gap-4">
