@@ -2,9 +2,9 @@
 
 const Support = () => {
   return (
-    <div className="flex items-center justify-center pt-10 lg:h-158 px-3 md:px-0 bg-linear-to-b from-[#A5CACA] to-[#EAF6FB]">
+    <div className="flex items-center justify-center lg:h-158  px-3 md:px-0 bg-linear-to-b from-[#A5CACA] to-[#EAF6FB]">
 
-      <div className="flex flex-col relative gap-2 md:gap-5 p-10 md:p-20 items-center justify-between lg:w-250 lg:h-100 h-fit rounded-[50px] shadow-[0_20px_80px_rgba(2,132,199,0.4)] bg-[radial-gradient(circle_at_center,#4fd1ff_0%,#0284c7_50%,#075985_100%)]">
+      <div className="flex flex-col relative gap-2 md:gap-5  md:p-20 items-center justify-between lg:w-250 lg:h-100 h-fit rounded-[50px] shadow-[0_20px_80px_rgba(2,132,199,0.4)] bg-[radial-gradient(circle_at_center,#4fd1ff_0%,#0284c7_50%,#075985_100%)]">
 
         <div className="md:text-[45px] text-2xl text-white font-semibold">
             Your loved one deserves the best care.

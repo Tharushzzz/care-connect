@@ -34,13 +34,13 @@ const WhyUs = () => {
   ];
 
   return (
-    <section className="flex flex-col lg:flex-row gap-3 items-center justify-center bg-linear-to-b from-[#F4FEFF] to-[#d0eeee] lg:h-158">
+    <section className="flex flex-col lg:flex-row gap-3 items-center justify-center bg-linear-to-b from-[#F4FEFF] to-[#d0eeee] lg:min-h-158 py-10 lg:py-0">
 
       {/* Left Content */}
-        <div className="flex relative lg:w-1/2 h-full items-center justify-end lg:pr-15 order-2 lg:order-1">
+        <div className="flex relative lg:w-2/5 h-full items-center justify-end lg:pr-15 order-2 lg:order-1 py-20 ml-25">
             <img src={whyus} alt="Why Us" className="object-cover p-4 lg:p-0 lg:h-[90%]" />
 
-            <div className="flex flex-col lg:p-5 p-3 pl-6 w-74 lg:h-30 h-24 lg:gap-2 absolute bg-white rounded-xl shadow-lg shadow-black bottom-0 right-0  lg:bottom-4 lg:right-6">
+            <div className="flex flex-col lg:p-5 p-3 pl-6 w-74 lg:h-30 h-24 lg:gap-2 absolute bg-white rounded-xl shadow-lg shadow-black bottom-17.5 right-0  lg:bottom-4 lg:right-6">
                 <div className="flex items-center gap-2">
                     <ShieldCheck size={26} color="#16B8A6" stroke-width="3px" /> 
                     <div className="font-semibold text-xl">100% Verified</div>
