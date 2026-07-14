@@ -5,23 +5,23 @@ const ServicesItem = ({ icon: Icon, header, description } : { icon: LucideIcon; 
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div className="flex flex-col gap-4 md:w-106 md:h-80.5 bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-shadow ease-in-out cursor-pointer"
+    <div className="flex flex-col gap-3 md:w-96 md:min-h-72 bg-white rounded-2xl p-5 shadow-sm hover:shadow-xl transition-shadow ease-in-out cursor-pointer"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
     >
 
 
 
-        <div className='pb-5'>
+        <div className='pb-3'>
                         <Icon
-                            size={60}
-                            className={`p-3 rounded-xl ${isHovered ? 'text-white bg-[#0384c6]' : 'text-[#0686CD] bg-[#f0f7ff]'} transition-colors ease-in-out duration-300`}
+                            size={48}
+                            className={`p-2.5 rounded-xl ${isHovered ? 'text-white bg-[#0384c6]' : 'text-[#0686CD] bg-[#f0f7ff]'} transition-colors ease-in-out duration-300`}
                         />
         </div>
-        <div className='font-semibold text-2xl'>
+        <div className='font-semibold text-xl'>
             {header}
         </div>
-        <div className='text-xl font-medium text-[#0D182B80]'>
+        <div className='text-base font-medium text-[#0D182B80]'>
             {description}
         </div>
     </div>

@@ -38,7 +38,7 @@ const CareServices = () => {
   ]
 
   return (
-    <section className='flex flex-col py-10 bg-linear-to-b from-white to-[#A5CACA]'>
+    <section className='flex flex-col py-10 px-11 bg-linear-to-b from-white to-[#A5CACA]'>
         <div className="flex flex-col justify-center p-5 md:pl-20 py-10 gap-5">
             <h1 className="font-bold text-3xl md:text-4xl">Comprehensive Care Services</h1>
             <p className="text-md md:text-lg text-[#0D182B99] font-medium md:w-2/3">Our network of professionals covers a wide range of needs, ensuring your family member receives specialized attention tailored to their condition.</p>
@@ -50,7 +50,7 @@ const CareServices = () => {
             ))}
 
 
-            <div className="flex flex-col gap-5 items-center justify-center md:w-106 md:h-80.5 bg-linear-to-b from-[#0385BF] to-[#0C938D] rounded-2xl p-6 cursor-pointer">
+            <div className="flex flex-col gap-5 items-center justify-center md:w-96 md:h-72 bg-linear-to-b from-[#0385BF] to-[#0C938D] rounded-2xl p-6 cursor-pointer">
               <div className="font-semibold text-2xl text-white">Need something else?</div>
               <div className="text-xl font-medium text-[#FFFFFFB2] text-center">We offer specialized care plans tailored to unique family needs.</div>
               <div className="text-center font-semibold text-[#0f6798] text-2xl bg-[#FFFFFF] py-2 px-6 rounded-3xl mt-5 hover:bg-[#eff9ff] hover:shadow-lg">Contact Us</div>

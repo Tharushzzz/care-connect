@@ -19,10 +19,22 @@ function Header() {
 
             {/* desktop menu */}
               <div className=" items-center justify-center gap-10 text-lg select-none hidden lg:flex">
-                <div className="cursor-pointer text-black/75 hover:text-[#0686CD] transition-colors ease-in-out delay-100">How it Works</div>
-                <div className="cursor-pointer text-black/75 hover:text-[#0686CD] transition-colors ease-in-out delay-100">Services</div>
-                <div className="cursor-pointer text-black/75 hover:text-[#0686CD] transition-colors ease-in-out delay-100">Why Us</div>
-                <div className="cursor-pointer text-black/75 hover:text-[#0686CD] transition-colors ease-in-out delay-100">Find Caregiver</div>
+                <div className="group relative cursor-pointer text-black/75 transition-colors ease-in-out delay-100 hover:text-[#0686CD]">
+                  How it Works
+                  <span className="absolute left-0 -bottom-1 h-0.5 w-full origin-left scale-x-0 bg-[#0686CD] transition-transform duration-300 ease-out group-hover:scale-x-100"></span>
+                </div>
+                <div className="group relative cursor-pointer text-black/75 transition-colors ease-in-out delay-100 hover:text-[#0686CD]">
+                  Services
+                  <span className="absolute left-0 -bottom-1 h-0.5 w-full origin-left scale-x-0 bg-[#0686CD] transition-transform duration-300 ease-out group-hover:scale-x-100"></span>
+                </div>
+                <div className="group relative cursor-pointer text-black/75 transition-colors ease-in-out delay-100 hover:text-[#0686CD]">
+                  Why Us
+                  <span className="absolute left-0 -bottom-1 h-0.5 w-full origin-left scale-x-0 bg-[#0686CD] transition-transform duration-300 ease-out group-hover:scale-x-100"></span>
+                </div>
+                <div className="group relative cursor-pointer text-black/75 transition-colors ease-in-out delay-100 hover:text-[#0686CD]">
+                  Find Caregiver
+                  <span className="absolute left-0 -bottom-1 h-0.5 w-full origin-left scale-x-0 bg-[#0686CD] transition-transform duration-300 ease-out group-hover:scale-x-100"></span>
+                </div>
               </div>
 
               <div className="items-center justify-center gap-4 pb-0.5 pr-3 select-none hidden sm:flex">
