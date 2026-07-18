@@ -5,7 +5,7 @@ const Footer = () => {
   return (
     <div className="flex flex-col items-center justify-center w-full h-fit bg-[#0F172A]">
         
-        <div className="flex flex-col lg:flex-row w-full items-center justify-center gap-10 lg:gap-20  p-10 text-white">
+        <div className="flex flex-col  md:flex-row  w-full items-center lg:justify-center justify-around  gap-10 md:gap-20  p-10 text-white">
 
             {/* left two columns */}
             <div className="flex flex-col lg:flex-row  items-center justify-center gap-10 lg:gap-20 ">
