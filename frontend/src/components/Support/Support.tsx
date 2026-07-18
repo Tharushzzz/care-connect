@@ -4,7 +4,7 @@ const Support = () => {
   return (
     <div className="flex items-center justify-center h-fit py-10 md:h-158  px-3 md:px-0 bg-linear-to-b from-[#A5CACA] to-[#EAF6FB]">
 
-      <div className="flex flex-col relative gap-2 md:gap-5 md:px-20 md:py-20 py-20 items-center justify-between md:w-250 md:h-100 h-fit   rounded-[50px] shadow-[0_20px_80px_rgba(2,132,199,0.4)] bg-[radial-gradient(circle_at_center,#4fd1ff_0%,#0284c7_50%,#075985_100%)]">
+      <div className="flex flex-col relative gap-2 md:gap-5 md:px-20 md:py-20 py-20 items-center justify-between md:w-250 md:h-100 h-fit md:mx-10 lg:mx-0  rounded-[50px] shadow-[0_20px_80px_rgba(2,132,199,0.4)] bg-[radial-gradient(circle_at_center,#4fd1ff_0%,#0284c7_50%,#075985_100%)]">
 
         <div className="lg:text-[45px] md:text-2xl text-lg text-white font-semibold">
             Your loved one deserves the best care.
