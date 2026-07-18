@@ -5,12 +5,15 @@ const Footer = () => {
   return (
     <div className="flex w-full h-80 bg-[#0F172A]">
         
-      <div className="flex flex-col lg:flex-row w-full items-center justify-center gap-10 lg:gap-20 p-10 text-white">
-        <div>
+      <div className="flex flex-col lg:flex-row w-full items-center justify-center gap-10 lg:gap-20  p-10 text-white">
+
+        {/* left two columns */}
+        <div className="flex flex-col lg:flex-row  items-center justify-center gap-10 lg:gap-20 ">
+            {/* first column */}
             <div className="flex flex-col gap-5 w-50">
                 <div className="flex items-center gap-2">
                     <img src={logo} alt="Logo" className="rounded-lg w-10 h-10" />
-                    <div>CareConnect</div>
+                    <div className="text-xl font-semibold">CareConnect</div>
                 </div>
                 <div className="text-[#FFFFFFB2]">
                     Empowering families with trusted,
@@ -38,13 +41,43 @@ const Footer = () => {
                     
                 </div>
             </div>
-            <div></div>
+
+            {/* second column */}
+            <div className="flex flex-col gap-5 w-50">
+                <div className="text-lg font-semibold">
+                    Quick Links
+                </div>
+                <div className="flex flex-col gap-3 text-[#FFFFFFB2] mb-7">
+                    <div>How it Works</div>
+                    <div>Services</div>
+                    <div>Why Us</div>
+                    <div>Find Caregiver</div>
+                </div>
+            </div>
         </div>
 
+        {/* right column */}
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-20 text-white">
+            <div className="flex flex-col gap-5 w-50">
+                <div className="text-lg font-semibold">Services</div>
+                <div className="flex flex-col gap-3 text-[#FFFFFFB2]">
+                    <div>Home Nursing</div>
+                    <div>Hospital Support</div>
+                    <div>Elderly Companionship</div>
+                    <div>Physiotherapy</div>
+                    <div>Dementia Care</div>
+                </div>
+            </div>
 
-        <div>
-            <div></div>
-            <div></div>
+            <div className="flex flex-col gap-5 w-50">
+                <div className="text-lg font-semibold">Contact Us</div>
+                <div className="flex flex-col gap-3 text-[#FFFFFFB2]">
+                    <div>123 Care Street</div>
+                    <div>City, State 12345</div>
+                    <div>Phone: (123) 456-7890</div>
+                    <div>Email: info@careconnect.com</div>
+                </div>
+            </div>
         </div>
       </div>
 
