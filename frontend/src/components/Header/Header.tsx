@@ -1,5 +1,6 @@
 import React from 'react'
 import logo from '../../assets/logo/Logo.svg';
+import { Link } from 'react-router-dom';
 
 
 function Header() {
@@ -8,43 +9,43 @@ function Header() {
   return (
     <header className='sticky top-0 z-20 h-15.5'>
         <nav className="flex bg-[#F7FBFE] p-2.5 items-center justify-between drop-shadow-lg">
-            <div className="flex items-center gap-2 pl-3">
+            <a href={'/'} className="flex items-center gap-2 pl-3">
                 <div className="w-9 h-9">     
                     <img src={logo} alt="Logo" className="rounded-lg" />
                 </div>
                 <div className="text-lg font-semibold select-none">
                   CareConnect
                 </div>
-            </div>
+            </a>
 
             {/* desktop menu */}
               <div className=" items-center justify-center gap-10 text-lg select-none hidden lg:flex">
-                <div className="group relative cursor-pointer text-black/75 transition-colors ease-in-out delay-100 hover:text-[#0686CD]">
+                <a href="#works" className="group relative cursor-pointer text-black/75 transition-colors ease-in-out delay-100 hover:text-[#0686CD]">
                   How it Works
                   <span className="absolute left-0 -bottom-1 h-0.5 w-full origin-left scale-x-0 bg-[#0686CD] transition-transform duration-300 ease-out group-hover:scale-x-100"></span>
-                </div>
-                <div className="group relative cursor-pointer text-black/75 transition-colors ease-in-out delay-100 hover:text-[#0686CD]">
+                </a>
+                <a href="#services" className="group relative cursor-pointer text-black/75 transition-colors ease-in-out delay-100 hover:text-[#0686CD]">
                   Services
                   <span className="absolute left-0 -bottom-1 h-0.5 w-full origin-left scale-x-0 bg-[#0686CD] transition-transform duration-300 ease-out group-hover:scale-x-100"></span>
-                </div>
-                <div className="group relative cursor-pointer text-black/75 transition-colors ease-in-out delay-100 hover:text-[#0686CD]">
+                </a>
+                <a href="#why-us" className="group relative cursor-pointer text-black/75 transition-colors ease-in-out delay-100 hover:text-[#0686CD]">
                   Why Us
                   <span className="absolute left-0 -bottom-1 h-0.5 w-full origin-left scale-x-0 bg-[#0686CD] transition-transform duration-300 ease-out group-hover:scale-x-100"></span>
-                </div>
-                <div className="group relative cursor-pointer text-black/75 transition-colors ease-in-out delay-100 hover:text-[#0686CD]">
+                </a>
+                <Link to={'#'} className="group relative cursor-pointer text-black/75 transition-colors ease-in-out delay-100 hover:text-[#0686CD]">
                   Find Caregiver
                   <span className="absolute left-0 -bottom-1 h-0.5 w-full origin-left scale-x-0 bg-[#0686CD] transition-transform duration-300 ease-out group-hover:scale-x-100"></span>
-                </div>
+                </Link>
               </div>
 
               <div className="items-center justify-center gap-4 pb-0.5 pr-3 select-none hidden sm:flex">
-                <div className="bg-[#E2F1FF] p-1.5 px-4 rounded-xl text-[#5E656A] cursor-pointer text-lg hover:bg-[#B5D8EB] hover:text-[#0686CD] transition-colors ease-in-out">
+                <a href="#login" className="bg-[#E2F1FF] p-1.5 px-4 rounded-xl text-[#5E656A] cursor-pointer text-lg hover:bg-[#B5D8EB] hover:text-[#0686CD] transition-colors ease-in-out">
                   Log In
-                </div>
+                </a>
 
-                <div className="bg-[#0686CD] p-1.5 px-4 rounded-xl text-[#E2F1FF] cursor-pointer text-lg hover:bg-[#0071A8] hover:shadow-lg transition-all ease-in-out delay-75">
+                <a href="#get-started" className="bg-[#0686CD] p-1.5 px-4 rounded-xl text-[#E2F1FF] cursor-pointer text-lg hover:bg-[#0071A8] hover:shadow-lg transition-all ease-in-out delay-75">
                   Get Started
-                </div>
+                </a>
 
               </div>
             
@@ -67,18 +68,18 @@ function Header() {
           style={{maxHeight: expanded ? '0px' : '500px'}}
         >
           
-          <div className="hover:bg-[#f9fafc] hover:rounded-lg w-full py-2 pl-3"> How it Works </div>
-          <div className="hover:bg-[#f9fafc] hover:rounded-lg w-full py-2 pl-3"> Services </div>
-          <div className="hover:bg-[#f9fafc] hover:rounded-lg w-full py-2 pl-3"> Why Us </div>
-          <div className="hover:bg-[#f9fafc] hover:rounded-lg w-full py-2 pl-3"> Find Caregiver </div>
-          
-          <div className="bg-white border border-[#0686CD] w-full text-center p-1.5 px-4 rounded-xl text-[#5E656A] cursor-pointer text-lg hover:bg-[#B5D8EB] hover:text-[#0687cd] transition-colors ease-in-out">
-            Log In
-          </div>
+          <a href="#works" className="hover:bg-[#f9fafc] hover:rounded-lg w-full py-2 pl-3"> How it Works </a>
+          <a href="#services" className="hover:bg-[#f9fafc] hover:rounded-lg w-full py-2 pl-3"> Services </a>
+          <a href="#why-us" className="hover:bg-[#f9fafc] hover:rounded-lg w-full py-2 pl-3"> Why Us </a>
+          <Link to={''} className="hover:bg-[#f9fafc] hover:rounded-lg w-full py-2 pl-3"> Find Caregiver </Link>
 
-          <div className="bg-[#0686CD] w-full text-center p-1.5 px-4 rounded-xl text-[#E2F1FF] cursor-pointer text-lg hover:bg-[#0071A8] hover:shadow-lg transition-all ease-in-out delay-75">
+          <Link to="#login" className="bg-white border border-[#0686CD] w-full text-center p-1.5 px-4 rounded-xl text-[#5E656A] cursor-pointer text-lg hover:bg-[#B5D8EB] hover:text-[#0687cd] transition-colors ease-in-out">
+            Log In
+          </Link>
+
+          <Link to="#get-started" className="bg-[#0686CD] w-full text-center p-1.5 px-4 rounded-xl text-[#E2F1FF] cursor-pointer text-lg hover:bg-[#0071A8] hover:shadow-lg transition-all ease-in-out delay-75">
             Get Started
-          </div>
+          </Link>
           
 
                 

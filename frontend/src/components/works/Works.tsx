@@ -6,7 +6,7 @@ import Workitem from './Workitem.js'
 
 const Works = () => {
   return (
-    <div className="flex flex-col py-20 lg:pt-16 gap-20 items-center justify-center xl:h-screen bg-linear-to-b from-[#e2f1ff83] to-[#a5caca]">
+    <div id='works' className="flex flex-col py-20 lg:pt-16 gap-20 items-center justify-center xl:h-screen bg-linear-to-b from-[#e2f1ff83] to-[#a5caca] scroll-mt-13">
       
         <section className="flex flex-col items-center justify-center gap-2 p-5 lg:p-0 lg:w-150">
           <div className="text-[#0071A8] text-xl font-semibold">SIMPLE PROCESS</div>

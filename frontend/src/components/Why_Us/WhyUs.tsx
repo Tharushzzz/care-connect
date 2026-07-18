@@ -34,7 +34,7 @@ const WhyUs = () => {
   ];
 
   return (
-    <section className="flex flex-col lg:flex-row gap-3 items-center justify-center bg-linear-to-b from-[#F4FEFF] to-[#d0eeee] lg:min-h-158 py-10 lg:py-0">
+    <section id="why-us" className="flex flex-col lg:flex-row gap-3 items-center justify-center bg-linear-to-b from-[#F4FEFF] to-[#d0eeee] lg:min-h-158 py-10 lg:py-0 scroll-mt-13">
 
       {/* Left Content */}
         <div className="relative lg:w-2/5 h-full items-center justify-end lg:pr-15 order-2 lg:order-1 py-20 ml-25 hidden md:flex">
