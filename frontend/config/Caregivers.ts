@@ -14,7 +14,8 @@ const CaregiversData = [
     reviews: 124,
     rate: '$35/hr',
     availability: 'Available today',
-    image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80',
+    description:
+      'Sarah is a compassionate Registered Nurse with extensive experience in geriatric care and post-surgery recovery. She is dedicated to providing dignified, respectful care to all her patients.',
     specialties: ['Senior Care', 'Mobility Support', 'Medication Administration', 'Recovery Care'],
     credentials: ['BLS Certified', 'Geriatric Care Certified', 'Background checked'],
     bio: 'Sarah is a dedicated Registered Nurse with over five years of experience in home-based and post-surgical care. She works closely with families to create comfortable, safe routines that support independence and emotional well-being.',
@@ -31,7 +32,8 @@ const CaregiversData = [
     reviews: 96,
     rate: '$26/hr',
     availability: 'Available tomorrow',
-    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80',
+    description:
+      'Michael is a warm, dependable Certified Nursing Assistant with a strong background in helping elderly clients with daily routines, personal support, and companionship.',
     specialties: ['Daily Living Support', 'Companionship', 'Bathing Assistance', 'Meal Support'],
     credentials: ['CNA License', 'First Aid Certified', 'Background checked'],
     bio: 'Michael is known for creating calm, respectful routines for seniors and recovering patients. His compassionate approach and reliability make families feel secure and comfortable.',
