@@ -61,7 +61,7 @@ const CachedCaregivers = () => {
               </div>
             </div>
 
-            <button className="rounded-full bg-[#0B8BD8] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0879b6]">
+            <button className="rounded-full bg-[#0B8BD8] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0879b6] cursor-pointer">
               View profile
             </button>
           </div>
