@@ -1,10 +1,24 @@
 import React from 'react'
 import logo from '../../assets/logo/Logo.svg';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 function Header() {
   const [expanded, setExpanded] = React.useState(true);
+  const navigate = useNavigate();
+
+  const handleSectionClick = (sectionId: string) => {
+    navigate('/');
+
+    setTimeout(() => {
+      const section = document.getElementById(sectionId);
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }, 50);
+  };
 
   return (
     <header className='sticky top-0 z-20 h-15.5'>
@@ -20,18 +34,18 @@ function Header() {
 
             {/* desktop menu */}
               <div className=" items-center justify-center gap-10 text-lg select-none hidden lg:flex">
-                <a href="#works" className="group relative cursor-pointer text-black/75 transition-colors ease-in-out delay-100 hover:text-[#0686CD]">
+                <button onClick={() => handleSectionClick('works')} className="group relative cursor-pointer text-black/75 transition-colors ease-in-out delay-100 hover:text-[#0686CD]">
                   How it Works
                   <span className="absolute left-0 -bottom-1 h-0.5 w-full origin-left scale-x-0 bg-[#0686CD] transition-transform duration-300 ease-out group-hover:scale-x-100"></span>
-                </a>
-                <a href="#services" className="group relative cursor-pointer text-black/75 transition-colors ease-in-out delay-100 hover:text-[#0686CD]">
+                </button>
+                <button onClick={() => handleSectionClick('services')} className="group relative cursor-pointer text-black/75 transition-colors ease-in-out delay-100 hover:text-[#0686CD]">
                   Services
                   <span className="absolute left-0 -bottom-1 h-0.5 w-full origin-left scale-x-0 bg-[#0686CD] transition-transform duration-300 ease-out group-hover:scale-x-100"></span>
-                </a>
-                <a href="#why-us" className="group relative cursor-pointer text-black/75 transition-colors ease-in-out delay-100 hover:text-[#0686CD]">
+                </button>
+                <button onClick={() => handleSectionClick('why-us')} className="group relative cursor-pointer text-black/75 transition-colors ease-in-out delay-100 hover:text-[#0686CD]">
                   Why Us
                   <span className="absolute left-0 -bottom-1 h-0.5 w-full origin-left scale-x-0 bg-[#0686CD] transition-transform duration-300 ease-out group-hover:scale-x-100"></span>
-                </a>
+                </button>
                 <Link to={'/find-caregivers'} className="group relative cursor-pointer text-black/75 transition-colors ease-in-out delay-100 hover:text-[#0686CD]">
                   Find Caregiver
                   <span className="absolute left-0 -bottom-1 h-0.5 w-full origin-left scale-x-0 bg-[#0686CD] transition-transform duration-300 ease-out group-hover:scale-x-100"></span>
@@ -39,13 +53,13 @@ function Header() {
               </div>
 
               <div className="items-center justify-center gap-4 pb-0.5 pr-3 select-none hidden sm:flex">
-                <a href="#login" className="bg-[#E2F1FF] p-1.5 px-4 rounded-xl text-[#5E656A] cursor-pointer text-lg hover:bg-[#B5D8EB] hover:text-[#0686CD] transition-colors ease-in-out">
+                <Link to="#login" className="bg-[#E2F1FF] p-1.5 px-4 rounded-xl text-[#5E656A] cursor-pointer text-lg hover:bg-[#B5D8EB] hover:text-[#0686CD] transition-colors ease-in-out">
                   Log In
-                </a>
+                </Link>
 
-                <a href="#get-started" className="bg-[#0686CD] p-1.5 px-4 rounded-xl text-[#E2F1FF] cursor-pointer text-lg hover:bg-[#0071A8] hover:shadow-lg transition-all ease-in-out delay-75">
+                <Link to="#get-started" className="bg-[#0686CD] p-1.5 px-4 rounded-xl text-[#E2F1FF] cursor-pointer text-lg hover:bg-[#0071A8] hover:shadow-lg transition-all ease-in-out delay-75">
                   Get Started
-                </a>
+                </Link>
 
               </div>
             
@@ -68,9 +82,9 @@ function Header() {
           style={{maxHeight: expanded ? '0px' : '500px'}}
         >
           
-          <a href="#works" className="hover:bg-[#f9fafc] hover:rounded-lg w-full py-2 pl-3"> How it Works </a>
-          <a href="#services" className="hover:bg-[#f9fafc] hover:rounded-lg w-full py-2 pl-3"> Services </a>
-          <a href="#why-us" className="hover:bg-[#f9fafc] hover:rounded-lg w-full py-2 pl-3"> Why Us </a>
+          <button onClick={() => handleSectionClick('works')} className="hover:bg-[#f9fafc] hover:rounded-lg w-full py-2 pl-3 text-left"> How it Works </button>
+          <button onClick={() => handleSectionClick('services')} className="hover:bg-[#f9fafc] hover:rounded-lg w-full py-2 pl-3 text-left"> Services </button>
+          <button onClick={() => handleSectionClick('why-us')} className="hover:bg-[#f9fafc] hover:rounded-lg w-full py-2 pl-3 text-left"> Why Us </button>
           <Link to={'/find-caregivers'} className="hover:bg-[#f9fafc] hover:rounded-lg w-full py-2 pl-3"> Find Caregiver </Link>
 
           <Link to="#login" className="bg-white border border-[#0686CD] w-full text-center p-1.5 px-4 rounded-xl text-[#5E656A] cursor-pointer text-lg hover:bg-[#B5D8EB] hover:text-[#0687cd] transition-colors ease-in-out">
