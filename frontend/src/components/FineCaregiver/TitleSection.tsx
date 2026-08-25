@@ -1,4 +1,4 @@
-
+import { Search } from "lucide-react";
 
 const TitleSection = () => {
   return (
@@ -8,12 +8,12 @@ const TitleSection = () => {
             <p className="text-lg text-white">
                 Browse our network of verified, experienced professionals ready to provide compassionate care for your loved ones.
             </p>
-            <div className="flex flex-row gap-4 bg-white rounded-xl p-2 px-4 shadow-md ">
-                
+            <div className="flex flex-row gap-4 bg-white rounded-xl p-2 px-4 shadow-md  justify-center items-center">
+                <Search className="text-gray-500" />
                 <input
                     type="text"
                     placeholder="Search by name (e.g.,Saraha)"
-                    className="flex-1 px-4 py-2 rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 border-0 bg-transparent px-4 py-2 text-xl text-gray-700 placeholder:text-gray-400 focus:outline-none"
                 />
                 <button className="px-8 py-2 bg-[#0384C6] text-white rounded-2xl text-xl cursor-pointer hover:bg-[#0269A1] transition duration-300">
                     Search
