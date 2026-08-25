@@ -1,6 +1,11 @@
-const caregivers = [
+import sahara from '../src/assets/Caregiverprofile/Sarah.jpeg'
+import Michael from '../src/assets/Caregiverprofile/Michael.jpeg'
+import Emily from '../src/assets/Caregiverprofile/Emily.jpeg'
+
+const CaregiversData = [
   {
     id: 1,
+    profileImage: sahara,
     name: 'Sarah Jenkins',
     role: 'Registered Nurse (RN)',
     location: 'San Francisco, CA',
@@ -17,6 +22,7 @@ const caregivers = [
   },
   {
     id: 2,
+    profileImage: Michael,
     name: 'Michael Lee',
     role: 'Certified Nursing Assistant',
     location: 'Oakland, CA',
@@ -33,6 +39,7 @@ const caregivers = [
   },
   {
     id: 3,
+    profileImage: Emily,
     name: 'Emily Davis',
     role: 'Licensed Practical Nurse (LPN)',
     location: 'San Francisco, CA',
@@ -41,7 +48,7 @@ const caregivers = [
     reviews: 82,
     rate: '$30/hr',
     availability: 'Available this week',
-    image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&q=80',
+    description: 'Emily is a Licensed Practical Nurse with a strong focus on patient-centered care. She is skilled in medication management, patient monitoring, and providing emotional support to patients and their families.',
     specialties: ['Medication Management', 'Patient Monitoring', 'Basic Life Support', 'Post-Visit Care'],
     credentials: ['LPN License', 'Patient Monitoring Certified', 'Background checked'],
     bio: 'Emily supports patients with a balance of clinical skill and compassionate communication. She is especially helpful for short-term recovery, check-ins, and routine health monitoring.',
@@ -49,4 +56,4 @@ const caregivers = [
   },
 ]
 
-export default caregivers
+export default CaregiversData
