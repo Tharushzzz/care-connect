@@ -46,7 +46,11 @@ function Header() {
                   Why Us
                   <span className="absolute left-0 -bottom-1 h-0.5 w-full origin-left scale-x-0 bg-[#0686CD] transition-transform duration-300 ease-out group-hover:scale-x-100"></span>
                 </button>
-                <Link to={'/find-caregivers'} className="group relative cursor-pointer text-black/75 transition-colors ease-in-out delay-100 hover:text-[#0686CD]">
+                <Link
+                  to={'/find-caregivers'}
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior })}
+                  className="group relative cursor-pointer text-black/75 transition-colors ease-in-out delay-100 hover:text-[#0686CD]"
+                >
                   Find Caregiver
                   <span className="absolute left-0 -bottom-1 h-0.5 w-full origin-left scale-x-0 bg-[#0686CD] transition-transform duration-300 ease-out group-hover:scale-x-100"></span>
                 </Link>
@@ -85,7 +89,13 @@ function Header() {
           <button onClick={() => handleSectionClick('works')} className="hover:bg-[#f9fafc] hover:rounded-lg w-full py-2 pl-3 text-left"> How it Works </button>
           <button onClick={() => handleSectionClick('services')} className="hover:bg-[#f9fafc] hover:rounded-lg w-full py-2 pl-3 text-left"> Services </button>
           <button onClick={() => handleSectionClick('why-us')} className="hover:bg-[#f9fafc] hover:rounded-lg w-full py-2 pl-3 text-left"> Why Us </button>
-          <Link to={'/find-caregivers'} className="hover:bg-[#f9fafc] hover:rounded-lg w-full py-2 pl-3"> Find Caregiver </Link>
+          <Link
+            to={'/find-caregivers'}
+            onClick={() => window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior })}
+            className="hover:bg-[#f9fafc] hover:rounded-lg w-full py-2 pl-3"
+          >
+            Find Caregiver
+          </Link>
 
           <Link to="#login" className="bg-white border border-[#0686CD] w-full text-center p-1.5 px-4 rounded-xl text-[#5E656A] cursor-pointer text-lg hover:bg-[#B5D8EB] hover:text-[#0687cd] transition-colors ease-in-out">
             Log In
