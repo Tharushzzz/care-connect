@@ -6,6 +6,7 @@ import Emily from '../../assets/Caregiverprofile/Emily.jpeg'
 
 const caregivers = [
   {
+    id: 1,
     profileImage: sahara,
     name: 'Sarah Jenkins',
     role: 'Registered Nurse (RN)',
@@ -18,6 +19,7 @@ const caregivers = [
     specialties: ['Senior Care', 'Mobility Assistance', 'Medication Support'],
   },
   {
+    id: 2,
     profileImage: Michael,
     name: 'Michael Lee',
     role: 'Certified Nursing Assistant',
@@ -30,6 +32,7 @@ const caregivers = [
     specialties: ['Daily Living Support', 'Companionship', 'Bathing Assistance'],
   },
   {
+    id: 3,
     profileImage: Emily,
     name: 'Emily Davis',
     role: 'Licensed Practical Nurse (LPN)',
@@ -49,7 +52,7 @@ const CaregiverCard = () => {
     <div className="space-y-5">
       {caregivers.map((caregiver) => (
         <article
-          key={caregiver.name}
+          key={caregiver.id}
           className="rounded-3xl bg-white p-5 shadow-[0_18px_40px_rgba(15,23,42,0.06)] ring-1 ring-[#E7EDF5]"
         >
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
