@@ -3,7 +3,7 @@ import { Search } from "lucide-react";
 const TitleSection = () => {
   return (
     <div className="flex flex-col align-self-stretch pl-20  bg-[#0384C6]">
-        <div className="flex flex-col w-2/4 py-15 px-4 gap-7">
+        <div className="flex flex-col w-2/4 py-10 px-4 gap-7">
             <h1 className="text-4xl font-bold text-white">Find Your Perfect Caregiver</h1>
             <p className="text-lg text-white">
                 Browse our network of verified, experienced professionals ready to provide compassionate care for your loved ones.
