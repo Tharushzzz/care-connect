@@ -1,5 +1,5 @@
 import { MapPin, ShieldCheck, Star } from 'lucide-react'
-import sahara from '../../assets/Caregiverprofile/sahara.jpeg'
+import sahara from '../../assets/Caregiverprofile/Sarah.jpeg'
 import Michael from '../../assets/Caregiverprofile/Michael.jpeg'
 import Emily from '../../assets/Caregiverprofile/Emily.jpeg'
 
