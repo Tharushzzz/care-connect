@@ -1,6 +1,7 @@
 import { MapPin, ShieldCheck, Star } from 'lucide-react'
 import sahara from '../../assets/Caregiverprofile/Sarah.jpeg'
 import Michael from '../../assets/Caregiverprofile/Michael.jpeg'
+import Emily from '../../assets/Caregiverprofile/Emily.jpeg'
 
 
 const caregivers = [
@@ -28,6 +29,19 @@ const caregivers = [
       'Warm, dependable caregiver with a strong background in helping elderly clients with daily routines, personal support, and companionship.',
     specialties: ['Daily Living Support', 'Companionship', 'Bathing Assistance'],
   },
+  {
+    profileImage: Emily,
+    name: 'Emily Davis',
+    role: 'Licensed Practical Nurse (LPN)',
+    location: 'San Francisco, CA',
+    experience: '3 years experience',
+    rating: 4.7,
+    reviews: 82,
+    description:
+      'Dedicated LPN with a passion for providing compassionate care to patients of all ages. Skilled in medication administration and patient monitoring.',
+    specialties: ['Medication Management', 'Patient Monitoring', 'Basic Life Support'],
+  },
+  
 ]
 
 const CachedCaregivers = () => {
