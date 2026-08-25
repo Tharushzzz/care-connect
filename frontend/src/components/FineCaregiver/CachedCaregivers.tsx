@@ -1,7 +1,11 @@
 import { MapPin, ShieldCheck, Star } from 'lucide-react'
+import sahara from '../../assets/Caregiverprofile/Sarah.jpeg'
+import Michael from '../../assets/Caregiverprofile/Michael.jpeg'
+
 
 const caregivers = [
   {
+    profileImage: sahara,
     name: 'Sarah Jenkins',
     role: 'Registered Nurse (RN)',
     location: 'San Francisco, CA',
@@ -13,6 +17,7 @@ const caregivers = [
     specialties: ['Senior Care', 'Mobility Assistance', 'Medication Support'],
   },
   {
+    profileImage: Michael,
     name: 'Michael Lee',
     role: 'Certified Nursing Assistant',
     location: 'Oakland, CA',
@@ -31,16 +36,12 @@ const CachedCaregivers = () => {
       {caregivers.map((caregiver) => (
         <article
           key={caregiver.name}
-          className="rounded-[24px] bg-white p-5 shadow-[0_18px_40px_rgba(15,23,42,0.06)] ring-1 ring-[#E7EDF5]"
+          className="rounded-3xl bg-white p-5 shadow-[0_18px_40px_rgba(15,23,42,0.06)] ring-1 ring-[#E7EDF5]"
         >
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div className="flex items-start gap-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#F0D8CB] to-[#D9B6A0] text-lg font-bold text-[#1F2937]">
-                {caregiver.name
-                  .split(' ')
-                  .map((part) => part[0])
-                  .slice(0, 2)
-                  .join('')}
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-linear-to-br from-[#F0D8CB] to-[#D9B6A0] text-lg font-bold text-[#1F2937]">
+                <img src={caregiver.profileImage} alt={caregiver.name} className="h-16 w-16 rounded-full object-cover" />
               </div>
 
               <div>
