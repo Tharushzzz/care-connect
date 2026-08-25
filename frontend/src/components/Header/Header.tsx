@@ -71,7 +71,7 @@ function Header() {
           <a href="#works" className="hover:bg-[#f9fafc] hover:rounded-lg w-full py-2 pl-3"> How it Works </a>
           <a href="#services" className="hover:bg-[#f9fafc] hover:rounded-lg w-full py-2 pl-3"> Services </a>
           <a href="#why-us" className="hover:bg-[#f9fafc] hover:rounded-lg w-full py-2 pl-3"> Why Us </a>
-          <Link to={''} className="hover:bg-[#f9fafc] hover:rounded-lg w-full py-2 pl-3"> Find Caregiver </Link>
+          <Link to={'/find-caregivers'} className="hover:bg-[#f9fafc] hover:rounded-lg w-full py-2 pl-3"> Find Caregiver </Link>
 
           <Link to="#login" className="bg-white border border-[#0686CD] w-full text-center p-1.5 px-4 rounded-xl text-[#5E656A] cursor-pointer text-lg hover:bg-[#B5D8EB] hover:text-[#0687cd] transition-colors ease-in-out">
             Log In
