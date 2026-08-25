@@ -1,56 +1,29 @@
 import { MapPin, ShieldCheck, Star } from 'lucide-react'
-import sahara from '../../assets/Caregiverprofile/sahara.jpeg'
-import Michael from '../../assets/Caregiverprofile/Michael.jpeg'
-import Emily from '../../assets/Caregiverprofile/Emily.jpeg'
+import { Link } from 'react-router-dom'
+import caregiversData from '../../../config/Caregivers'
 
+type caregivers = {
+  id: number
+  profileImage: string
+  name: string
+  role: string
+  location: string
+  experience: string
+  rating: number
+  reviews: number
+  description: string
+  specialties: string[]
+}
 
-const caregivers = [
-  {
-    profileImage: sahara,
-    name: 'Sarah Jenkins',
-    role: 'Registered Nurse (RN)',
-    location: 'San Francisco, CA',
-    experience: '5 years experience',
-    rating: 4.9,
-    reviews: 124,
-    description:
-      'Compassionate RN with extensive experience in geriatric care and post-surgery recovery. Dedicated to providing dignified, respectful care to all my patients.',
-    specialties: ['Senior Care', 'Mobility Assistance', 'Medication Support'],
-  },
-  {
-    profileImage: Michael,
-    name: 'Michael Lee',
-    role: 'Certified Nursing Assistant',
-    location: 'Oakland, CA',
-    experience: '4 years experience',
-    rating: 4.8,
-    reviews: 96,
-    description:
-      'Warm, dependable caregiver with a strong background in helping elderly clients with daily routines, personal support, and companionship.',
-    specialties: ['Daily Living Support', 'Companionship', 'Bathing Assistance'],
-  },
-  {
-    profileImage: Emily,
-    name: 'Emily Davis',
-    role: 'Licensed Practical Nurse (LPN)',
-    location: 'San Francisco, CA',
-    experience: '3 years experience',
-    rating: 4.7,
-    reviews: 82,
-    description:
-      'Dedicated LPN with a passion for providing compassionate care to patients of all ages. Skilled in medication administration and patient monitoring.',
-    specialties: ['Medication Management', 'Patient Monitoring', 'Basic Life Support'],
-  },
-  
-]
+const caregivers = caregiversData
 
 const CaregiverCard = () => {
   return (
     <div className="space-y-5">
       {caregivers.map((caregiver) => (
         <article
-          key={caregiver.name}
-          className="rounded-3xl bg-white p-5 shadow-[0_18px_40px_rgba(15,23,42,0.06)] ring-1 ring-[#E7EDF5]"
+          key={caregiver.id}
+          className="rounded-4xl bg-white p-5 shadow-[0_18px_40px_rgba(15,23,42,0.06)] ring-1 ring-[#E7EDF5]"
         >
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div className="flex items-start gap-4">
@@ -75,9 +48,12 @@ const CaregiverCard = () => {
               </div>
             </div>
 
-            <button className="rounded-full bg-[#0B8BD8] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0879b6] cursor-pointer">
+            <Link
+              to={`/find-caregivers/${caregiver.id}`}
+              className="rounded-full bg-[#0B8BD8] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0879b6] cursor-pointer"
+            >
               View profile
-            </button>
+            </Link>
           </div>
 
           <div className="mt-4 flex items-center gap-2 text-sm text-[#374151]">
