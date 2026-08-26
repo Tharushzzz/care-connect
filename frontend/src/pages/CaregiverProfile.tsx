@@ -1,10 +1,15 @@
 import { ArrowLeft, MapPin, ShieldCheck, Star, BriefcaseBusiness, Clock3, MessageCircle, CircleCheckBig } from 'lucide-react'
+import { useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import caregiversData from '../../config/Caregivers'
 
 const CaregiverProfile = () => {
   const { id } = useParams()
   const caregiver = caregiversData.find((item) => item.id === Number(id))
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' })
+  }, [id])
 
   if (!caregiver) {
     return (
