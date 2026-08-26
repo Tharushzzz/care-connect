@@ -114,7 +114,74 @@ const CaregiverProfile = () => {
         </div>
       </div>
 
-      
+      {/* Reviews Section */}
+      <div className="mt-10 w-3/5 ml-40 rounded-lg bg-white p-6 shadow-md sm:p-8">
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <h2 className="text-2xl font-bold text-[#111827]">Client Reviews</h2>
+            <button className="rounded-full border border-[#CFE3F7] px-4 py-2 text-sm font-semibold text-[#0B8BD8] transition hover:border-[#0B8BD8] hover:bg-[#F4FAFF]">
+              Write a review
+            </button>
+          </div>
+
+          <div className="rounded-2xl border border-[#E2ECF8] bg-[#F7FBFF] p-5">
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-3xl font-bold text-[#111827] shadow-sm ring-1 ring-[#E2ECF8]">
+                {caregiver.rating}
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-1 text-[#F4B740]">
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <Star
+                      key={index}
+                      className={`h-4 w-4 ${index < Math.round(caregiver.rating) ? 'fill-current' : ''}`}
+                    />
+                  ))}
+                </div>
+                <p className="text-sm font-medium text-[#1F2937]">Based on {caregiver.reviews} verified reviews</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            {caregiver.reviewsData.length > 0 ? (
+              caregiver.reviewsData.map((review) => (
+                <article
+                  key={review.id}
+                  className="rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-[0_10px_24px_rgba(15,23,42,0.04)]"
+                >
+                  <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <p className="text-[16px] font-semibold text-[#111827]">{review.reviewerName}</p>
+                      <p className="text-xs font-medium text-[#6B7280]">{review.date}</p>
+                    </div>
+
+                    <div className="flex items-center gap-1 text-[#F4B740]">
+                      {Array.from({ length: 5 }).map((_, index) => (
+                        <Star
+                          key={index}
+                          className={`h-4 w-4 ${index < review.rating ? 'fill-current' : ''}`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  <p className="text-[15px] leading-7 text-[#41474E]">{review.comment}</p>
+                </article>
+              ))
+            ) : (
+              <article className="rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-[0_10px_24px_rgba(15,23,42,0.04)]">
+                <p className="text-[15px] leading-7 text-[#41474E]">{caregiver.reviewText}</p>
+              </article>
+            )}
+          </div>
+
+          <button className="w-fit rounded-full bg-[#0B8BD8] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0879B6]">
+            Load more reviews
+          </button>
+        </div>
+      </div>
 
     </div>
     
