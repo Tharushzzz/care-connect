@@ -18,8 +18,10 @@ const CaregiversData = [
       'Sarah is a compassionate Registered Nurse with extensive experience in geriatric care and post-surgery recovery. She is dedicated to providing dignified, respectful care to all her patients.',
     specialties: ['Senior Care', 'Mobility Support', 'Medication Administration', 'Recovery Care'],
     credentials: ['BLS Certified', 'Geriatric Care Certified', 'Background checked'],
-    bio: 'Sarah is a dedicated Registered Nurse with over five years of experience in home-based and post-surgical care. She works closely with families to create comfortable, safe routines that support independence and emotional well-being.',
+    about: "I started my journey in caregiving over a decade ago after caring for my own grandmother. That experience taught me the profound impact that patient, empathetic support can have on a family's well-being. I bring a calm demeanor and a positive attitude to every home I visit.",
+    freetime: 'In my free time, I enjoy hiking, reading historical novels, and volunteering at local animal shelters. I also love to cook and often share my favorite healthy recipes with the families I work with.',
     reviewText: 'Sarah was warm, professional, and truly attentive to my mother’s needs. She made us feel supported from day one.',
+    
   },
   {
     id: 2,
@@ -36,7 +38,8 @@ const CaregiversData = [
       'Michael is a warm, dependable Certified Nursing Assistant with a strong background in helping elderly clients with daily routines, personal support, and companionship.',
     specialties: ['Daily Living Support', 'Companionship', 'Bathing Assistance', 'Meal Support'],
     credentials: ['CNA License', 'First Aid Certified', 'Background checked'],
-    bio: 'Michael is known for creating calm, respectful routines for seniors and recovering patients. His compassionate approach and reliability make families feel secure and comfortable.',
+    about: 'Michael is known for creating calm, respectful routines for seniors and recovering patients. His compassionate approach and reliability make families feel secure and comfortable.',
+    freetime: 'Outside of work, Michael enjoys cycling, playing chess, and attending local community theater productions. He also volunteers at a senior center on weekends.',
     reviewText: 'Michael is patient, respectful, and always on time. He built trust with our family very quickly.',
   },
   {
@@ -53,7 +56,8 @@ const CaregiversData = [
     description: 'Emily is a Licensed Practical Nurse with a strong focus on patient-centered care. She is skilled in medication management, patient monitoring, and providing emotional support to patients and their families.',
     specialties: ['Medication Management', 'Patient Monitoring', 'Basic Life Support', 'Post-Visit Care'],
     credentials: ['LPN License', 'Patient Monitoring Certified', 'Background checked'],
-    bio: 'Emily supports patients with a balance of clinical skill and compassionate communication. She is especially helpful for short-term recovery, check-ins, and routine health monitoring.',
+    about: 'Emily supports patients with a balance of clinical skill and compassionate communication. She is especially helpful for short-term recovery, check-ins, and routine health monitoring.',
+    freetime: 'In her free time, Emily enjoys reading, gardening, and spending time with her family.',
     reviewText: 'Emily was kind, attentive, and extremely helpful throughout my recovery process. We appreciated her professionalism.',
   },
 ]

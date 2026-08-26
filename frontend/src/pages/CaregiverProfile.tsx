@@ -58,7 +58,7 @@ const CaregiverProfile = () => {
               {caregiver.location}
             </div>
 
-            <p className="text-[16px] max-w-full text-[#41474E]">{caregiver.bio}</p>
+            <p className="text-[16px] max-w-full text-[#41474E]">{caregiver.description}</p>
           </div>
 
 
@@ -71,7 +71,16 @@ const CaregiverProfile = () => {
 
       </div>
 
-      
+      {/* About Section */}
+      <div className="mt-10 flex w-3/5 ml-40 gap-10 rounded-lg bg-white p-6 shadow-md sm:p-8">
+        <div className="flex flex-col gap-4 w-5/6">
+          <h2 className="text-2xl font-bold text-[#111827]">About {caregiver.name}</h2>
+          <p className=" text-[16px] text-[#41474E] align-justify">{caregiver.about}</p>
+          <p className=" text-[16px] text-[#41474E] align-justify">{caregiver.freetime}</p>
+        </div>
+        
+        
+      </div>
 
 
       
