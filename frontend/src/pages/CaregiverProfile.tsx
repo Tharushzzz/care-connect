@@ -37,16 +37,18 @@ const CaregiverProfile = () => {
             <img src={caregiver.profileImage} alt={caregiver.name} className="h-40 w-40 rounded-full object-cover" />
           </div>
 
-          <div className="flex flex-col justify-center gap-2">
-            <h1 className="text-2xl font-semibold text-[#111827]">{caregiver.name}</h1>
-            <p className="text-sm text-[#6B7280]">{caregiver.role}</p>
-            <div>
-              
-              <div className="flex items-center gap-2 text-sm text-[#6B7280]">
-                <MapPin className="h-4 w-4" />
-                {caregiver.location}
+          <div className="flex flex-col justify-center gap-3">
+            <h1 className="text-4xl font-semibold text-[#111827]">{caregiver.name}</h1>
+            <p className="text-[18px] text-[#41474E]">{caregiver.role}</p>
+            <div className="flex items-center gap-4 text-sm text-[#6B7280]">
+              <div className="flex items-center gap-2 text-sm text-[#41474E]">
+                <Star className="h-4 w-4" />
+                {caregiver.rating} ({caregiver.reviews} reviews)
               </div>  
-
+              <div className="flex items-center gap-2 text-sm text-[#6B7280]">
+                <BriefcaseBusiness className="h-4 w-4" />
+                {caregiver.experience}
+              </div>
             </div>
           </div> 
 
