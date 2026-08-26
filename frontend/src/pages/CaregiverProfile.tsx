@@ -1,4 +1,4 @@
-import { ArrowLeft, MapPin, ShieldCheck, Star, BriefcaseBusiness, Clock3, MessageCircle, CircleCheckBig } from 'lucide-react'
+import { ArrowLeft, MapPin, ShieldCheck, ShieldAlert, Star, BriefcaseBusiness, Clock3, MessageCircle, CircleCheckBig } from 'lucide-react'
 import { useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import caregiversData from '../../config/Caregivers'
@@ -73,12 +73,21 @@ const CaregiverProfile = () => {
               </div>
 
 
-              <div className="flex  px-2 py-2 items-center gap-3 rounded-4xl bg-[#8EF4E9] h-fit">
+              {caregiver.verified ? (
+                <div className="flex px-2 py-2 items-center gap-3 rounded-4xl bg-[#8EF4E9] h-fit">
                   <ShieldCheck className="h-8 w-8 text-[#006F67]" />
                   <div className="flex flex-col gap-1">
                     <p className="text-sm font-medium text-[#006F67]">Background Checked</p>
                   </div>  
-              </div> 
+                </div>
+              ) : (
+                <div className="flex px-2 py-2 items-center gap-3 rounded-4xl bg-[#FEF3C7] h-fit">
+                  <ShieldAlert className="h-8 w-8 text-[#D97706]" />
+                  <div className="flex flex-col gap-1">
+                    <p className="text-sm font-medium text-[#92400E]">Verification Pending</p>
+                  </div>  
+                </div>
+              )}
 
           </div>
 
@@ -203,13 +212,23 @@ const CaregiverProfile = () => {
             </div>
 
             <div className="space-y-5 p-6">
-              <div className="rounded-xl border border-[#DDEAF8] bg-[#F7FBFF] p-4">
-                <div className="flex items-center gap-2 text-sm font-medium text-[#1F2937]">
-                  <ShieldCheck className="h-4 w-4 text-[#0B8BD8]" />
-                  Verified Professional
+              {caregiver.verified ? (
+                <div className="rounded-xl border border-[#DDEAF8] bg-[#F7FBFF] p-4">
+                  <div className="flex items-center gap-2 text-sm font-medium text-[#1F2937]">
+                    <ShieldCheck className="h-4 w-4 text-[#0B8BD8]" />
+                    Verified Professional
+                  </div>
+                  <p className="mt-2 text-sm leading-6 text-[#4B5563]">Background checks, certifications, and references are verified by CareConnect.</p>
                 </div>
-                <p className="mt-2 text-sm leading-6 text-[#4B5563]">Background checks, certifications, and references are verified by CareConnect.</p>
-              </div>
+              ) : (
+                <div className="rounded-xl border border-[#FDE68A] bg-[#FFFBEB] p-4">
+                  <div className="flex items-center gap-2 text-sm font-medium text-[#92400E]">
+                    <ShieldAlert className="h-4 w-4 text-[#D97706]" />
+                    Verification Pending
+                  </div>
+                  <p className="mt-2 text-sm leading-6 text-[#78350F]">Background checks and credentials are currently being processed by CareConnect.</p>
+                </div>
+              )}
 
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-sm text-[#4B5563]">

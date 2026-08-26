@@ -21,6 +21,7 @@ export type Caregiver = {
   reviews: number
   rate: string
   availability: string
+  verified: boolean
   description: string
   specialties: string[]
   credentials: string[]
@@ -42,6 +43,7 @@ const CaregiversData: Caregiver[] = [
     reviews: 124,
     rate: '$35/hr',
     availability: 'Available today',
+    verified: true,
     description:
       'Sarah is a compassionate Registered Nurse with extensive experience in geriatric care and post-surgery recovery. She is dedicated to providing dignified, respectful care to all her patients.',
     specialties: ['Senior Care', 'Mobility Support', 'Medication Administration', 'Recovery Care'],
@@ -72,7 +74,7 @@ const CaregiversData: Caregiver[] = [
         comment: 'Dependable and kind. She kept detailed notes that helped our family coordinate care easily.',
       },
     ],
-    
+
   },
   {
     id: 2,
@@ -85,6 +87,7 @@ const CaregiversData: Caregiver[] = [
     reviews: 96,
     rate: '$26/hr',
     availability: 'Available tomorrow',
+    verified: true,
     description:
       'Michael is a warm, dependable Certified Nursing Assistant with a strong background in helping elderly clients with daily routines, personal support, and companionship.',
     specialties: ['Daily Living Support', 'Companionship', 'Bathing Assistance', 'Meal Support'],
@@ -127,6 +130,7 @@ const CaregiversData: Caregiver[] = [
     reviews: 82,
     rate: '$30/hr',
     availability: 'Available this week',
+    verified: false,
     description: 'Emily is a Licensed Practical Nurse with a strong focus on patient-centered care. She is skilled in medication management, patient monitoring, and providing emotional support to patients and their families.',
     specialties: ['Medication Management', 'Patient Monitoring', 'Basic Life Support', 'Post-Visit Care'],
     credentials: ['LPN License', 'Patient Monitoring Certified', 'Background checked'],

@@ -1,4 +1,4 @@
-import { MapPin, ShieldCheck, Star } from 'lucide-react'
+import { MapPin, ShieldCheck, ShieldAlert, Star } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import caregiversData from '../../../config/Caregivers'
 
@@ -11,6 +11,7 @@ type caregivers = {
   experience: string
   rating: number
   reviews: number
+  verified: boolean
   description: string
   specialties: string[]
 }
@@ -34,7 +35,15 @@ const CaregiverCard = () => {
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="text-2xl font-semibold text-[#111827]">{caregiver.name}</h3>
-                  <ShieldCheck className="h-5 w-5 text-[#0B8BD8]" />
+                  {caregiver.verified ? (
+                    <span title="Verified Professional">
+                      <ShieldCheck className="h-5 w-5 text-[#0B8BD8]" />
+                    </span>
+                  ) : (
+                    <span title="Verification Pending">
+                      <ShieldAlert className="h-5 w-5 text-[#D97706]" />
+                    </span>
+                  )}
                 </div>
                 <p className="text-base text-[#4B5563]">{caregiver.role}</p>
 
