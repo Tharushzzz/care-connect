@@ -25,7 +25,7 @@ const CaregiverProfile = () => {
   return (
     <div className="bg-[#F3F5F8] px-4 py-8 sm:px-6 lg:px-8">
       {/* Back button */}
-      <div className="ml-20 max-w-6xl">
+      <div className="mx-auto max-w-7xl">
         <Link
           to="/find-caregivers"
           className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-[#0B8BD8]"
