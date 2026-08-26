@@ -1,4 +1,4 @@
-import { ArrowLeft, MapPin, ShieldCheck, ShieldAlert, Star, BriefcaseBusiness, Clock3, MessageCircle, CircleCheckBig } from 'lucide-react'
+import { ArrowLeft, MapPin, ShieldCheck, ShieldAlert, Star, BriefcaseBusiness, Clock3, MessageCircle, CircleCheckBig, Calendar } from 'lucide-react'
 import { useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import caregiversData from '../../config/Caregivers'
@@ -25,7 +25,7 @@ const CaregiverProfile = () => {
   return (
     <div className="bg-[#F3F5F8] px-4 py-8 sm:px-6 lg:px-8">
       {/* Back button */}
-      <div className="mx-auto max-w-6xl">
+      <div className="ml-20 max-w-6xl">
         <Link
           to="/find-caregivers"
           className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-[#0B8BD8]"
@@ -133,6 +133,28 @@ const CaregiverProfile = () => {
               </div>
             </div>
           </div>
+
+          {/* Available Dates Section */}
+          {caregiver.availableDates && caregiver.availableDates.length > 0 && (
+            <div className="mt-10 flex gap-10 rounded-lg bg-white p-6 shadow-md sm:p-8">
+              <div className="flex flex-col gap-4 w-full">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-6 w-6 text-[#0B8BD8]" />
+                  <h2 className="text-2xl font-bold text-[#111827]">Available Dates</h2>
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  {caregiver.availableDates.map((date, index) => (
+                    <span
+                      key={index}
+                      className="rounded-xl border border-[#D9EAFB] bg-[#F3F9FF] px-4 py-2.5 text-sm font-semibold text-[#0B8BD8] shadow-xs"
+                    >
+                      {date}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Reviews Section */}
           <div className="mt-10 rounded-lg bg-white p-6 shadow-md sm:p-8">

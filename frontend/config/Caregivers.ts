@@ -21,6 +21,7 @@ export type Caregiver = {
   reviews: number
   rate: string
   availability: string
+  availableDates: string[]
   verified: boolean
   description: string
   specialties: string[]
@@ -43,6 +44,7 @@ const CaregiversData: Caregiver[] = [
     reviews: 124,
     rate: '$35/hr',
     availability: 'Available today',
+    availableDates: ['Aug 27, 2026', 'Aug 28, 2026', 'Aug 30, 2026', 'Sep 01, 2026', 'Sep 03, 2026'],
     verified: true,
     description:
       'Sarah is a compassionate Registered Nurse with extensive experience in geriatric care and post-surgery recovery. She is dedicated to providing dignified, respectful care to all her patients.',
@@ -87,6 +89,7 @@ const CaregiversData: Caregiver[] = [
     reviews: 96,
     rate: '$26/hr',
     availability: 'Available tomorrow',
+    availableDates: ['Aug 28, 2026', 'Aug 29, 2026', 'Aug 31, 2026', 'Sep 02, 2026', 'Sep 04, 2026'],
     verified: true,
     description:
       'Michael is a warm, dependable Certified Nursing Assistant with a strong background in helping elderly clients with daily routines, personal support, and companionship.',
@@ -130,6 +133,7 @@ const CaregiversData: Caregiver[] = [
     reviews: 82,
     rate: '$30/hr',
     availability: 'Available this week',
+    availableDates: ['Aug 29, 2026', 'Aug 30, 2026', 'Sep 01, 2026', 'Sep 03, 2026', 'Sep 05, 2026'],
     verified: false,
     description: 'Emily is a Licensed Practical Nurse with a strong focus on patient-centered care. She is skilled in medication management, patient monitoring, and providing emotional support to patients and their families.',
     specialties: ['Medication Management', 'Patient Monitoring', 'Basic Life Support', 'Post-Visit Care'],
