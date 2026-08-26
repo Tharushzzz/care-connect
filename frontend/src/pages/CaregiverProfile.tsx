@@ -32,14 +32,16 @@ const CaregiverProfile = () => {
         
       {/* herosection */}
           
-      <div className="flex w-3/4 mx-auto gap-10 rounded-lg bg-white p-6 shadow-md sm:p-8 ">
-          <div>
+      <div className="flex w-3/5 ml-40 gap-10 rounded-lg bg-white p-6 shadow-md sm:p-8 ">
+          <div className="flex w-1/4 justify-center ">
             <img src={caregiver.profileImage} alt={caregiver.name} className="h-40 w-40 rounded-full object-cover" />
           </div>
 
-          <div className="flex flex-col justify-center gap-3">
+          <div className="flex flex-col w-3/4 justify-center gap-3">
             <h1 className="text-4xl font-semibold text-[#111827]">{caregiver.name}</h1>
+
             <p className="text-[18px] text-[#41474E]">{caregiver.role}</p>
+
             <div className="flex items-center gap-4 text-sm text-[#6B7280]">
               <div className="flex items-center gap-2 text-sm text-[#41474E]">
                 <Star className="h-4 w-4" />
@@ -50,9 +52,26 @@ const CaregiverProfile = () => {
                 {caregiver.experience}
               </div>
             </div>
+            
+            <div className="flex items-center gap-4 text-sm text-[#6B7280]">
+              <MapPin className="h-4 w-4" />
+              {caregiver.location}
+            </div>
+
+            <p className="text-[16px] max-w-full text-[#41474E]">{caregiver.bio}</p>
+          </div>
+
+
+          <div className="flex  px-2 py-2 items-center gap-3 rounded-4xl bg-[#8EF4E9] h-fit">
+              <ShieldCheck className="h-8 w-8 text-[#006F67]" />
+              <div className="flex flex-col gap-1">
+                <p className="text-sm font-medium text-[#006F67]">Background Checked</p>
+              </div>  
           </div> 
 
       </div>
+
+      
 
 
       
