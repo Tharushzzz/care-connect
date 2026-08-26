@@ -119,9 +119,6 @@ const CaregiverProfile = () => {
         <div className="flex flex-col gap-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <h2 className="text-2xl font-bold text-[#111827]">Client Reviews</h2>
-            <button className="rounded-full border border-[#CFE3F7] px-4 py-2 text-sm font-semibold text-[#0B8BD8] transition hover:border-[#0B8BD8] hover:bg-[#F4FAFF]">
-              Write a review
-            </button>
           </div>
 
           <div className="rounded-2xl border border-[#E2ECF8] bg-[#F7FBFF] p-5">
@@ -177,7 +174,7 @@ const CaregiverProfile = () => {
             )}
           </div>
 
-          <button className="w-fit rounded-full bg-[#0B8BD8] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0879B6]">
+          <button className="w-fit rounded-full bg-[#0B8BD8] cursor-pointer px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0879B6]">
             Load more reviews
           </button>
         </div>
