@@ -77,13 +77,45 @@ const CaregiverProfile = () => {
           <h2 className="text-2xl font-bold text-[#111827]">About {caregiver.name}</h2>
           <p className=" text-[16px] text-[#41474E] align-justify">{caregiver.about}</p>
           <p className=" text-[16px] text-[#41474E] align-justify">{caregiver.freetime}</p>
-        </div>
-        
-        
+        </div>  
       </div>
 
+      {/* Specialties Section */}
+      <div className="mt-10 flex w-3/5 ml-40 gap-10 rounded-lg bg-white p-6 shadow-md sm:p-8">
+        <div className="flex flex-col gap-4 w-5/6">
+          <h2 className="text-2xl font-bold text-[#111827]">Specialties</h2>
+          <div className="flex flex-wrap gap-2">
+            {caregiver.specialties.map((specialty, index) => (
+              <span
+                key={index}
+                className="rounded-full bg-[#E5F0FF] px-4 py-2 text-sm font-medium text-[#0B8BD8]"
+              >
+                {specialty}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Credentials Section */}
+      <div className="mt-10 flex w-3/5 ml-40 gap-10 rounded-lg bg-white p-6 shadow-md sm:p-8">
+        <div className="flex flex-col gap-4 w-5/6">
+          <h2 className="text-2xl font-bold text-[#111827]">Credentials</h2>
+          <div className="flex flex-wrap gap-2">
+            {caregiver.credentials.map((credential, index) => (
+              <span
+                key={index}
+                className="rounded-full bg-[#E5F0FF] px-4 py-2 text-sm font-medium text-[#0B8BD8]"
+              >
+                {credential}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
 
       
+
     </div>
     
   )
