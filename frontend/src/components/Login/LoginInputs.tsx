@@ -1,12 +1,21 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
 
 const LoginInputs: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    login();
+    navigate('/');
+  };
 
   return (
     <div className="flex flex-col justify-center w-full lg:max-w-lg space-y-6">
@@ -35,7 +44,7 @@ const LoginInputs: React.FC = () => {
       </div>
 
       {/* Form Fields */}
-      <form onSubmit={(e) => e.preventDefault()} className="space-y-5 pt-2">
+      <form onSubmit={handleLogin} className="space-y-5 pt-2">
         {/* Email */}
         <div className="space-y-1.5">
           <label className="block text-sm font-medium text-[#344054]">
