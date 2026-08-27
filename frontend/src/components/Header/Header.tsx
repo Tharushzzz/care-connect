@@ -105,7 +105,7 @@ function Header() {
               </div>
 
               <div className="items-center justify-center gap-4 pb-0.5 pr-3 select-none hidden sm:flex">
-                <Link to="#login" className="bg-[#E2F1FF] p-1.5 px-4 rounded-xl text-[#5E656A] cursor-pointer text-lg hover:bg-[#B5D8EB] hover:text-[#0686CD] transition-colors ease-in-out">
+                <Link to="/login" className="bg-[#E2F1FF] p-1.5 px-4 rounded-xl text-[#5E656A] cursor-pointer text-lg hover:bg-[#B5D8EB] hover:text-[#0686CD] transition-colors ease-in-out">
                   Log In
                 </Link>
 
@@ -166,7 +166,7 @@ function Header() {
 
           <div className="sm:hidden flex flex-col gap-3 w-full pt-2 border-t border-[#F0F4F8]">
             <Link 
-              to="#login" 
+              to="/login" 
               onClick={closeMenu}
               className="bg-white border border-[#0686CD] w-full text-center p-1.5 px-4 rounded-xl text-[#5E656A] cursor-pointer text-lg hover:bg-[#B5D8EB] hover:text-[#0687cd] transition-colors ease-in-out"
             >
