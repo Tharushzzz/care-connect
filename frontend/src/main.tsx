@@ -6,6 +6,7 @@ import App from './App.tsx'
 import Home from './pages/Home.tsx';
 import FindCaregivers from './pages/FindCaregivers.tsx';
 import CaregiverProfile from './pages/CaregiverProfile.tsx';
+import Login from './pages/Login.tsx';
 
 const router = createBrowserRouter([
   {
@@ -13,6 +14,7 @@ const router = createBrowserRouter([
     element: <App />,
     children:[
       {index:true, element: <Home /> },
+      {index:false, path:'/login', element: <Login /> },
       {index:false, path:'/find-caregivers', element: <FindCaregivers /> },
       {index:false, path:'/find-caregivers/:id', element: <CaregiverProfile /> },
     ]
