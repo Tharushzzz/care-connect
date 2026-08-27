@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { ArrowLeft, Eye } from "lucide-react"
+import { ArrowLeft,  Eye,  } from "lucide-react"
 
 
 const LoginInputs = () => {
@@ -33,6 +33,28 @@ const LoginInputs = () => {
                 </div>
                 
             </div>
+        </div>
+
+        <div className="flex gap-4 w-2/3 justify-between">
+            <div className="flex items-center gap-2">
+                <input type="checkbox" id="rememberMe" className="w-4 h-4" />
+                <label htmlFor="rememberMe" className="text-[#000000B2] text-lg">Remember me</label>
+            </div>
+            <Link to="/forgot-password" className="text-blue-500 hover:underline">Forgot password?</Link>   
+        </div>
+
+        <div className="flex flex-col gap-4 w-2/3">
+            <button className="w-full h-12 bg-blue-500 text-white rounded-md hover:bg-blue-600">Login</button>
+            <div className="flex items-center gap-2">
+                <div className="grow border-t border-gray-300"></div>
+                <span className="text-[#000000B2] text-lg">Or continue with</span>
+                <div className="grow border-t border-gray-300"></div>
+            </div>
+            <div className="flex gap-2 items-center justify-center">
+                <button className="w-1/2 h-12  text-black border-2 rounded-2xl border-gray-300 cursor-pointer hover:bg-gray-100 mt-2">Login with Google</button>
+                <button className="w-1/2 h-12  text-black border-2 rounded-2xl border-gray-300 cursor-pointer hover:bg-gray-100 mt-2">Login with Facebook</button>
+            </div>
+
         </div>
            
     </div>
