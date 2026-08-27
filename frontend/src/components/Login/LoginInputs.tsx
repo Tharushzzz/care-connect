@@ -4,7 +4,7 @@ import { ArrowLeft,  Eye,  } from "lucide-react"
 
 const LoginInputs = () => {
   return (
-    <div className="flex flex-col gap-4 w-1/2">
+    <div className="flex flex-col gap-4 w-150 h-fit">
         {/* Back btn */}
         <div className="flex w-fit h-fit gap-2 items-center hover:underline">
             <ArrowLeft size={16} strokeWidth={2} color="#000000B2"  />
