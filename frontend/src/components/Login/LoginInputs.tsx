@@ -9,7 +9,7 @@ const LoginInputs: React.FC = () => {
   const [rememberMe, setRememberMe] = useState(false);
 
   return (
-    <div className="flex flex-col justify-center w-full lg:max-w-lg space-y-6 py-4">
+    <div className="flex flex-col justify-center w-full lg:max-w-lg space-y-6">
       {/* Back button */}
       <div>
         <Link
