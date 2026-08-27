@@ -56,6 +56,7 @@ export const Step4Finish: React.FC<Step4FinishProps> = ({
       <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
         <Link
           to="/find-caregivers"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior })}
           className="w-full sm:w-auto px-6 py-2.5 rounded-xl border border-[#D0D5DD] bg-white text-sm font-bold text-[#344054] hover:bg-gray-50 transition-colors text-center"
         >
           Find More Caregivers
@@ -63,6 +64,7 @@ export const Step4Finish: React.FC<Step4FinishProps> = ({
 
         <Link
           to="/"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior })}
           className="w-full sm:w-auto px-8 py-2.5 rounded-xl bg-[#0B3B60] hover:bg-[#0B8BD8] text-white text-sm font-bold shadow-xs transition-colors text-center inline-flex items-center justify-center gap-2"
         >
           <span>Return to Home</span>
