@@ -278,9 +278,13 @@ const CaregiverProfile = () => {
               </div>
 
               <div className="space-y-3">
-                <button className="w-full rounded-full bg-[#0B8BD8] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#0879B6] cursor-pointer shadow-sm">
+                <Link
+                  to={`/book-care/${caregiver.id}`}
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior })}
+                  className="block w-full text-center rounded-full bg-[#0B8BD8] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#0879B6] cursor-pointer shadow-sm"
+                >
                   Book Consultation
-                </button>
+                </Link>
                 <button className="flex w-full items-center justify-center gap-2 rounded-full border border-[#CFE3F7] bg-white px-5 py-3 text-sm font-semibold text-[#0B8BD8] transition hover:border-[#0B8BD8] hover:bg-[#F4FAFF] cursor-pointer">
                   <MessageCircle className="h-4 w-4" />
                   Message Caregiver
