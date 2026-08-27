@@ -463,14 +463,14 @@ export const LoginHeader: React.FC<LoginHeaderProps> = ({
                       <span>Account Settings</span>
                     </Link>
 
-                    <Link
-                      to="/support"
-                      onClick={() => setIsUserDropdownOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:bg-[#F2F8FD] hover:text-[#0686CD] transition-colors"
+                    <button
+                      type="button"
+                      onClick={() => handleSectionClick('support')}
+                      className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:bg-[#F2F8FD] hover:text-[#0686CD] transition-colors cursor-pointer text-left"
                     >
                       <HelpCircle className="w-4 h-4 text-gray-500" />
                       <span>Help & Support</span>
-                    </Link>
+                    </button>
                   </div>
 
                   {/* Sign out section */}
