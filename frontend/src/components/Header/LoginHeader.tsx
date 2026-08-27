@@ -153,7 +153,10 @@ export const LoginHeader: React.FC<LoginHeaderProps> = ({
           <Link
             to="/"
             className="flex items-center gap-2.5 group transition-transform active:scale-95 shrink-0"
-            onClick={closeAllDropdowns}
+            onClick={() => {
+              closeAllDropdowns();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
           >
             <div className="w-9 h-9 rounded-xl bg-white p-1 shadow-xs border border-[#E0EBF3] flex items-center justify-center transition-all duration-200 group-hover:shadow-md group-hover:scale-105">
               <img src={logo} alt="CareConnect Logo" className="w-full h-full object-contain rounded-lg" />
