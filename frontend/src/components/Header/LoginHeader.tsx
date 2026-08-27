@@ -16,15 +16,15 @@ import {
   Clock,
   CheckCircle2,
   AlertCircle,
-  Menu,
-  X,
 } from 'lucide-react';
 import UsersData from '../../../config/User';
 import type { User } from '../../../config/User';
 import NotificationsData from '../../../config/Notifications';
 import type { NotificationItem } from '../../../config/Notifications';
+import MessagesData from '../../../config/Messages';
+import type { MessageItem } from '../../../config/Messages';
 
-export type { NotificationItem };
+export type { NotificationItem, MessageItem };
 
 export interface LoginHeaderProps {
   user?: User;
@@ -35,15 +35,14 @@ export interface LoginHeaderProps {
 
 const defaultUser: User = UsersData[0];
 const defaultNotifications: NotificationItem[] = NotificationsData;
-
+const defaultUnreadMessagesCount: number = MessagesData.filter((m) => m.unread).length;
 
 export const LoginHeader: React.FC<LoginHeaderProps> = ({
   user = defaultUser,
   notifications: initialNotifications = defaultNotifications,
-  unreadMessagesCount = 2,
+  unreadMessagesCount = defaultUnreadMessagesCount,
   onLogout,
 }) => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [notifications, setNotifications] = useState<NotificationItem[]>(initialNotifications);
@@ -60,7 +59,6 @@ export const LoginHeader: React.FC<LoginHeaderProps> = ({
   const closeAllDropdowns = () => {
     setIsUserDropdownOpen(false);
     setIsNotificationOpen(false);
-    setIsMobileMenuOpen(false);
   };
 
   // Close menus on route changes
@@ -80,10 +78,6 @@ export const LoginHeader: React.FC<LoginHeaderProps> = ({
       if (notificationMenuRef.current && !notificationMenuRef.current.contains(target)) {
         setIsNotificationOpen(false);
       }
-
-      if (headerRef.current && !headerRef.current.contains(target)) {
-        setIsMobileMenuOpen(false);
-      }
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -101,17 +95,6 @@ export const LoginHeader: React.FC<LoginHeaderProps> = ({
       document.removeEventListener('touchstart', handleClickOutside);
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, []);
-
-  // Close mobile drawer on desktop resize
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 1024) {
-        setIsMobileMenuOpen(false);
-      }
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const handleSectionClick = (sectionId: string) => {
@@ -169,7 +152,7 @@ export const LoginHeader: React.FC<LoginHeaderProps> = ({
           {/* Left Brand & Logo */}
           <Link
             to="/"
-            className="flex items-center gap-2.5 group transition-transform active:scale-95"
+            className="flex items-center gap-2.5 group transition-transform active:scale-95 shrink-0"
             onClick={closeAllDropdowns}
           >
             <div className="w-9 h-9 rounded-xl bg-white p-1 shadow-xs border border-[#E0EBF3] flex items-center justify-center transition-all duration-200 group-hover:shadow-md group-hover:scale-105">
@@ -180,8 +163,8 @@ export const LoginHeader: React.FC<LoginHeaderProps> = ({
             </span>
           </Link>
 
-          {/* Center Navigation Links (Matching First Header) */}
-          <nav className="hidden lg:flex items-center gap-10 text-lg">
+          {/* Center Navigation Links */}
+          <nav className="hidden md:flex items-center gap-6 lg:gap-10 text-base lg:text-lg">
             <button
               onClick={() => handleSectionClick('works')}
               className="group relative cursor-pointer text-black/75 transition-colors ease-in-out delay-100 hover:text-[#0686CD]"
@@ -263,7 +246,7 @@ export const LoginHeader: React.FC<LoginHeaderProps> = ({
 
               {/* Notification Popover Dropdown Panel */}
               {isNotificationOpen && (
-                <div className="absolute right-0 mt-3 w-84 sm:w-96 bg-white rounded-2xl shadow-2xl border border-[#E3EDF6] overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="fixed sm:absolute left-3 right-3 sm:left-auto sm:right-0 top-18 sm:top-full mt-0 sm:mt-3 w-auto sm:w-96 bg-white rounded-2xl shadow-2xl border border-[#E3EDF6] overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
                   {/* Header */}
                   <div className="px-4 py-3.5 bg-[#F9FBFE] border-b border-[#E9F0F6] flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -342,7 +325,7 @@ export const LoginHeader: React.FC<LoginHeaderProps> = ({
             {/* Separator */}
             <div className="hidden sm:block h-6 w-px bg-[#E2EAF1]" />
 
-            {/* User Profile Pill & Dropdown (Data from User.ts) */}
+            {/* User Profile Pill & Dropdown */}
             <div ref={userMenuRef} className="relative">
               <button
                 type="button"
@@ -393,7 +376,7 @@ export const LoginHeader: React.FC<LoginHeaderProps> = ({
 
               {/* User Dropdown Menu Card */}
               {isUserDropdownOpen && (
-                <div className="absolute right-0 mt-3 w-72 bg-white rounded-2xl shadow-2xl border border-[#E3EDF6] overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="fixed sm:absolute left-3 right-3 sm:left-auto sm:right-0 top-18 sm:top-full mt-0 sm:mt-3 w-auto sm:w-72 max-w-sm ml-auto bg-white rounded-2xl shadow-2xl border border-[#E3EDF6] overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
                   {/* Account Header */}
                   <div className="p-4 bg-gradient-to-br from-[#F5FAFE] to-[#EAF5FD] border-b border-[#E2EEF7]">
                     <div className="flex items-center gap-3">
@@ -501,178 +484,6 @@ export const LoginHeader: React.FC<LoginHeaderProps> = ({
                 </div>
               )}
             </div>
-
-            {/* Mobile Hamburger Toggle Button */}
-            <button
-              type="button"
-              onClick={() => {
-                setIsMobileMenuOpen(!isMobileMenuOpen);
-                setIsUserDropdownOpen(false);
-                setIsNotificationOpen(false);
-              }}
-              className="lg:hidden p-2 rounded-xl text-[#4A5568] hover:text-[#0686CD] hover:bg-[#EAF5FC] transition-colors cursor-pointer"
-              aria-label="Toggle mobile menu"
-              aria-expanded={isMobileMenuOpen}
-            >
-              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Backdrop Overlay */}
-      <div
-        className={`fixed inset-0 top-17 bg-black/30 backdrop-blur-xs transition-opacity duration-300 lg:hidden ${
-          isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-        }`}
-        onClick={() => setIsMobileMenuOpen(false)}
-        aria-hidden="true"
-      />
-
-      {/* Mobile Slide-down Menu Drawer */}
-      <div
-        className={`lg:hidden absolute top-full left-0 w-full bg-white border-b border-[#E2EDF7] shadow-xl overflow-hidden transition-all duration-300 ease-in-out ${
-          isMobileMenuOpen ? 'max-h-[90vh] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'
-        }`}
-      >
-        <div className="px-4 py-5 space-y-4 max-h-[85vh] overflow-y-auto">
-          {/* User profile banner on mobile */}
-          <div className="p-3.5 bg-gradient-to-r from-[#F4FAFE] to-[#E9F4FC] rounded-2xl flex items-center justify-between gap-3 border border-[#E1EEF8]">
-            <div className="flex items-center gap-3">
-              {user.avatar ? (
-                <img
-                  src={user.avatar}
-                  alt={user.name}
-                  className="w-11 h-11 rounded-full object-cover ring-2 ring-white shadow-xs"
-                />
-              ) : (
-                <div className="w-11 h-11 rounded-full bg-[#0686CD] text-white flex items-center justify-center font-bold text-sm uppercase">
-                  {user.name.charAt(0)}
-                </div>
-              )}
-              <div>
-                <div className="font-bold text-sm text-[#0D182B]">{user.name}</div>
-                <div className="text-xs text-gray-500 truncate max-w-44">{user.email}</div>
-              </div>
-            </div>
-            <span className="px-2 py-1 rounded-md text-[10px] font-semibold bg-white text-[#0686CD] shadow-xs border border-[#D9EAF5] capitalize">
-              {user.role}
-            </span>
-          </div>
-
-          {/* Quick shortcuts */}
-          <div className="grid grid-cols-2 gap-2">
-            <Link
-              to="/messages"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-[#F6FAFD] hover:bg-[#EAF5FC] border border-[#E3EDF5] text-xs font-semibold text-[#0D182B] transition-colors"
-            >
-              <MessageSquare className="w-4 h-4 text-[#0686CD]" />
-              <span>Messages ({unreadMessagesCount})</span>
-            </Link>
-
-            <Link
-              to="/notifications"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-[#F6FAFD] hover:bg-[#EAF5FC] border border-[#E3EDF5] text-xs font-semibold text-[#0D182B] transition-colors"
-            >
-              <Bell className="w-4 h-4 text-amber-500" />
-              <span>Alerts ({unreadNotificationsCount})</span>
-            </Link>
-          </div>
-
-          {/* Main Navigation Links (Same as First Header) */}
-          <div className="space-y-1">
-            <div className="px-2 text-[10px] font-bold tracking-wider text-gray-400 uppercase">
-              Navigation
-            </div>
-            
-            <button
-              onClick={() => handleSectionClick('works')}
-              className="hover:bg-[#f9fafc] hover:rounded-lg w-full py-2 pl-3 text-left text-sm text-gray-700 font-medium cursor-pointer transition-colors"
-            >
-              How it Works
-            </button>
-            
-            <button
-              onClick={() => handleSectionClick('services')}
-              className="hover:bg-[#f9fafc] hover:rounded-lg w-full py-2 pl-3 text-left text-sm text-gray-700 font-medium cursor-pointer transition-colors"
-            >
-              Services
-            </button>
-            
-            <button
-              onClick={() => handleSectionClick('why-us')}
-              className="hover:bg-[#f9fafc] hover:rounded-lg w-full py-2 pl-3 text-left text-sm text-gray-700 font-medium cursor-pointer transition-colors"
-            >
-              Why Us
-            </button>
-            
-            <Link
-              to="/find-caregivers"
-              onClick={() => {
-                setIsMobileMenuOpen(false);
-                window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
-              }}
-              className="block hover:bg-[#f9fafc] hover:rounded-lg w-full py-2 pl-3 text-sm text-gray-700 font-medium transition-colors"
-            >
-              Find Caregiver
-            </Link>
-          </div>
-
-          {/* Account & Care Management Links */}
-          <div className="space-y-1 pt-2 border-t border-[#EEF4F9]">
-            <div className="px-2 text-[10px] font-bold tracking-wider text-gray-400 uppercase">
-              Care & Settings
-            </div>
-
-            <Link
-              to="/saved-caregivers"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm text-gray-700 hover:bg-[#F6FAFD] transition-colors"
-            >
-              <Heart className="w-4 h-4 text-rose-500" />
-              <span>Saved Caregivers</span>
-            </Link>
-
-            <Link
-              to="/profile"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm text-gray-700 hover:bg-[#F6FAFD] transition-colors"
-            >
-              <UserIcon className="w-4 h-4 text-gray-500" />
-              <span>Profile Information</span>
-            </Link>
-
-            <Link
-              to="/settings"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm text-gray-700 hover:bg-[#F6FAFD] transition-colors"
-            >
-              <Settings className="w-4 h-4 text-gray-500" />
-              <span>Account Settings</span>
-            </Link>
-
-            <Link
-              to="/support"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm text-gray-700 hover:bg-[#F6FAFD] transition-colors"
-            >
-              <HelpCircle className="w-4 h-4 text-gray-500" />
-              <span>Help & Support Center</span>
-            </Link>
-          </div>
-
-          {/* Logout Action */}
-          <div className="pt-2 border-t border-[#EEF4F9]">
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold text-rose-600 bg-rose-50/70 hover:bg-rose-100/70 transition-colors cursor-pointer"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>Sign Out</span>
-            </button>
           </div>
         </div>
       </div>
