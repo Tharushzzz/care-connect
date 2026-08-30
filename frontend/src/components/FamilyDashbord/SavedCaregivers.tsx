@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   Heart,
   Search,
@@ -14,15 +14,12 @@ import {
   Filter,
   CheckCircle,
   SlidersHorizontal,
-  Clock,
-  Sparkles
+  Clock
 } from 'lucide-react';
 import CaregiversData from '../../../config/Caregivers';
 import type { Caregiver } from '../../../config/Caregivers';
 
 export const SavedCaregivers: React.FC = () => {
-  const navigate = useNavigate();
-
   // Initial state loaded with popular caregivers as saved
   const [savedCaregivers, setSavedCaregivers] = useState<Caregiver[]>(CaregiversData.slice(0, 3));
   const [searchQuery, setSearchQuery] = useState('');
@@ -97,23 +94,16 @@ export const SavedCaregivers: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
-            <Link
-              to="/find-caregivers"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0B8BD8] text-white text-sm font-semibold hover:bg-[#0879B6] transition shadow-xs cursor-pointer"
-            >
-              <Sparkles className="w-4 h-4" />
-              <span>Explore More Caregivers</span>
-            </Link>
-            {savedCaregivers.length > 0 && (
+          {savedCaregivers.length > 0 && (
+            <div className="flex items-center gap-3">
               <button
                 onClick={handleClearAll}
                 className="px-3.5 py-2.5 rounded-xl border border-gray-200 text-gray-600 text-sm font-medium hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition cursor-pointer"
               >
                 Clear All
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         {/* Quick metrics summary */}
