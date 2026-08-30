@@ -8,6 +8,11 @@ import FindCaregivers from './pages/FindCaregivers.tsx';
 import CaregiverProfile from './pages/CaregiverProfile.tsx';
 import Login from './pages/Login.tsx';
 import BookCare from './pages/BookCare.tsx';
+import DashboardLayout from './components/DashboardLayout.tsx';
+import Booking from './pages/Booking.tsx';
+import Message from './pages/Message.tsx';
+import Profile from './pages/Profile.tsx';
+import Settings from './pages/Settings.tsx';
 
 const router = createBrowserRouter([
   {
@@ -20,6 +25,15 @@ const router = createBrowserRouter([
       { index: false, path: '/find-caregivers/:id', element: <CaregiverProfile /> },
       { index: false, path: '/book-care', element: <BookCare /> },
       { index: false, path: '/book-care/:id', element: <BookCare /> },
+      {
+        element: <DashboardLayout />,
+        children: [
+          { path: '/bookings', element: <Booking /> },
+          { path: '/messages', element: <Message /> },
+          { path: '/profile', element: <Profile /> },
+          { path: '/settings', element: <Settings /> },
+        ],
+      },
     ],
   },
 ]);
