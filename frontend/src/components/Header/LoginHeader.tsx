@@ -12,7 +12,6 @@ import {
   HelpCircle,
   LogOut,
   CheckCheck,
-  FileText,
   Clock,
   CheckCircle2,
   AlertCircle,
@@ -428,15 +427,6 @@ export const LoginHeader: React.FC<LoginHeaderProps> = ({
                     >
                       <Heart className="w-4 h-4 text-rose-500" />
                       <span>Saved Caregivers</span>
-                    </Link>
-
-                    <Link
-                      to="/care-plans"
-                      onClick={() => setIsUserDropdownOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:bg-[#F2F8FD] hover:text-[#0686CD] transition-colors"
-                    >
-                      <FileText className="w-4 h-4 text-indigo-500" />
-                      <span>Care Plans & Vitals</span>
                     </Link>
 
                     <div className="my-1.5 border-t border-[#EEF4F9]" />
