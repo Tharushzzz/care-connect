@@ -100,10 +100,10 @@ export const BookCare: React.FC = () => {
         />
 
         {/* Card Container */}
-        <div className="bg-white rounded-3xl sm:rounded-[32px] border border-[#E3EDF6] p-6 sm:p-10 shadow-xs space-y-8">
+        <div className="bg-white rounded-3xl sm:rounded-4xl border border-[#E3EDF6] p-6 sm:p-10 shadow-xs space-y-8">
           
           {/* Caregiver Mini Info Bar */}
-          <div className="p-4 rounded-2xl bg-gradient-to-r from-[#F4FAFE] to-[#E9F4FC] border border-[#DCEBF7] flex items-center justify-between gap-4">
+          <div className="p-4 rounded-2xl bg-linear-to-r from-[#F4FAFE] to-[#E9F4FC] border border-[#DCEBF7] flex items-center justify-between gap-4">
             <div className="flex items-center gap-3.5">
               <img
                 src={selectedCaregiver.profileImage}
