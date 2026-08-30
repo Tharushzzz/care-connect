@@ -13,7 +13,7 @@ import Booking from './components/FamilyDashbord/Booking.tsx';
 import Message from './components/FamilyDashbord/Message.tsx';
 import Profile from './components/FamilyDashbord/Profile.tsx';
 import Settings from './components/FamilyDashbord/Settings.tsx';
-
+import SavedCaregivers from './components/FamilyDashbord/SavedCaregivers.tsx';
 
 const router = createBrowserRouter([
   {
@@ -30,6 +30,7 @@ const router = createBrowserRouter([
         element: <DashboardLayout />,
         children: [
           { path: '/bookings', element: <Booking /> },
+          { path: '/saved-caregivers', element: <SavedCaregivers /> },
           { path: '/messages', element: <Message /> },
           { path: '/profile', element: <Profile /> },
           { path: '/settings', element: <Settings /> },

@@ -15,7 +15,7 @@ function App() {
     window.scrollTo(0, 0);
   }, [pathname]);
 
-  const dashboardRoutes = ['/bookings', '/messages', '/profile', '/settings'];
+  const dashboardRoutes = ['/bookings', '/saved-caregivers', '/messages', '/profile', '/settings'];
   const isDashboardRoute = dashboardRoutes.some(route => pathname.startsWith(route));
 
   if (isDashboardRoute) {
