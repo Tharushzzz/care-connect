@@ -14,8 +14,7 @@ import {
   CheckCircle2,
   AlertCircle,
   Menu,
-  X,
-  LayoutDashboard
+  X
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import UsersData from '../../config/User';
@@ -107,7 +106,6 @@ export const DashboardLayout: React.FC = () => {
   };
 
   const sidebarLinks = [
-    { name: 'Dashboard', path: '/', icon: LayoutDashboard },
     { name: 'My Bookings', path: '/bookings', icon: Calendar },
     { name: 'Messages', path: '/messages', icon: MessageSquare, badge: unreadMessagesCount },
     { name: 'Profile', path: '/profile', icon: UserIcon },

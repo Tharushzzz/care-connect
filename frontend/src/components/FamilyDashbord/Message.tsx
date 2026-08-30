@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, Send, Paperclip, Image, Smile, Phone, Video, Info, ArrowLeft, Check, CheckCheck } from 'lucide-react';
-import CaregiversData from '../../config/Caregivers';
-import MessagesData from '../../config/Messages';
+import { Search, Send, Paperclip, Image, Smile, Phone, Video, Info, ArrowLeft, CheckCheck } from 'lucide-react';
+import CaregiversData from '../../../config/Caregivers';
 
 interface MessageLog {
   id: string;

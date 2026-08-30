@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Camera, User, Mail, Phone, MapPin, CheckCircle, Trash2 } from 'lucide-react';
-import UsersData from '../../config/User';
+import UsersData from '../../../config/User';
 
 export const Profile: React.FC = () => {
   const defaultUser = UsersData[0]; // Eleanor Vance

@@ -8,11 +8,12 @@ import FindCaregivers from './pages/FindCaregivers.tsx';
 import CaregiverProfile from './pages/CaregiverProfile.tsx';
 import Login from './pages/Login.tsx';
 import BookCare from './pages/BookCare.tsx';
-import DashboardLayout from './components/DashboardLayout.tsx';
-import Booking from './pages/Booking.tsx';
-import Message from './pages/Message.tsx';
-import Profile from './pages/Profile.tsx';
-import Settings from './pages/Settings.tsx';
+import DashboardLayout from './pages/FamilyDashbord.tsx';
+import Booking from './components/FamilyDashbord/Booking.tsx';
+import Message from './components/FamilyDashbord/Message.tsx';
+import Profile from './components/FamilyDashbord/Profile.tsx';
+import Settings from './components/FamilyDashbord/Settings.tsx';
+
 
 const router = createBrowserRouter([
   {
