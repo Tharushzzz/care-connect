@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Search, Calendar, MessageSquare, Star, X, CheckCircle2, ChevronRight, AlertTriangle } from 'lucide-react';
+import { Search, Calendar, MessageSquare, Star, X, CheckCircle2, ChevronRight } from 'lucide-react';
 import CaregiversData from '../../../config/Caregivers';
 
 interface BookingItem {
