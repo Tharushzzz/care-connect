@@ -44,10 +44,12 @@ export default function AdminLayout() {
       {/* Sidebar */}
       <aside className="admin-sidebar">
         <div>
-          <div className="admin-logo">
-            <span className="admin-logo-dot"></span>
-            <span>CareConnect</span>
-          </div>
+         <div className="admin-logo">
+  <span className="admin-logo-icon">
+    <ShieldCheck size={19} />
+  </span>
+  <span>Admin Panel</span>
+</div>
 
           <nav className="admin-nav">
             {navItems.map((item) => {
