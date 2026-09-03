@@ -14,6 +14,7 @@ import Message from './components/FamilyDashbord/Message.tsx';
 import Profile from './components/FamilyDashbord/Profile.tsx';
 import Settings from './components/FamilyDashbord/Settings.tsx';
 import Signup from './pages/Signup.tsx';
+import ResetPassword from './pages/ResetPassword.tsx';
 
 
 const router = createBrowserRouter([
@@ -28,6 +29,7 @@ const router = createBrowserRouter([
       { index: false, path: '/book-care', element: <BookCare /> },
       { index: false, path: '/book-care/:id', element: <BookCare /> },
       { index: false, path: '/signup', element: <Signup /> },
+      { index: false, path: '/forgot-password', element: <ResetPassword /> },
       {
         element: <DashboardLayout />,
         children: [
