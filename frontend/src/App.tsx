@@ -29,7 +29,7 @@ function App() {
       ) : (
         <Header />
       )}
-      <Outlet></Outlet>
+      <Outlet />
       <Footer />
     </>
   );

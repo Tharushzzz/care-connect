@@ -29,14 +29,20 @@ export const Step3Payment: React.FC<Step3PaymentProps> = ({
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       <div className="border-b border-[#EEF4FA] pb-4">
-        <h2 className="text-xl font-bold text-[#0D182B]">Payment Information</h2>
-        <p className="text-xs text-gray-500 mt-1">Enter your card details to confirm the booking.</p>
+        <h2 className="text-xl font-bold text-[#0D182B]">
+          Payment Information
+        </h2>
+        <p className="text-xs text-gray-500 mt-1">
+          Enter your card details to confirm the booking.
+        </p>
       </div>
 
       {/* Card Inputs */}
       <div className="space-y-4 pt-2">
         <div className="space-y-1.5">
-          <label className="block text-xs font-semibold text-gray-600">Cardholder Name</label>
+          <label className="block text-xs font-semibold text-gray-600">
+            Cardholder Name
+          </label>
           <input
             type="text"
             value={cardName}
@@ -47,7 +53,9 @@ export const Step3Payment: React.FC<Step3PaymentProps> = ({
         </div>
 
         <div className="space-y-1.5">
-          <label className="block text-xs font-semibold text-gray-600">Card Number</label>
+          <label className="block text-xs font-semibold text-gray-600">
+            Card Number
+          </label>
           <input
             type="text"
             value={cardNumber}
@@ -59,7 +67,9 @@ export const Step3Payment: React.FC<Step3PaymentProps> = ({
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-gray-600">Expiration Date</label>
+            <label className="block text-xs font-semibold text-gray-600">
+              Expiration Date
+            </label>
             <input
               type="text"
               value={cardExpiry}
@@ -68,8 +78,11 @@ export const Step3Payment: React.FC<Step3PaymentProps> = ({
               className="w-full h-11 px-4 rounded-xl border border-[#D5E3EF] text-sm text-[#0D182B] focus:outline-none focus:ring-2 focus:ring-[#0B8BD8]/30 focus:border-[#0B8BD8] transition-all bg-white"
             />
           </div>
+
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-gray-600">CVC Code</label>
+            <label className="block text-xs font-semibold text-gray-600">
+              CVC Code
+            </label>
             <input
               type="text"
               value={cardCvc}

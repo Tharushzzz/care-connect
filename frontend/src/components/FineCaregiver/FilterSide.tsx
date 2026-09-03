@@ -4,7 +4,11 @@ import { Filter, ChevronDown, ChevronUp } from 'lucide-react'
 const filterGroups = [
   {
     title: 'Hourly rate',
+<<<<<<< HEAD
     options: ['Any', 'Under Rs. 2,500/hr', 'Rs. 2,500 - Rs. 3,500/hr', 'Rs. 3,500+/hr'],
+=======
+    options: ['Any', 'Under $20/hr', '$20 - $30/hr', '$30+/hr'],
+>>>>>>> origin/main
   },
   {
     title: 'Years of experience',
