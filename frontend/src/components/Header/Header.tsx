@@ -136,7 +136,7 @@ function Header() {
             </Link>
 
             <Link
-              to="#get-started"
+              to="/signup"
               className="bg-[#0686CD] p-1.5 px-4 rounded-xl text-[#E2F1FF] cursor-pointer text-lg hover:bg-[#0071A8] hover:shadow-lg transition-all ease-in-out delay-75"
             >
               Get Started
@@ -209,7 +209,7 @@ function Header() {
           </Link>
 
           <Link
-            to="#get-started"
+            to="/signup"
             onClick={closeMenu}
             className="bg-[#0686CD] w-full text-center p-1.5 px-4 rounded-xl text-[#E2F1FF] cursor-pointer text-lg hover:bg-[#0071A8] hover:shadow-lg transition-all ease-in-out delay-75"
           >
