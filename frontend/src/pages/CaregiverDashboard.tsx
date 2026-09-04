@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation, Outlet } from 'react-router-dom';
 import logo from '../assets/logo/Logo.svg';
 import sarahAvatar from '../assets/Caregiverprofile/Sarah.jpeg';
@@ -25,30 +25,12 @@ export const CaregiverDashboardLayout: React.FC = () => {
 
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isAvailable, setIsAvailable] = useState(true);
-  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [unreadNotifications] = useState(2);
-
-  const notificationMenuRef = useRef<HTMLDivElement>(null);
 
   // Close menus on route change
   useEffect(() => {
     setIsMobileSidebarOpen(false);
-    setIsNotificationOpen(false);
   }, [pathname]);
-
-  // Click outside to close notification dropdown
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-      const target = event.target as Node;
-      if (notificationMenuRef.current && !notificationMenuRef.current.contains(target)) {
-        setIsNotificationOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
 
   const handleLogout = () => {
     logout();
@@ -241,7 +223,7 @@ export const CaregiverDashboardLayout: React.FC = () => {
             </button>
 
             {/* Notifications Bell */}
-            <div ref={notificationMenuRef} className="relative">
+            <div className="relative">
               <Link
                 to="/caregiver/notifications"
                 className="relative p-2 rounded-xl text-slate-500 hover:text-[#0D9488] hover:bg-teal-50 transition-colors flex items-center justify-center"
