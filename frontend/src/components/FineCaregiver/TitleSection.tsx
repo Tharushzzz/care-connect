@@ -1,6 +1,18 @@
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 
-const TitleSection = () => {
+interface TitleSectionProps {
+  searchQuery?: string;
+  setSearchQuery?: (query: string) => void;
+  onSearchSubmit?: () => void;
+}
+
+const TitleSection = ({ searchQuery = "", setSearchQuery, onSearchSubmit }: TitleSectionProps) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && onSearchSubmit) {
+      onSearchSubmit();
+    }
+  };
+
   return (
     <div className="bg-[#0384C6] px-4 py-8 sm:px-8 lg:px-20">
       <div className="mx-auto flex flex-col w-full max-w-4xl py-4 sm:py-8 gap-5 sm:gap-7">
@@ -15,11 +27,28 @@ const TitleSection = () => {
             <Search className="h-5 w-5 text-gray-500 shrink-0" />
             <input
               type="text"
-              placeholder="Search by name (e.g., Sarah)"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery && setSearchQuery(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Search by name (e.g., Sarah, Michael)"
               className="w-full border-0 bg-transparent py-1 text-sm sm:text-base text-gray-700 placeholder:text-gray-400 focus:outline-none"
             />
+            {searchQuery && setSearchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="text-gray-400 hover:text-gray-600 p-1 cursor-pointer"
+                title="Clear search"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
           </div>
-          <button className="px-6 py-2.5 bg-[#0384C6] text-white rounded-xl text-sm sm:text-base font-semibold cursor-pointer hover:bg-[#0269A1] transition duration-300 w-full sm:w-auto">
+          <button
+            type="button"
+            onClick={onSearchSubmit}
+            className="px-6 py-2.5 bg-[#0384C6] text-white rounded-xl text-sm sm:text-base font-semibold cursor-pointer hover:bg-[#0269A1] transition duration-300 w-full sm:w-auto"
+          >
             Search
           </button>
         </div>
@@ -29,3 +58,4 @@ const TitleSection = () => {
 }
 
 export default TitleSection
+

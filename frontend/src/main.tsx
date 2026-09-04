@@ -13,8 +13,9 @@ import Booking from './components/FamilyDashbord/Booking.tsx';
 import Message from './components/FamilyDashbord/Message.tsx';
 import Profile from './components/FamilyDashbord/Profile.tsx';
 import Settings from './components/FamilyDashbord/Settings.tsx';
-
-
+import Signup from './pages/Signup.tsx';
+import ResetPassword from './pages/ResetPassword.tsx';
+import SavedCaregivers from './components/FamilyDashbord/SavedCaregivers.tsx';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -26,10 +27,13 @@ const router = createBrowserRouter([
       { index: false, path: '/find-caregivers/:id', element: <CaregiverProfile /> },
       { index: false, path: '/book-care', element: <BookCare /> },
       { index: false, path: '/book-care/:id', element: <BookCare /> },
+      { index: false, path: '/signup', element: <Signup /> },
+      { index: false, path: '/forgot-password', element: <ResetPassword /> },
       {
         element: <DashboardLayout />,
         children: [
           { path: '/bookings', element: <Booking /> },
+          { path: '/saved-caregivers', element: <SavedCaregivers /> },
           { path: '/messages', element: <Message /> },
           { path: '/profile', element: <Profile /> },
           { path: '/settings', element: <Settings /> },

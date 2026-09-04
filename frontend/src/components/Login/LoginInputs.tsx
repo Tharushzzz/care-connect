@@ -37,7 +37,7 @@ const LoginInputs: React.FC = () => {
         </h1>
         <p className="text-sm sm:text-base text-[#475467]">
           Don't have an account?{' '}
-          <Link to="/register" className="text-[#0686CD] hover:underline font-semibold">
+          <Link to="/signup" className="text-[#0686CD] hover:underline font-semibold">
             Create a new account
           </Link>
         </p>
