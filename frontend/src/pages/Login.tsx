@@ -3,7 +3,7 @@ import loginimage from "../assets/login/login.jpg"
 
 const Login = () => {
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-white flex items-center justify-center p-4 sm:p-6 lg:p-10">
+    <div className="min-h-screen bg-white flex items-center justify-center p-4 sm:p-6 lg:p-10">
       <div className="w-full max-w-7xl flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
         {/* Left side: Login Inputs Form */}
         <div className="w-full lg:w-1/2 flex items-center justify-top">

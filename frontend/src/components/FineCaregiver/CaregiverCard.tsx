@@ -1,27 +1,54 @@
-import { MapPin, ShieldCheck, ShieldAlert, Star } from 'lucide-react'
+import { useState } from 'react'
+import { MapPin, ShieldCheck, ShieldAlert, Star, Bookmark, UserX } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import caregiversData from '../../../config/Caregivers'
 
-type caregivers = {
-  id: number
-  profileImage: string
-  name: string
-  role: string
-  location: string
-  experience: string
-  rating: number
-  reviews: number
-  verified: boolean
-  description: string
-  specialties: string[]
+interface CaregiverCardProps {
+  searchQuery?: string;
+  onClearSearch?: () => void;
 }
 
-const caregivers = caregiversData
+const CaregiverCard = ({ searchQuery = "", onClearSearch }: CaregiverCardProps) => {
+  const [savedIds, setSavedIds] = useState<number[]>([])
 
-const CaregiverCard = () => {
+  const toggleSave = (id: number) => {
+    setSavedIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    )
+  }
+
+  const query = searchQuery.trim().toLowerCase()
+  const filteredCaregivers = caregiversData.filter((caregiver) => {
+    if (!query) return true
+    return caregiver.name.toLowerCase().includes(query)
+  })
+
+  if (filteredCaregivers.length === 0) {
+    return (
+      <div className="rounded-2xl sm:rounded-3xl bg-white p-8 sm:p-12 text-center shadow-[0_18px_40px_rgba(15,23,42,0.06)] ring-1 ring-[#E7EDF5]">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#F3F9FF] text-[#0B8BD8] mb-4">
+          <UserX className="h-8 w-8" />
+        </div>
+        <h3 className="text-lg sm:text-xl font-bold text-[#111827]">No caregivers found</h3>
+        <p className="mt-2 text-sm text-[#6B7280] max-w-md mx-auto">
+          We couldn't find any caregivers matching <span className="font-semibold text-[#111827]">"{searchQuery}"</span>. Try adjusting your search term or search by specialty.
+        </p>
+        {onClearSearch && (
+          <button
+            type="button"
+            onClick={onClearSearch}
+            className="mt-5 inline-flex items-center justify-center rounded-full bg-[#0B8BD8] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0879B6] cursor-pointer"
+          >
+            Clear Search
+          </button>
+        )}
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-4 sm:space-y-5">
-      {caregivers.map((caregiver) => (
+      {filteredCaregivers.map((caregiver) => (
         <article
           key={caregiver.id}
           className="rounded-2xl sm:rounded-4xl bg-white p-4 sm:p-5 shadow-[0_18px_40px_rgba(15,23,42,0.06)] ring-1 ring-[#E7EDF5]"
@@ -57,12 +84,32 @@ const CaregiverCard = () => {
               </div>
             </div>
 
-            <Link
-              to={`/find-caregivers/${caregiver.id}`}
-              className="w-full text-center sm:w-auto rounded-full bg-[#0B8BD8] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0879b6] cursor-pointer"
-            >
-              View profile
-            </Link>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+              <button
+                type="button"
+                onClick={() => toggleSave(caregiver.id)}
+                className={`inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-semibold transition cursor-pointer border ${
+                  savedIds.includes(caregiver.id)
+                    ? 'border-[#0B8BD8] bg-[#F0F8FF] text-[#0B8BD8]'
+                    : 'border-[#E2E8F0] bg-white text-[#4B5563] hover:border-[#0B8BD8] hover:text-[#0B8BD8]'
+                }`}
+                title={savedIds.includes(caregiver.id) ? 'Remove from saved' : 'Save caregiver'}
+              >
+                <Bookmark
+                  className={`h-4 w-4 transition-transform ${
+                    savedIds.includes(caregiver.id) ? 'fill-[#0B8BD8] text-[#0B8BD8] scale-110' : ''
+                  }`}
+                />
+                <span>{savedIds.includes(caregiver.id) ? 'Saved' : 'Save'}</span>
+              </button>
+
+              <Link
+                to={`/find-caregivers/${caregiver.id}`}
+                className="w-full text-center sm:w-auto rounded-full bg-[#0B8BD8] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0879b6] cursor-pointer"
+              >
+                View profile
+              </Link>
+            </div>
           </div>
 
           <div className="mt-3 sm:mt-4 flex items-center gap-2 text-xs sm:text-sm text-[#374151]">
@@ -92,3 +139,4 @@ const CaregiverCard = () => {
 }
 
 export default CaregiverCard
+
