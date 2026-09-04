@@ -15,7 +15,7 @@ function App() {
     window.scrollTo(0, 0);
   }, [pathname]);
 
-  const noHeaderFooterRoutes = ['/login', '/bookings', '/saved-caregivers', '/messages', '/profile', '/settings'];
+  const noHeaderFooterRoutes = ['/login', '/signup', '/bookings', '/saved-caregivers', '/messages', '/profile', '/settings'];
   const hideHeaderFooter = noHeaderFooterRoutes.some(route => pathname.startsWith(route));
 
   if (hideHeaderFooter) {

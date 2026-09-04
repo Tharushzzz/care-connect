@@ -2,10 +2,21 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Eye, EyeOff, Heart, User } from 'lucide-react';
 
-const SignupInputs: React.FC = () => {
+interface SignupInputsProps {
+  role?: 'family' | 'caregiver';
+  onRoleChange?: (role: 'family' | 'caregiver') => void;
+}
+
+const SignupInputs: React.FC<SignupInputsProps> = ({ role: controlledRole, onRoleChange }) => {
   const location = useLocation();
   const initialRole = location.state?.role || 'family';
-  const [role, setRole] = useState<'family' | 'caregiver'>(initialRole);
+  const [internalRole, setInternalRole] = useState<'family' | 'caregiver'>(initialRole);
+  
+  const role = controlledRole ?? internalRole;
+  const setRole = (newRole: 'family' | 'caregiver') => {
+    setInternalRole(newRole);
+    onRoleChange?.(newRole);
+  };
   const [showPassword, setShowPassword] = useState(false);
   
   // Form fields
