@@ -95,9 +95,10 @@ export const loginUser = async (req, res) => {
     }
 
     const normalizedEmail = email.toLowerCase().trim();
+    const searchEmail = normalizedEmail === 'admin' ? 'admin@admin.com' : normalizedEmail;
 
     // Find user by email
-    const user = await User.findOne({ email: normalizedEmail });
+    const user = await User.findOne({ email: searchEmail });
 
     if (user && (await user.matchPassword(password))) {
       return res.json({

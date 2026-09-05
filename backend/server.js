@@ -9,11 +9,14 @@ import cors from 'cors';
 import authRoutes from './routes/authRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
 import messageRoutes from './routes/messageRoutes.js';
+import { seedAdminUser } from './config/seedAdmin.js';
 
 dotenv.config();
 
 // Connect to MongoDB
-connectDB();
+connectDB().then(() => {
+  seedAdminUser();
+});
 
 const port = process.env.PORT || 5000;
 

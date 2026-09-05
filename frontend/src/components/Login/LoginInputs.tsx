@@ -26,7 +26,7 @@ const LoginInputs: React.FC = () => {
     if (result.success && result.user) {
       // Role-based redirection
       if (result.user.role === 'admin') {
-        navigate('/admin/dashboard');
+        navigate('/');
       } else if (result.user.role === 'caregiver') {
         navigate('/caregiver');
       } else {
@@ -73,13 +73,13 @@ const LoginInputs: React.FC = () => {
 
       {/* Form Fields */}
       <form onSubmit={handleLogin} className="space-y-5 pt-2">
-        {/* Email */}
+        {/* Email / Username */}
         <div className="space-y-1.5">
           <label className="block text-sm font-medium text-[#344054]">
-            Email address
+            Email or Username
           </label>
           <input
-            type="email"
+            type="text"
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);

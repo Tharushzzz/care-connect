@@ -18,6 +18,7 @@ import {
   LayoutDashboard,
   DollarSign,
   ShieldCheck,
+  Users,
 } from 'lucide-react';
 import UsersData from '../../../config/User';
 import type { User } from '../../../config/User';
@@ -46,6 +47,7 @@ export const LoginHeader: React.FC<LoginHeaderProps> = ({
   onLogout,
 }) => {
   const isCaregiver = user.role === 'caregiver';
+  const isAdmin = user.role === 'admin';
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [notifications, setNotifications] = useState<NotificationItem[]>(initialNotifications);
@@ -222,6 +224,17 @@ export const LoginHeader: React.FC<LoginHeaderProps> = ({
               </Link>
             )}
 
+            {/* Admin Portal shortcut button */}
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white text-xs font-semibold shadow-xs transition-all hover:shadow-md"
+              >
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>Admin Portal</span>
+              </Link>
+            )}
+
             {/* Quick Link: Messages */}
             <Link
               to={isCaregiver ? "/caregiver/messages" : "/messages"}
@@ -352,8 +365,12 @@ export const LoginHeader: React.FC<LoginHeaderProps> = ({
                 }}
                 className={`flex items-center gap-2.5 p-1 sm:pl-1.5 sm:pr-2.5 rounded-full border transition-all duration-200 cursor-pointer ${
                   isUserDropdownOpen
-                    ? 'bg-white border-[#0686CD] shadow-sm ring-2 ring-[#0686CD]/10'
-                    : 'bg-white/90 border-[#E0EBF3] hover:border-[#BCE0F5] hover:bg-white'
+                    ? isAdmin
+                      ? 'bg-white border-purple-600 shadow-sm ring-2 ring-purple-600/15'
+                      : 'bg-white border-[#0686CD] shadow-sm ring-2 ring-[#0686CD]/10'
+                    : isAdmin
+                      ? 'bg-white/90 border-purple-200 hover:border-purple-400 hover:bg-white'
+                      : 'bg-white/90 border-[#E0EBF3] hover:border-[#BCE0F5] hover:bg-white'
                 }`}
                 aria-label="User Account Menu"
                 aria-expanded={isUserDropdownOpen}
@@ -367,11 +384,11 @@ export const LoginHeader: React.FC<LoginHeaderProps> = ({
                       className="w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full object-cover ring-2 ring-white"
                     />
                   ) : (
-                    <div className="w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full bg-[#EAF5FC] text-[#0686CD] flex items-center justify-center font-bold text-xs ring-2 ring-white uppercase">
+                    <div className={`w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full ${isAdmin ? 'bg-purple-100 text-purple-700' : 'bg-[#EAF5FC] text-[#0686CD]'} flex items-center justify-center font-bold text-xs ring-2 ring-white uppercase`}>
                       {user.name.charAt(0)}
                     </div>
                   )}
-                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white" />
+                  <span className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full ${isAdmin ? 'bg-purple-600' : 'bg-emerald-500'} ring-2 ring-white`} />
                 </div>
 
                 {/* User info (visible on md+) */}
@@ -379,14 +396,14 @@ export const LoginHeader: React.FC<LoginHeaderProps> = ({
                   <span className="text-xs font-bold text-[#0D182B] leading-tight truncate max-w-28 xl:max-w-36">
                     {user.name}
                   </span>
-                  <span className="text-[10px] text-gray-500 font-medium capitalize leading-none mt-0.5 truncate max-w-28 xl:max-w-36">
-                    {user.role}
+                  <span className={`text-[10px] font-medium capitalize leading-none mt-0.5 truncate max-w-28 xl:max-w-36 ${isAdmin ? 'text-purple-600 font-semibold' : 'text-gray-500'}`}>
+                    {isAdmin ? 'Administrator' : user.role}
                   </span>
                 </div>
 
                 <ChevronDown
                   className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${
-                    isUserDropdownOpen ? 'rotate-180 text-[#0686CD]' : ''
+                    isUserDropdownOpen ? (isAdmin ? 'rotate-180 text-purple-600' : 'rotate-180 text-[#0686CD]') : ''
                   }`}
                 />
               </button>
@@ -395,7 +412,7 @@ export const LoginHeader: React.FC<LoginHeaderProps> = ({
               {isUserDropdownOpen && (
                 <div className="fixed sm:absolute left-3 right-3 sm:left-auto sm:right-0 top-18 sm:top-full mt-0 sm:mt-3 w-auto sm:w-72 max-w-sm ml-auto bg-white rounded-2xl shadow-2xl border border-[#E3EDF6] overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
                   {/* Account Header */}
-                  <div className="p-4 bg-gradient-to-br from-[#F5FAFE] to-[#EAF5FD] border-b border-[#E2EEF7]">
+                  <div className={`p-4 ${isAdmin ? 'bg-gradient-to-br from-purple-50 via-indigo-50/50 to-white border-b border-purple-100' : 'bg-gradient-to-br from-[#F5FAFE] to-[#EAF5FD] border-b border-[#E2EEF7]'}`}>
                     <div className="flex items-center gap-3">
                       {user.avatar ? (
                         <img
@@ -404,17 +421,28 @@ export const LoginHeader: React.FC<LoginHeaderProps> = ({
                           className="w-12 h-12 rounded-full object-cover ring-3 ring-white shadow-xs"
                         />
                       ) : (
-                        <div className="w-12 h-12 rounded-full bg-[#0686CD] text-white flex items-center justify-center font-bold text-base ring-3 ring-white shadow-xs uppercase">
+                        <div className={`w-12 h-12 rounded-full ${isAdmin ? 'bg-gradient-to-tr from-purple-600 to-indigo-600' : 'bg-[#0686CD]'} text-white flex items-center justify-center font-bold text-base ring-3 ring-white shadow-xs uppercase`}>
                           {user.name.charAt(0)}
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
-                        <h4 className="text-sm font-bold text-[#0D182B] truncate">{user.name}</h4>
+                        <div className="flex items-center gap-1.5">
+                          <h4 className="text-sm font-bold text-[#0D182B] truncate">{user.name}</h4>
+                          {isAdmin && (
+                            <ShieldCheck className="w-4 h-4 text-purple-600 shrink-0" />
+                          )}
+                        </div>
                         <p className="text-xs text-gray-500 truncate">{user.email}</p>
                         <div className="mt-1 flex items-center gap-1.5">
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold bg-[#0686CD]/10 text-[#0686CD] capitalize">
-                            {user.role} account
-                          </span>
+                          {isAdmin ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-purple-100 text-purple-700 border border-purple-200">
+                              Platform Administrator
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold bg-[#0686CD]/10 text-[#0686CD] capitalize">
+                              {user.role} account
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -422,7 +450,82 @@ export const LoginHeader: React.FC<LoginHeaderProps> = ({
 
                   {/* Dropdown Menu Items */}
                   <div className="p-2 space-y-0.5 text-sm">
-                    {isCaregiver ? (
+                    {isAdmin ? (
+                      <>
+                        <div className="px-2.5 py-1 text-[10px] font-bold tracking-wider text-purple-700/80 uppercase">
+                          Admin Control Center
+                        </div>
+
+                        <Link
+                          to="/admin"
+                          onClick={() => setIsUserDropdownOpen(false)}
+                          className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
+                        >
+                          <LayoutDashboard className="w-4 h-4 text-purple-600" />
+                          <span className="font-semibold">Admin Dashboard</span>
+                        </Link>
+
+                        <Link
+                          to="/admin/users"
+                          onClick={() => setIsUserDropdownOpen(false)}
+                          className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
+                        >
+                          <Users className="w-4 h-4 text-purple-600" />
+                          <span>User Management</span>
+                        </Link>
+
+                        <Link
+                          to="/admin/verifications"
+                          onClick={() => setIsUserDropdownOpen(false)}
+                          className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
+                        >
+                          <ShieldCheck className="w-4 h-4 text-indigo-600" />
+                          <span>Caregiver Verifications</span>
+                        </Link>
+
+                        <Link
+                          to="/admin/bookings"
+                          onClick={() => setIsUserDropdownOpen(false)}
+                          className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
+                        >
+                          <Calendar className="w-4 h-4 text-[#0686CD]" />
+                          <span>All Bookings & Activity</span>
+                        </Link>
+
+                        <Link
+                          to="/admin/transactions"
+                          onClick={() => setIsUserDropdownOpen(false)}
+                          className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
+                        >
+                          <DollarSign className="w-4 h-4 text-emerald-600" />
+                          <span>Transactions & Payouts</span>
+                        </Link>
+
+                        <div className="my-1.5 border-t border-[#EEF4F9]" />
+
+                        <div className="px-2.5 py-1 text-[10px] font-bold tracking-wider text-gray-400 uppercase">
+                          Preferences
+                        </div>
+
+                        <Link
+                          to="/profile"
+                          onClick={() => setIsUserDropdownOpen(false)}
+                          className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:bg-[#F2F8FD] hover:text-[#0686CD] transition-colors"
+                        >
+                          <UserIcon className="w-4 h-4 text-gray-500" />
+                          <span>Admin Profile</span>
+                        </Link>
+
+                        <Link
+                          to="/settings"
+                          onClick={() => setIsUserDropdownOpen(false)}
+                          className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:bg-[#F2F8FD] hover:text-[#0686CD] transition-colors"
+                        >
+                          <Settings className="w-4 h-4 text-gray-500" />
+                          <span>System Settings</span>
+                        </Link>
+                      </>
+                    ) : isCaregiver ? (
                       <>
                         <div className="px-2.5 py-1 text-[10px] font-bold tracking-wider text-gray-400 uppercase">
                           Caregiver Workspace

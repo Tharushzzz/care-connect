@@ -33,6 +33,7 @@ import FamilySettings from './components/FamilyDashbord/Settings.tsx';
 import SavedCaregivers from './components/FamilyDashbord/SavedCaregivers.tsx';
 import Signup from './pages/Signup.tsx';
 import ResetPassword from './pages/ResetPassword.tsx';
+import AdminDashboard from './pages/AdminDashboard.tsx';
 
 const router = createBrowserRouter([
   {
@@ -82,6 +83,26 @@ const router = createBrowserRouter([
           { path: 'notifications', element: <CaregiverNotifications /> },
           { path: 'settings', element: <CaregiverSettings /> },
         ],
+      },
+      {
+        path: '/admin',
+        element: <AdminDashboard />,
+      },
+      {
+        path: '/admin/users',
+        element: <AdminDashboard />,
+      },
+      {
+        path: '/admin/verifications',
+        element: <AdminDashboard />,
+      },
+      {
+        path: '/admin/bookings',
+        element: <AdminDashboard />,
+      },
+      {
+        path: '/admin/transactions',
+        element: <AdminDashboard />,
       },
     ],
   },
