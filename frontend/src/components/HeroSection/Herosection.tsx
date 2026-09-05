@@ -1,4 +1,4 @@
-
+import { Link } from 'react-router-dom';
 import right from "../../assets/Herosection/right.svg";
 import correct from "../../assets/Herosection/correct.svg";
 import hero from "../../assets/Herosection/hero.png";
@@ -30,12 +30,15 @@ const Herosection = () => {
           background-checked caregivers to be there when you can't.
         </div>
         <div className="flex flex-col w-full lg:flex-row  items-center gap-3 mt-5">
-          <div className="flex items-center bg-[#0686CD] w-full justify-center lg:w-max p-1.5 px-4 rounded-xl text-[#E2F1FF] cursor-pointer text-lg hover:bg-[#0071A8] hover:shadow-lg transition-all ease-in-out delay-75">
-            Find a Caregiver <img src={right} alt="right arrow" className="ml-2 w-4 h-4"></img>
-          </div>
-          <div className="flex bg-[#E2F1FF] p-1.5 px-4 w-full justify-center lg:w-max rounded-xl border border-[#0071A8] text-[#5E656A] cursor-pointer text-lg hover:bg-[#B5D8EB] hover:text-[#0686CD] transition-colors ease-in-out">
+          <Link
+            to="/find-caregivers"
+            className="flex items-center bg-[#0686CD] w-full justify-center lg:w-max p-1.5 px-4 rounded-xl text-[#E2F1FF] cursor-pointer text-lg hover:bg-[#0071A8] hover:shadow-lg transition-all ease-in-out delay-75"
+          >
+            Find a Caregiver <img src={right} alt="right arrow" className="ml-2 w-4 h-4" />
+          </Link>
+          <Link to="/signup" state={{ role: 'caregiver' }} className="flex bg-[#E2F1FF] p-1.5 px-4 w-full justify-center lg:w-max rounded-xl border border-[#0071A8] text-[#5E656A] cursor-pointer text-lg hover:bg-[#B5D8EB] hover:text-[#0686CD] transition-colors ease-in-out">
             Become a Caregiver
-          </div>
+          </Link>
         </div>
 
         <div className="flex items-center gap-4 mt-3">

@@ -15,10 +15,22 @@ function App() {
     window.scrollTo(0, 0);
   }, [pathname]);
 
-  const dashboardRoutes = ['/bookings', '/messages', '/profile', '/settings', '/caregiver'];
-  const isDashboardRoute = dashboardRoutes.some(route => pathname.startsWith(route));
+  const noHeaderFooterRoutes = [
+    '/login',
+    '/signup',
+    '/forgot-password',
+    '/bookings',
+    '/saved-caregivers',
+    '/messages',
+    '/profile',
+    '/settings',
+    '/caregiver',
+    '/family',
+    '/admin'
+  ];
+  const hideHeaderFooter = noHeaderFooterRoutes.some(route => pathname.startsWith(route));
 
-  if (isDashboardRoute) {
+  if (hideHeaderFooter) {
     return <Outlet />;
   }
 
