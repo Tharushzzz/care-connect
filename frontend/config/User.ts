@@ -41,7 +41,7 @@ const UsersData: User[] = [
     name: 'Michael Lee',
     email: 'michael@example.com',
     phone: '0712554570',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80',
+    avatar: 'https://res.cloudinary.com/i7mccbnx/image/upload/v1788631373/Michael.jpg',
     password: '1234',
     role: 'caregiver',
   },

@@ -1,4 +1,3 @@
-import Michael from '../src/assets/Caregiverprofile/Michael.jpeg'
 import Emily from '../src/assets/Caregiverprofile/Emily.jpeg'
 
 export type Review = {
@@ -100,7 +99,7 @@ const CaregiversData: Caregiver[] = [
   },
   {
     id: 2,
-    profileImage: Michael,
+    profileImage: 'https://res.cloudinary.com/i7mccbnx/image/upload/v1788631373/Michael.jpg',
     name: 'Michael Lee',
     role: 'Certified Nursing Assistant',
     location: 'Kandy, Sri Lanka',
