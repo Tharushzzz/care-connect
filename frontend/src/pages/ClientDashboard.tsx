@@ -17,6 +17,7 @@ import {
   X
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import CaregiversData from '../../config/Caregivers';
 import UsersData from '../../config/User';
 import type { User } from '../../config/User';
 import NotificationsData from '../../config/Notifications';
@@ -28,7 +29,7 @@ const defaultNotifications: NotificationItem[] = NotificationsData;
 const defaultUnreadMessagesCount: number = MessagesData.filter((m) => m.unread).length;
 
 export const DashboardLayout: React.FC = () => {
-  const { logout } = useAuth();
+  const { user: authUser, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const pathname = location.pathname;
@@ -41,7 +42,31 @@ export const DashboardLayout: React.FC = () => {
   const userMenuRef = useRef<HTMLDivElement>(null);
   const notificationMenuRef = useRef<HTMLDivElement>(null);
 
-  const user = defaultUser;
+  const user = {
+    name: authUser?.name || defaultUser.name,
+    email: authUser?.email || defaultUser.email,
+    role: authUser?.role || defaultUser.role,
+    avatar: authUser !== null && authUser !== undefined
+      ? (authUser.avatar || (authUser as any)?.profileImage || '')
+      : '',
+  };
+
+  let photoUrl = user.avatar;
+  if (!photoUrl) {
+    const matchedCaregiver = CaregiversData.find(
+      (c) => c.name.toLowerCase() === user.name.toLowerCase()
+    );
+    if (matchedCaregiver?.profileImage) {
+      photoUrl = matchedCaregiver.profileImage;
+    }
+  }
+
+  const [avatarError, setAvatarError] = useState(false);
+
+  useEffect(() => {
+    setAvatarError(false);
+  }, [photoUrl]);
+
   const unreadNotificationsCount = notifications.filter((n) => !n.read).length;
   const unreadMessagesCount = defaultUnreadMessagesCount;
 
@@ -370,10 +395,11 @@ export const DashboardLayout: React.FC = () => {
                     : 'bg-white border-[#E0EBF3] hover:border-[#BCE0F5]'
                 }`}
               >
-                {user.avatar ? (
+                {photoUrl && !avatarError ? (
                   <img
-                    src={user.avatar}
+                    src={photoUrl}
                     alt={user.name}
+                    onError={() => setAvatarError(true)}
                     className="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover ring-2 ring-white"
                   />
                 ) : (
@@ -389,9 +415,22 @@ export const DashboardLayout: React.FC = () => {
 
               {isUserDropdownOpen && (
                 <div className="absolute right-0 top-full mt-3 w-56 bg-white rounded-xl shadow-2xl border border-[#E3EDF6] overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                  <div className="p-3 border-b border-[#E2EEF7] bg-[#F5FAFE]">
-                    <h4 className="text-xs font-bold text-[#0D182B] truncate">{user.name}</h4>
-                    <p className="text-[10px] text-gray-500 truncate">{user.email}</p>
+                  <div className="p-3 border-b border-[#E2EEF7] bg-[#F5FAFE] flex items-center gap-2.5">
+                    {photoUrl && !avatarError ? (
+                      <img
+                        src={photoUrl}
+                        alt={user.name}
+                        className="w-9 h-9 rounded-full object-cover ring-2 ring-white shrink-0"
+                      />
+                    ) : (
+                      <div className="w-9 h-9 rounded-full bg-[#0686CD] text-white flex items-center justify-center font-bold text-xs shrink-0 ring-2 ring-white uppercase">
+                        {user.name.charAt(0)}
+                      </div>
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <h4 className="text-xs font-bold text-[#0D182B] truncate">{user.name}</h4>
+                      <p className="text-[10px] text-gray-500 truncate">{user.email}</p>
+                    </div>
                   </div>
                   <div className="p-1.5 space-y-0.5 text-xs">
                     <Link

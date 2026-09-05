@@ -22,10 +22,12 @@ import {
 } from 'lucide-react';
 import UsersData from '../../../config/User';
 import type { User } from '../../../config/User';
+import CaregiversData from '../../../config/Caregivers';
 import NotificationsData from '../../../config/Notifications';
 import type { NotificationItem } from '../../../config/Notifications';
 import MessagesData from '../../../config/Messages';
 import type { MessageItem } from '../../../config/Messages';
+import { useAuth } from '../../hooks/useAuth';
 
 export type { NotificationItem, MessageItem };
 
@@ -41,11 +43,44 @@ const defaultNotifications: NotificationItem[] = NotificationsData;
 const defaultUnreadMessagesCount: number = MessagesData.filter((m) => m.unread).length;
 
 export const LoginHeader: React.FC<LoginHeaderProps> = ({
-  user = defaultUser,
+  user: propUser,
   notifications: initialNotifications = defaultNotifications,
   unreadMessagesCount = defaultUnreadMessagesCount,
   onLogout,
 }) => {
+  const { user: authUser, logout: authLogout } = useAuth();
+
+  const user: User = {
+    id: propUser?.id || authUser?._id || authUser?.id || defaultUser.id,
+    name: authUser?.name || propUser?.name || defaultUser.name,
+    email: authUser?.email || propUser?.email || defaultUser.email,
+    phone: authUser?.phone || propUser?.phone || defaultUser.phone,
+    role: authUser?.role || propUser?.role || defaultUser.role,
+    avatar: authUser !== null && authUser !== undefined
+      ? (authUser.avatar || (authUser as any)?.profileImage || '')
+      : (propUser?.avatar || ''),
+    password: '',
+  };
+
+  // Find caregiver photo fallback if avatar is not set or empty
+  let photoUrl = user.avatar;
+  if (!photoUrl) {
+    const matchedCaregiver = CaregiversData.find(
+      (c) => c.name.toLowerCase() === user.name.toLowerCase()
+    );
+    if (matchedCaregiver?.profileImage) {
+      photoUrl = matchedCaregiver.profileImage;
+    }
+  }
+
+  const [imageError, setImageError] = useState(false);
+  const [dropdownImageError, setDropdownImageError] = useState(false);
+
+  useEffect(() => {
+    setImageError(false);
+    setDropdownImageError(false);
+  }, [photoUrl]);
+
   const isCaregiver = user.role === 'caregiver';
   const isAdmin = user.role === 'admin';
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
@@ -60,6 +95,37 @@ export const LoginHeader: React.FC<LoginHeaderProps> = ({
   const location = useLocation();
 
   const unreadNotificationsCount = notifications.filter((n) => !n.read).length;
+
+  // Load live notifications from MongoDB API
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const token = localStorage.getItem('careconnect_token');
+        const res = await fetch('/api/notifications', {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data)) {
+            setNotifications(
+              data.map((n: any) => ({
+                id: n._id || n.notificationId || n.id,
+                title: n.title,
+                description: n.description,
+                time: n.time,
+                read: n.read,
+                type: n.type,
+              }))
+            );
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load notifications from MongoDB:', err);
+      }
+    };
+
+    fetchNotifications();
+  }, []);
 
   const closeAllDropdowns = () => {
     setIsUserDropdownOpen(false);
@@ -116,14 +182,24 @@ export const LoginHeader: React.FC<LoginHeaderProps> = ({
     }, 100);
   };
 
-  const markAllNotificationsAsRead = () => {
+  const markAllNotificationsAsRead = async () => {
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    try {
+      await fetch('/api/notifications/read-all', { method: 'PATCH' });
+    } catch (err) {
+      console.error('Error marking all notifications read:', err);
+    }
   };
 
-  const markNotificationAsRead = (id: string) => {
+  const markNotificationAsRead = async (id: string) => {
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, read: true } : n))
     );
+    try {
+      await fetch(`/api/notifications/${id}/read`, { method: 'PATCH' });
+    } catch (err) {
+      console.error('Error marking notification read in MongoDB:', err);
+    }
   };
 
   const handleLogout = () => {
@@ -131,6 +207,7 @@ export const LoginHeader: React.FC<LoginHeaderProps> = ({
     if (onLogout) {
       onLogout();
     } else {
+      authLogout();
       navigate('/');
     }
   };
@@ -377,10 +454,11 @@ export const LoginHeader: React.FC<LoginHeaderProps> = ({
               >
                 {/* Avatar with online status */}
                 <div className="relative">
-                  {user.avatar ? (
+                  {photoUrl && !imageError ? (
                     <img
-                      src={user.avatar}
+                      src={photoUrl}
                       alt={user.name}
+                      onError={() => setImageError(true)}
                       className="w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full object-cover ring-2 ring-white"
                     />
                   ) : (
@@ -414,10 +492,11 @@ export const LoginHeader: React.FC<LoginHeaderProps> = ({
                   {/* Account Header */}
                   <div className={`p-4 ${isAdmin ? 'bg-gradient-to-br from-purple-50 via-indigo-50/50 to-white border-b border-purple-100' : 'bg-gradient-to-br from-[#F5FAFE] to-[#EAF5FD] border-b border-[#E2EEF7]'}`}>
                     <div className="flex items-center gap-3">
-                      {user.avatar ? (
+                      {photoUrl && !dropdownImageError ? (
                         <img
-                          src={user.avatar}
+                          src={photoUrl}
                           alt={user.name}
+                          onError={() => setDropdownImageError(true)}
                           className="w-12 h-12 rounded-full object-cover ring-3 ring-white shadow-xs"
                         />
                       ) : (

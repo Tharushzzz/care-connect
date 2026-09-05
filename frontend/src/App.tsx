@@ -39,7 +39,7 @@ function App() {
     name: user.name,
     email: user.email,
     phone: user.phone || '',
-    avatar: user.avatar || '',
+    avatar: user.avatar || (user as any).profileImage || '',
     password: '',
     role: user.role,
   } : undefined;

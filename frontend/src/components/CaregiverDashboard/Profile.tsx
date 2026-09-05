@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import sarahAvatar from '../../assets/Caregiverprofile/Sarah.jpeg';
 import {
   Camera,
   Trash2,
@@ -22,14 +21,17 @@ interface Certification {
 export const CaregiverProfile: React.FC = () => {
   const { user, updateProfile } = useAuth();
 
-  const [profilePic, setProfilePic] = useState<string>(user?.avatar || sarahAvatar);
+  const isSarah = user?.email === 'sarah@example.com' || user?.name?.toLowerCase().includes('sarah');
+  const [profilePic, setProfilePic] = useState<string>(
+    user?.avatar || (isSarah ? 'https://res.cloudinary.com/i7mccbnx/image/upload/v1788630765/Sarah.jpg' : '')
+  );
   const [firstName, setFirstName] = useState(
-    user?.firstName || (user?.name ? user.name.split(' ')[0] : 'Sarah')
+    user?.firstName || (user?.name ? user.name.split(' ')[0] : (isSarah ? 'Sarah' : 'Caregiver'))
   );
   const [lastName, setLastName] = useState(
-    user?.lastName || (user?.name ? user.name.split(' ').slice(1).join(' ') : 'Jenkins')
+    user?.lastName || (user?.name ? user.name.split(' ').slice(1).join(' ') : (isSarah ? 'Jenkins' : ''))
   );
-  const [email, setEmail] = useState(user?.email || 'sarah.j@example.com');
+  const [email, setEmail] = useState(user?.email || (isSarah ? 'sarah@example.com' : ''));
   const [phone, setPhone] = useState(user?.phone || '0712554568');
   const [location, setLocation] = useState('Colombo, Sri Lanka');
   const [title, setTitle] = useState(user?.title || 'Registered Nurse (RN)');
@@ -37,7 +39,7 @@ export const CaregiverProfile: React.FC = () => {
     user?.hourlyRate ? String(user.hourlyRate) : '3500'
   );
   const [experience, setExperience] = useState(
-    user?.experience ? String(user.experience) : '8'
+    user?.experience ? String(user.experience) : '5'
   );
   const [bio, setBio] = useState(
     user?.bio ||
@@ -55,7 +57,9 @@ export const CaregiverProfile: React.FC = () => {
       if (user.hourlyRate) setHourlyRate(String(user.hourlyRate));
       if (user.experience) setExperience(String(user.experience));
       if (user.bio) setBio(user.bio);
-      if (user.avatar) setProfilePic(user.avatar);
+      if (user.avatar !== undefined) {
+        setProfilePic(user.avatar || '');
+      }
     }
   }, [user]);
 
@@ -131,6 +135,7 @@ export const CaregiverProfile: React.FC = () => {
       hourlyRate: Number(hourlyRate) || 0,
       experience: Number(experience) || 0,
       bio,
+      avatar: profilePic,
     });
     setSavedSuccess(true);
     setTimeout(() => setSavedSuccess(false), 3000);
@@ -161,21 +166,45 @@ export const CaregiverProfile: React.FC = () => {
       <form onSubmit={handleSave} className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs p-6 sm:p-8 space-y-8">
         {/* 1. Profile Picture Section */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-5 pb-6 border-b border-slate-100">
-          <div className="relative w-20 h-20 rounded-full overflow-hidden ring-4 ring-slate-100 shrink-0">
-            <img
-              src={profilePic}
-              alt="Profile avatar"
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer">
+          <div className="relative w-20 h-20 rounded-full overflow-hidden ring-4 ring-slate-100 shrink-0 flex items-center justify-center bg-teal-100 text-teal-800">
+            {profilePic ? (
+              <img
+                src={profilePic}
+                alt="Profile avatar"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <span className="font-bold text-2xl uppercase">
+                {firstName ? firstName.charAt(0) : 'C'}
+              </span>
+            )}
+            <label
+              htmlFor="caregiver-avatar-upload"
+              className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer"
+            >
               <Camera className="w-5 h-5 text-white" />
-            </div>
+              <input
+                id="caregiver-avatar-upload"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                      setProfilePic(reader.result as string);
+                    };
+                    reader.readAsDataURL(e.target.files[0]);
+                  }
+                }}
+              />
+            </label>
           </div>
 
           <div className="space-y-1.5 flex-1">
             <h3 className="text-sm font-bold text-slate-900">Profile Picture</h3>
             <p className="text-xs text-slate-500">
-              A clear, professional headshot builds trust with families.
+              A clear, professional headshot builds trust with families. If no photo is uploaded, your name initial will be shown.
             </p>
             <div className="flex items-center gap-2.5 pt-1.5">
               <label className="px-3.5 py-1.5 rounded-xl border border-teal-600 text-teal-700 hover:bg-teal-50 text-xs font-semibold cursor-pointer transition-colors">
@@ -186,18 +215,24 @@ export const CaregiverProfile: React.FC = () => {
                   className="hidden"
                   onChange={(e) => {
                     if (e.target.files && e.target.files[0]) {
-                      setProfilePic(URL.createObjectURL(e.target.files[0]));
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setProfilePic(reader.result as string);
+                      };
+                      reader.readAsDataURL(e.target.files[0]);
                     }
                   }}
                 />
               </label>
-              <button
-                type="button"
-                onClick={() => setProfilePic('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80')}
-                className="px-3.5 py-1.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold transition-colors"
-              >
-                Remove
-              </button>
+              {profilePic && (
+                <button
+                  type="button"
+                  onClick={() => setProfilePic('')}
+                  className="px-3.5 py-1.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold transition-colors cursor-pointer"
+                >
+                  Remove Photo
+                </button>
+              )}
             </div>
           </div>
         </div>

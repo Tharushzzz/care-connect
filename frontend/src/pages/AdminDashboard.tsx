@@ -7,17 +7,14 @@ import {
   ShieldCheck,
   Calendar,
   DollarSign,
-  Settings as SettingsIcon,
   LogOut,
-  Menu,
-  X,
   ArrowLeft,
   CheckCircle2,
   Clock,
-  UserCheck,
   TrendingUp,
   Search,
-  Filter,
+  Menu,
+  X,
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
@@ -28,15 +25,43 @@ export const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'verifications' | 'bookings'>('overview');
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [avatarError, setAvatarError] = useState(false);
 
-  // Example users data for admin view
-  const [userList, setUserList] = useState([
-    { id: '1', name: 'Eleanor Vance', email: 'eleanor@example.com', role: 'family', status: 'Active', joined: '2026-08-14' },
-    { id: '2', name: 'Sarah Jenkins', email: 'sarah@example.com', role: 'caregiver', status: 'Pending Verification', joined: '2026-08-20' },
-    { id: '3', name: 'William Smith', email: 'william@example.com', role: 'family', status: 'Active', joined: '2026-08-25' },
-    { id: '4', name: 'Michael Lee', email: 'michael@example.com', role: 'caregiver', status: 'Verified', joined: '2026-08-28' },
-    { id: '5', name: 'System Admin', email: 'admin@admin.com', role: 'admin', status: 'Active', joined: '2026-09-01' },
-  ]);
+  const adminPhoto = user?.avatar || (user as any)?.profileImage;
+
+  useEffect(() => {
+    setAvatarError(false);
+  }, [adminPhoto]);
+
+  // Live users and bookings from MongoDB
+  const [userList, setUserList] = useState<any[]>([]);
+  const [bookingList, setBookingList] = useState<any[]>([]);
+
+  // Fetch users and bookings from backend API
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [usersRes, bookingsRes] = await Promise.all([
+          fetch('/api/auth/users'),
+          fetch('/api/bookings'),
+        ]);
+
+        if (usersRes.ok) {
+          const usersData = await usersRes.json();
+          setUserList(usersData);
+        }
+
+        if (bookingsRes.ok) {
+          const bookingsData = await bookingsRes.json();
+          setBookingList(bookingsData);
+        }
+      } catch (err) {
+        console.error('Error fetching admin data from MongoDB:', err);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // Handle logout
   const handleLogout = () => {
@@ -44,23 +69,104 @@ export const AdminDashboard: React.FC = () => {
     navigate('/');
   };
 
-  const handleApproveCaregiver = (id: string) => {
+  const handleApproveCaregiver = async (id: string) => {
     setUserList((prev) =>
-      prev.map((u) => (u.id === id ? { ...u, status: 'Verified' } : u))
+      prev.map((u) => (u.id === id || u._id === id ? { ...u, status: 'Verified' } : u))
     );
+
+    try {
+      await fetch(`/api/auth/users/${id}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'Verified' }),
+      });
+    } catch (err) {
+      console.error('Failed to update verification status in MongoDB:', err);
+    }
   };
 
   const filteredUsers = userList.filter(
     (u) =>
-      u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      u.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      u.role.toLowerCase().includes(searchQuery.toLowerCase())
+      (u.name && u.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (u.email && u.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (u.role && u.role.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   const pendingVerifications = userList.filter((u) => u.status === 'Pending Verification');
 
+  const filteredBookings = bookingList.filter(
+    (b) =>
+      (b.bookingCode && b.bookingCode.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (b.caregiverName && b.caregiverName.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (b.serviceType && b.serviceType.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex font-sans antialiased text-slate-800">
+      {/* Mobile Drawer */}
+      {isMobileSidebarOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden flex">
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs"
+            onClick={() => setIsMobileSidebarOpen(false)}
+          />
+          <aside className="relative flex flex-col w-64 bg-[#0F172A] text-white select-none shadow-2xl z-10">
+            <div className="h-17 px-6 flex items-center justify-between border-b border-white/10">
+              <Link to="/" className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-white p-1">
+                  <img src={logo} alt="CareConnect Logo" className="w-full h-full object-contain" />
+                </div>
+                <span className="text-xl font-bold text-white">CareConnect</span>
+              </Link>
+              <button
+                onClick={() => setIsMobileSidebarOpen(false)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <nav className="flex-1 px-3.5 py-4 space-y-1 overflow-y-auto">
+              <button
+                onClick={() => { setActiveTab('overview'); setIsMobileSidebarOpen(false); }}
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium cursor-pointer ${
+                  activeTab === 'overview' ? 'bg-purple-600 text-white' : 'text-slate-300'
+                }`}
+              >
+                <LayoutDashboard className="w-4.5 h-4.5" />
+                <span>Overview</span>
+              </button>
+              <button
+                onClick={() => { setActiveTab('users'); setIsMobileSidebarOpen(false); }}
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium cursor-pointer ${
+                  activeTab === 'users' ? 'bg-purple-600 text-white' : 'text-slate-300'
+                }`}
+              >
+                <Users className="w-4.5 h-4.5" />
+                <span>User Management</span>
+              </button>
+              <button
+                onClick={() => { setActiveTab('verifications'); setIsMobileSidebarOpen(false); }}
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium cursor-pointer ${
+                  activeTab === 'verifications' ? 'bg-purple-600 text-white' : 'text-slate-300'
+                }`}
+              >
+                <ShieldCheck className="w-4.5 h-4.5" />
+                <span>Verifications</span>
+              </button>
+              <button
+                onClick={() => { setActiveTab('bookings'); setIsMobileSidebarOpen(false); }}
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium cursor-pointer ${
+                  activeTab === 'bookings' ? 'bg-purple-600 text-white' : 'text-slate-300'
+                }`}
+              >
+                <Calendar className="w-4.5 h-4.5" />
+                <span>Platform Bookings</span>
+              </button>
+            </nav>
+          </aside>
+        </div>
+      )}
+
       {/* Desktop Sidebar (Royal Indigo / Slate) */}
       <aside className="hidden lg:flex flex-col w-64 bg-[#0F172A] text-white shrink-0 select-none shadow-xl border-r border-[#1E293B]">
         {/* Brand */}
@@ -214,8 +320,17 @@ export const AdminDashboard: React.FC = () => {
             </Link>
 
             <div className="flex items-center gap-2.5 pl-3 border-l border-slate-200">
-              <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 text-white font-bold text-sm flex items-center justify-center ring-2 ring-purple-200 uppercase">
-                {user?.name ? user.name.charAt(0) : 'A'}
+              <div className="w-9 h-9 rounded-full ring-2 ring-purple-200 overflow-hidden shrink-0 flex items-center justify-center bg-gradient-to-tr from-purple-600 to-indigo-600 text-white font-bold text-sm uppercase">
+                {adminPhoto && !avatarError ? (
+                  <img
+                    src={adminPhoto}
+                    alt={user?.name || 'Administrator'}
+                    onError={() => setAvatarError(true)}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span>{user?.name ? user.name.charAt(0) : 'A'}</span>
+                )}
               </div>
               <div className="hidden sm:block text-left">
                 <p className="text-xs font-bold text-slate-900">{user?.name || 'Administrator'}</p>
@@ -307,87 +422,158 @@ export const AdminDashboard: React.FC = () => {
               </div>
             </div>
 
-            {/* Users Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                    <th className="py-3 px-6">User</th>
-                    <th className="py-3 px-6">Role</th>
-                    <th className="py-3 px-6">Status</th>
-                    <th className="py-3 px-6">Joined Date</th>
-                    <th className="py-3 px-6 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 text-sm">
-                  {filteredUsers.length === 0 ? (
-                    <tr>
-                      <td colSpan={5} className="py-8 text-center text-slate-500 text-sm">
-                        No users matching your search criteria
-                      </td>
+            {/* Content Table */}
+            {activeTab === 'bookings' ? (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                      <th className="py-3 px-6">Booking Code</th>
+                      <th className="py-3 px-6">Caregiver</th>
+                      <th className="py-3 px-6">Service Type</th>
+                      <th className="py-3 px-6">Schedule</th>
+                      <th className="py-3 px-6">Amount</th>
+                      <th className="py-3 px-6 text-right">Status</th>
                     </tr>
-                  ) : (
-                    filteredUsers.map((item) => (
-                      <tr key={item.id} className="hover:bg-slate-50/70 transition-colors">
-                        <td className="py-3.5 px-6">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-700 font-bold text-xs flex items-center justify-center uppercase">
-                              {item.name.charAt(0)}
-                            </div>
-                            <div>
-                              <p className="font-semibold text-slate-900 text-xs">{item.name}</p>
-                              <p className="text-[11px] text-slate-500">{item.email}</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="py-3.5 px-6">
-                          <span
-                            className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase ${
-                              item.role === 'admin'
-                                ? 'bg-purple-100 text-purple-700 border border-purple-200'
-                                : item.role === 'caregiver'
-                                ? 'bg-teal-50 text-teal-700 border border-teal-200'
-                                : 'bg-sky-50 text-sky-700 border border-sky-200'
-                            }`}
-                          >
-                            {item.role}
-                          </span>
-                        </td>
-                        <td className="py-3.5 px-6">
-                          <span
-                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
-                              item.status === 'Verified' || item.status === 'Active'
-                                ? 'bg-emerald-50 text-emerald-700'
-                                : 'bg-amber-50 text-amber-700'
-                            }`}
-                          >
-                            {item.status === 'Verified' || item.status === 'Active' ? (
-                              <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                            ) : (
-                              <Clock className="w-3 h-3 text-amber-600" />
-                            )}
-                            {item.status}
-                          </span>
-                        </td>
-                        <td className="py-3.5 px-6 text-xs text-slate-500">{item.joined}</td>
-                        <td className="py-3.5 px-6 text-right">
-                          {item.status === 'Pending Verification' ? (
-                            <button
-                              onClick={() => handleApproveCaregiver(item.id)}
-                              className="px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors cursor-pointer"
-                            >
-                              Approve
-                            </button>
-                          ) : (
-                            <span className="text-xs text-slate-400 font-medium">Standard</span>
-                          )}
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-sm">
+                    {filteredBookings.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="py-8 text-center text-slate-500 text-sm">
+                          No bookings found in MongoDB database
                         </td>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
+                    ) : (
+                      filteredBookings.map((b) => (
+                        <tr key={b._id || b.bookingCode} className="hover:bg-slate-50/70 transition-colors">
+                          <td className="py-3.5 px-6 font-mono text-xs font-semibold text-purple-700">
+                            {b.bookingCode || 'BK_001'}
+                          </td>
+                          <td className="py-3.5 px-6">
+                            <div className="flex items-center gap-2.5">
+                              {b.caregiverAvatar && (
+                                <img src={b.caregiverAvatar} alt={b.caregiverName} className="w-7 h-7 rounded-full object-cover" />
+                              )}
+                              <div>
+                                <p className="font-semibold text-slate-900 text-xs">{b.caregiverName}</p>
+                                <p className="text-[11px] text-slate-500">{b.caregiverRole}</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="py-3.5 px-6 text-xs text-slate-700 font-medium">
+                            {b.serviceType}
+                          </td>
+                          <td className="py-3.5 px-6 text-xs text-slate-500">
+                            {b.startDate} • {b.startTime || '09:00 AM'}
+                          </td>
+                          <td className="py-3.5 px-6 text-xs font-bold text-slate-800">
+                            Rs. {Number(b.totalPrice || 0).toLocaleString()}
+                          </td>
+                          <td className="py-3.5 px-6 text-right">
+                            <span
+                              className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                                b.status === 'Completed'
+                                  ? 'bg-emerald-50 text-emerald-700'
+                                  : b.status === 'Scheduled'
+                                  ? 'bg-sky-50 text-sky-700'
+                                  : b.status === 'Cancelled'
+                                  ? 'bg-rose-50 text-rose-700'
+                                  : 'bg-amber-50 text-amber-700'
+                              }`}
+                            >
+                              {b.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                      <th className="py-3 px-6">User</th>
+                      <th className="py-3 px-6">Role</th>
+                      <th className="py-3 px-6">Status</th>
+                      <th className="py-3 px-6">Joined Date</th>
+                      <th className="py-3 px-6 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-sm">
+                    {(activeTab === 'verifications' ? pendingVerifications : filteredUsers).length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="py-8 text-center text-slate-500 text-sm">
+                          {activeTab === 'verifications'
+                            ? 'No pending caregiver verification requests'
+                            : 'No users matching your search criteria'}
+                        </td>
+                      </tr>
+                    ) : (
+                      (activeTab === 'verifications' ? pendingVerifications : filteredUsers).map((item) => (
+                        <tr key={item.id || item._id} className="hover:bg-slate-50/70 transition-colors">
+                          <td className="py-3.5 px-6">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-700 font-bold text-xs flex items-center justify-center uppercase">
+                                {item.name.charAt(0)}
+                              </div>
+                              <div>
+                                <p className="font-semibold text-slate-900 text-xs">{item.name}</p>
+                                <p className="text-[11px] text-slate-500">{item.email}</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="py-3.5 px-6">
+                            <span
+                              className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase ${
+                                item.role === 'admin'
+                                  ? 'bg-purple-100 text-purple-700 border border-purple-200'
+                                  : item.role === 'caregiver'
+                                  ? 'bg-teal-50 text-teal-700 border border-teal-200'
+                                  : 'bg-sky-50 text-sky-700 border border-sky-200'
+                              }`}
+                            >
+                              {item.role}
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-6">
+                            <span
+                              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
+                                item.status === 'Verified' || item.status === 'Active'
+                                  ? 'bg-emerald-50 text-emerald-700'
+                                  : 'bg-amber-50 text-amber-700'
+                              }`}
+                            >
+                              {item.status === 'Verified' || item.status === 'Active' ? (
+                                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                              ) : (
+                                <Clock className="w-3 h-3 text-amber-600" />
+                              )}
+                              {item.status}
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-6 text-xs text-slate-500">{item.joined}</td>
+                          <td className="py-3.5 px-6 text-right">
+                            {item.status === 'Pending Verification' ? (
+                              <button
+                                onClick={() => handleApproveCaregiver(item.id || item._id)}
+                                className="px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+                              >
+                                Approve
+                              </button>
+                            ) : (
+                              <span className="text-xs text-slate-400 font-medium">Standard</span>
+                            )}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </main>
       </div>

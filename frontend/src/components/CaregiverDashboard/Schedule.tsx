@@ -5,10 +5,7 @@ import {
   MapPin,
   CheckCircle2,
   Navigation,
-  MessageSquare,
-  Play,
-  Calendar as CalendarIcon,
-  ChevronRight
+  MessageSquare
 } from 'lucide-react';
 
 interface Shift {

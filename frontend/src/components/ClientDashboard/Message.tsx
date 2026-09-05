@@ -32,111 +32,50 @@ export const Message: React.FC = () => {
     return cg ? cg.profileImage : '';
   };
 
-  // Chat threads setup
-  const [threads, setThreads] = useState<ChatThread[]>([
-    {
-      id: 'msg_1',
-      caregiverId: 1,
-      name: 'Sarah Jenkins',
-      role: 'Registered Nurse (RN)',
-      avatar: getCaregiverAvatar(1),
-      lastMessage: 'I have arrived and updated today’s care notes for your review.',
-      time: '10:15 AM',
-      unread: true,
-      unreadCount: 1,
-      online: true,
-      messages: [
-        {
-          id: '1',
-          sender: 'them',
-          text: "I'm on my way to Eleanor's home. I should be there in about 15 minutes.",
-          time: '09:45 AM'
-        },
-        {
-          id: '2',
-          sender: 'me',
-          text: 'Great! Thank you for the update, Sarah. See you soon!',
-          time: '09:48 AM'
-        },
-        {
-          id: '3',
-          sender: 'them',
-          text: 'I have arrived and updated today’s care notes for your review.',
-          time: '10:15 AM'
-        }
-      ]
-    },
-    {
-      id: 'msg_2',
-      caregiverId: 2,
-      name: 'Michael Lee',
-      role: 'Certified Nursing Assistant',
-      avatar: getCaregiverAvatar(2),
-      lastMessage: 'Tomorrow’s afternoon schedule works great for me!',
-      time: 'Yesterday',
-      unread: true,
-      unreadCount: 1,
-      online: true,
-      messages: [
-        {
-          id: '1',
-          sender: 'them',
-          text: 'Hello Eleanor, just checking in about our schedule for tomorrow.',
-          time: '03:00 PM'
-        },
-        {
-          id: '2',
-          sender: 'me',
-          text: 'Yes, is 1:00 PM still good for you?',
-          time: '03:05 PM'
-        },
-        {
-          id: '3',
-          sender: 'them',
-          text: 'Tomorrow’s afternoon schedule works great for me!',
-          time: '03:10 PM'
-        }
-      ]
-    },
-    {
-      id: 'msg_3',
-      caregiverId: 3,
-      name: 'Emily Davis',
-      role: 'Licensed Practical Nurse (LPN)',
-      avatar: getCaregiverAvatar(3),
-      lastMessage: 'Thank you for confirming the booking details.',
-      time: 'Aug 25',
-      unread: false,
-      online: false,
-      messages: [
-        {
-          id: '1',
-          sender: 'them',
-          text: 'Hi Eleanor, the check-in today went great. Mr. Vance took all his medications.',
-          time: '04:00 PM'
-        },
-        {
-          id: '2',
-          sender: 'me',
-          text: 'Excellent, thank you so much Emily!',
-          time: '04:05 PM'
-        },
-        {
-          id: '3',
-          sender: 'them',
-          text: 'Thank you for confirming the booking details.',
-          time: '04:10 PM'
-        }
-      ]
-    }
-  ]);
-
-  const [activeThreadId, setActiveThreadId] = useState('msg_1');
+  const [threads, setThreads] = useState<ChatThread[]>([]);
+  const [activeThreadId, setActiveThreadId] = useState<string>('');
   const [typedMessage, setTypedMessage] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [viewingChatPaneOnMobile, setViewingChatPaneOnMobile] = useState(false);
+  // Load threads from MongoDB API
+  useEffect(() => {
+    const fetchThreads = async () => {
+      try {
+        const res = await fetch('/api/messages');
+        if (res.ok) {
+          const data = await res.json();
+          const mapped: ChatThread[] = data.map((t: any) => ({
+            id: t._id || t.id,
+            caregiverId: t.caregiverId,
+            name: t.name,
+            role: t.role,
+            avatar: t.avatar || getCaregiverAvatar(t.caregiverId),
+            lastMessage: t.lastMessage,
+            time: t.time,
+            unread: t.unread,
+            unreadCount: t.unreadCount || 0,
+            online: t.online,
+            messages: (t.messages || []).map((m: any) => ({
+              id: m._id || m.id || String(Math.random()),
+              sender: m.sender,
+              text: m.text,
+              time: m.time,
+            })),
+          }));
+          setThreads(mapped);
+          if (mapped.length > 0) {
+            setActiveThreadId(mapped[0].id);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load messages from MongoDB:', err);
+      }
+    };
 
-  const activeThread = threads.find((t) => t.id === activeThreadId) || threads[0];
+    fetchThreads();
+  }, []);
+
+  const activeThread = threads.find((t) => t.id === activeThreadId) || threads[0] || null;
 
   // Scroll to bottom of chat when active thread changes or new message sent
   const scrollToBottom = () => {
@@ -145,11 +84,11 @@ export const Message: React.FC = () => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [activeThread.messages, activeThreadId]);
+  }, [activeThread?.messages, activeThreadId]);
 
   // Mark active thread messages as read
   useEffect(() => {
-    if (activeThread.unread) {
+    if (activeThread?.unread && activeThread?.id) {
       setThreads((prev) =>
         prev.map((t) =>
           t.id === activeThread.id
@@ -157,27 +96,32 @@ export const Message: React.FC = () => {
             : t
         )
       );
+      fetch(`/api/messages/${activeThread.id}/read`, { method: 'PATCH' }).catch(console.error);
     }
-  }, [activeThreadId]);
+  }, [activeThreadId, activeThread?.unread]);
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!typedMessage.trim()) return;
+    if (!typedMessage.trim() || !activeThread) return;
+
+    const currentText = typedMessage.trim();
+    const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
     const newMsg: MessageLog = {
       id: Date.now().toString(),
       sender: 'me',
-      text: typedMessage.trim(),
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      text: currentText,
+      time: currentTime
     };
 
+    // Optimistic UI update
     setThreads((prev) =>
       prev.map((t) => {
         if (t.id === activeThread.id) {
           return {
             ...t,
-            lastMessage: newMsg.text,
-            time: newMsg.time,
+            lastMessage: currentText,
+            time: currentTime,
             messages: [...t.messages, newMsg]
           };
         }
@@ -186,6 +130,22 @@ export const Message: React.FC = () => {
     );
 
     setTypedMessage('');
+
+    try {
+      const targetThreadId = activeThread.id;
+      await fetch(`/api/messages/${targetThreadId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text: currentText,
+          sender: 'me',
+        }),
+      });
+    } catch (err) {
+      console.error('Error sending message to MongoDB:', err);
+    }
   };
 
   const filteredThreads = threads.filter(t =>

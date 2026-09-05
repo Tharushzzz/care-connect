@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Heart,
@@ -21,11 +21,35 @@ import type { Caregiver } from '../../../config/Caregivers';
 
 export const SavedCaregivers: React.FC = () => {
   // Initial state loaded with popular caregivers as saved
-  const [savedCaregivers, setSavedCaregivers] = useState<Caregiver[]>(CaregiversData.slice(0, 3));
+  const [savedCaregivers, setSavedCaregivers] = useState<Caregiver[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSpecialty, setSelectedSpecialty] = useState('All');
   const [sortBy, setSortBy] = useState<'rating' | 'experience' | 'name'>('rating');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchSavedCaregivers = async () => {
+      try {
+        const res = await fetch('/api/caregivers');
+        if (res.ok) {
+          const allCgs: Caregiver[] = await res.json();
+          const stored = localStorage.getItem('careconnect_saved_caregivers');
+          const savedIds: number[] = stored ? JSON.parse(stored) : [];
+          if (savedIds.length > 0) {
+            setSavedCaregivers(allCgs.filter(c => savedIds.includes(c.id)));
+          } else {
+            // Default show the caregivers
+            setSavedCaregivers(allCgs.slice(0, 3));
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching caregivers from MongoDB:', err);
+        setSavedCaregivers(CaregiversData.slice(0, 3));
+      }
+    };
+
+    fetchSavedCaregivers();
+  }, []);
 
   // Show temporary toast notification
   const showToast = (msg: string) => {
@@ -37,7 +61,18 @@ export const SavedCaregivers: React.FC = () => {
 
   // Remove a caregiver from the saved list
   const handleRemove = (id: number, name: string) => {
-    setSavedCaregivers((prev) => prev.filter((cg) => cg.id !== id));
+    setSavedCaregivers((prev) => {
+      const updated = prev.filter((cg) => cg.id !== id);
+      try {
+        const stored = localStorage.getItem('careconnect_saved_caregivers');
+        const savedIds: number[] = stored ? JSON.parse(stored) : [];
+        const newIds = savedIds.filter(i => i !== id);
+        localStorage.setItem('careconnect_saved_caregivers', JSON.stringify(newIds));
+      } catch (e) {
+        console.error(e);
+      }
+      return updated;
+    });
     showToast(`${name} was removed from your saved list`);
   };
 
@@ -45,11 +80,12 @@ export const SavedCaregivers: React.FC = () => {
   const handleClearAll = () => {
     if (savedCaregivers.length === 0) return;
     setSavedCaregivers([]);
+    localStorage.removeItem('careconnect_saved_caregivers');
     showToast('All saved caregivers have been cleared');
   };
 
   // Extract all unique specialties
-  const allSpecialties = ['All', ...Array.from(new Set(CaregiversData.flatMap((c) => c.specialties)))];
+  const allSpecialties = ['All', ...Array.from(new Set(savedCaregivers.flatMap((c) => c.specialties || [])))];
 
   // Filtering & Sorting
   const filteredCaregivers = savedCaregivers

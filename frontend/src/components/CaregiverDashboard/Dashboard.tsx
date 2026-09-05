@@ -7,7 +7,6 @@ import {
   CheckCircle2,
   MapPin,
   ArrowRight,
-  Sparkles,
   Check,
   X
 } from 'lucide-react';

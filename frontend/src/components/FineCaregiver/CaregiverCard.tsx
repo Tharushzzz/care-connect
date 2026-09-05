@@ -1,29 +1,104 @@
-import { useState } from 'react'
-import { MapPin, ShieldCheck, ShieldAlert, Star, Bookmark, UserX } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { MapPin, ShieldCheck, ShieldAlert, Star, Bookmark, UserX, Loader2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import caregiversData from '../../../config/Caregivers'
+import type { Caregiver } from '../../../config/Caregivers'
+import fallbackCaregivers from '../../../config/Caregivers'
 
 interface CaregiverCardProps {
   searchQuery?: string;
   onClearSearch?: () => void;
+  hourlyRate?: string;
+  experience?: string;
+  availability?: string;
+  selectedSpecialty?: string;
 }
 
-const CaregiverCard = ({ searchQuery = "", onClearSearch }: CaregiverCardProps) => {
-  const [savedIds, setSavedIds] = useState<number[]>([])
+const CaregiverCard = ({
+  searchQuery = "",
+  onClearSearch,
+  hourlyRate = "Any",
+  experience = "Any",
+  availability = "Any",
+  selectedSpecialty = "All",
+}: CaregiverCardProps) => {
+  const [caregivers, setCaregivers] = useState<Caregiver[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [savedIds, setSavedIds] = useState<(number | string)[]>(() => {
+    try {
+      const saved = localStorage.getItem('careconnect_saved_caregivers');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
 
-  const toggleSave = (id: number) => {
-    setSavedIds((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    )
+  const toggleSave = (id: number | string) => {
+    setSavedIds((prev) => {
+      const updated = prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id];
+      try {
+        localStorage.setItem('careconnect_saved_caregivers', JSON.stringify(updated));
+      } catch (err) {
+        console.error(err);
+      }
+      return updated;
+    });
+  };
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchCaregivers = async () => {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams();
+        if (searchQuery.trim()) params.append('search', searchQuery.trim());
+        if (selectedSpecialty && selectedSpecialty !== 'All') params.append('specialty', selectedSpecialty);
+        if (hourlyRate && hourlyRate !== 'Any') params.append('rate', hourlyRate);
+        if (experience && experience !== 'Any') params.append('experience', experience);
+        if (availability && availability !== 'Any') params.append('availability', availability);
+
+        const res = await fetch(`/api/caregivers?${params.toString()}`);
+        if (!res.ok) throw new Error('Failed to fetch from MongoDB API');
+        const data = await res.json();
+        if (isMounted) {
+          setCaregivers(data);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Error fetching caregivers from MongoDB, using fallback:', error);
+        // Fallback filter
+        const query = searchQuery.trim().toLowerCase();
+        const filtered = fallbackCaregivers.filter((c) => {
+          if (!query) return true;
+          return (
+            c.name.toLowerCase().includes(query) ||
+            c.role.toLowerCase().includes(query) ||
+            c.location.toLowerCase().includes(query)
+          );
+        });
+        if (isMounted) {
+          setCaregivers(filtered);
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchCaregivers();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [searchQuery, selectedSpecialty, hourlyRate, experience, availability]);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[300px] rounded-3xl bg-white p-8 ring-1 ring-[#E7EDF5]">
+        <Loader2 className="h-8 w-8 animate-spin text-[#0B8BD8] mb-3" />
+        <p className="text-sm font-medium text-slate-500">Loading caregivers from database...</p>
+      </div>
+    );
   }
 
-  const query = searchQuery.trim().toLowerCase()
-  const filteredCaregivers = caregiversData.filter((caregiver) => {
-    if (!query) return true
-    return caregiver.name.toLowerCase().includes(query)
-  })
-
-  if (filteredCaregivers.length === 0) {
+  if (caregivers.length === 0) {
     return (
       <div className="rounded-2xl sm:rounded-3xl bg-white p-8 sm:p-12 text-center shadow-[0_18px_40px_rgba(15,23,42,0.06)] ring-1 ring-[#E7EDF5]">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#F3F9FF] text-[#0B8BD8] mb-4">
@@ -31,7 +106,7 @@ const CaregiverCard = ({ searchQuery = "", onClearSearch }: CaregiverCardProps) 
         </div>
         <h3 className="text-lg sm:text-xl font-bold text-[#111827]">No caregivers found</h3>
         <p className="mt-2 text-sm text-[#6B7280] max-w-md mx-auto">
-          We couldn't find any caregivers matching <span className="font-semibold text-[#111827]">"{searchQuery}"</span>. Try adjusting your search term or search by specialty.
+          We couldn't find any caregivers matching your search criteria. Try adjusting your filters or search term.
         </p>
         {onClearSearch && (
           <button
@@ -43,20 +118,27 @@ const CaregiverCard = ({ searchQuery = "", onClearSearch }: CaregiverCardProps) 
           </button>
         )}
       </div>
-    )
+    );
   }
 
   return (
     <div className="space-y-4 sm:space-y-5">
-      {filteredCaregivers.map((caregiver) => (
+      {caregivers.map((caregiver) => (
         <article
-          key={caregiver.id}
-          className="rounded-2xl sm:rounded-4xl bg-white p-4 sm:p-5 shadow-[0_18px_40px_rgba(15,23,42,0.06)] ring-1 ring-[#E7EDF5]"
+          key={caregiver.id || caregiver._id}
+          className="rounded-2xl sm:rounded-4xl bg-white p-4 sm:p-5 shadow-[0_18px_40px_rgba(15,23,42,0.06)] ring-1 ring-[#E7EDF5] hover:shadow-md transition-shadow"
         >
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex items-start gap-3 sm:gap-4">
-              <div className="flex h-14 w-14 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-[#F0D8CB] to-[#D9B6A0] text-lg font-bold text-[#1F2937]">
-                <img src={caregiver.profileImage} alt={caregiver.name} className="h-14 w-14 sm:h-16 sm:w-16 rounded-full object-cover" />
+              <div className="flex h-14 w-14 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-[#F0D8CB] to-[#D9B6A0] text-lg font-bold text-[#1F2937] overflow-hidden">
+                <img
+                  src={caregiver.profileImage}
+                  alt={caregiver.name}
+                  className="h-full w-full rounded-full object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLElement).style.display = 'none';
+                  }}
+                />
               </div>
 
               <div>
@@ -80,6 +162,7 @@ const CaregiverCard = ({ searchQuery = "", onClearSearch }: CaregiverCardProps) 
                     {caregiver.location}
                   </span>
                   <span>{caregiver.experience}</span>
+                  <span className="font-semibold text-slate-800">{caregiver.rate}</span>
                 </div>
               </div>
             </div>
@@ -120,7 +203,9 @@ const CaregiverCard = ({ searchQuery = "", onClearSearch }: CaregiverCardProps) 
             <span>({caregiver.reviews} Reviews)</span>
           </div>
 
-          <p className="mt-3 sm:mt-4 max-w-3xl text-sm sm:text-base leading-6 sm:leading-7 text-[#4B5563]">{caregiver.description}</p>
+          <p className="mt-3 sm:mt-4 max-w-3xl text-sm sm:text-base leading-6 sm:leading-7 text-[#4B5563]">
+            {caregiver.description}
+          </p>
 
           <div className="mt-3 sm:mt-4 flex flex-wrap gap-2">
             {caregiver.specialties.map((specialty) => (
@@ -135,8 +220,7 @@ const CaregiverCard = ({ searchQuery = "", onClearSearch }: CaregiverCardProps) 
         </article>
       ))}
     </div>
-  )
-}
+  );
+};
 
-export default CaregiverCard
-
+export default CaregiverCard;

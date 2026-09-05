@@ -1,4 +1,3 @@
-import sahara from '../src/assets/Caregiverprofile/Sarah.jpeg'
 import Michael from '../src/assets/Caregiverprofile/Michael.jpeg'
 import Emily from '../src/assets/Caregiverprofile/Emily.jpeg'
 
@@ -12,6 +11,7 @@ export type Review = {
 
 export type Caregiver = {
   id: number
+  _id?: string
   profileImage: string
   name: string
   role: string
@@ -35,7 +35,7 @@ export type Caregiver = {
 const CaregiversData: Caregiver[] = [
   {
     id: 1,
-    profileImage: sahara,
+    profileImage: 'https://res.cloudinary.com/i7mccbnx/image/upload/v1788630765/Sarah.jpg',
     name: 'Sarah Jenkins',
     role: 'Registered Nurse (RN)',
     location: 'Colombo, Sri Lanka',

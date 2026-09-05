@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { ShieldCheck } from 'lucide-react';
 import CaregiversData from '../../config/Caregivers';
@@ -15,12 +15,25 @@ export const BookCare: React.FC = () => {
   const { id } = useParams<{ id?: string }>();
   const caregiverId = id ? parseInt(id, 10) : 1;
 
-  // Selected Caregiver (default to Sarah Jenkins if not specified)
-  const selectedCaregiver: Caregiver =
-    CaregiversData.find((c) => c.id === caregiverId) || CaregiversData[0];
+  // Selected Caregiver state (initialized with fallback, synced with MongoDB)
+  const [selectedCaregiver, setSelectedCaregiver] = useState<Caregiver>(() => {
+    return CaregiversData.find((c) => c.id === caregiverId) || CaregiversData[0];
+  });
 
   // Stepper state (1: Service, 2: Review, 3: Payment, 4: Finish)
   const [currentStep, setCurrentStep] = useState<number>(1);
+
+  useEffect(() => {
+    fetch(`/api/caregivers/${caregiverId}`)
+      .then((res) => {
+        if (!res.ok) throw new Error('Caregiver not found');
+        return res.json();
+      })
+      .then((data) => {
+        if (data && data.name) setSelectedCaregiver(data);
+      })
+      .catch((err) => console.log('Using local caregiver fallback:', err));
+  }, [caregiverId]);
 
   // Form State initialized from config/Booking.ts
   const [serviceType, setServiceType] = useState(defaultBookingData.serviceType);
@@ -60,12 +73,52 @@ export const BookCare: React.FC = () => {
     }
   };
 
-  const handleNextStep = () => {
-    if (currentStep < 4) {
-      if (currentStep === 3) {
-        const randomRef = 'BK-' + Math.floor(100000 + Math.random() * 900000);
-        setBookingRef(randomRef);
+  const handleNextStep = async () => {
+    if (currentStep === 3) {
+      try {
+        const token = localStorage.getItem('careconnect_token');
+        const mappedService =
+          serviceType === 'elderly'
+            ? 'Elderly Care'
+            : serviceType === 'child'
+            ? 'Child Care'
+            : 'Special Needs Care';
+
+        const res = await fetch('/api/bookings', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({
+            caregiverId: selectedCaregiver.id || caregiverId,
+            caregiverName: selectedCaregiver.name,
+            caregiverRole: selectedCaregiver.role,
+            caregiverAvatar: selectedCaregiver.profileImage,
+            serviceType: mappedService,
+            startDate,
+            endDate,
+            startTime,
+            endTime,
+            totalPrice: 28000.0,
+            days: 1,
+            notes: `${selectedRequirements.join(', ')} | Address: ${streetAddress}, ${city} ${additionalNotes ? '| Notes: ' + additionalNotes : ''}`,
+          }),
+        });
+
+        if (res.ok) {
+          const createdBooking = await res.json();
+          setBookingRef(createdBooking.bookingCode || 'BK-' + Math.floor(100000 + Math.random() * 900000));
+        } else {
+          setBookingRef('BK-' + Math.floor(100000 + Math.random() * 900000));
+        }
+      } catch (err) {
+        console.error('Error posting booking to MongoDB:', err);
+        setBookingRef('BK-' + Math.floor(100000 + Math.random() * 900000));
       }
+    }
+
+    if (currentStep < 4) {
       setCurrentStep((prev) => prev + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }

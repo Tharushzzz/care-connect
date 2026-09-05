@@ -9,13 +9,15 @@ import cors from 'cors';
 import authRoutes from './routes/authRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
 import messageRoutes from './routes/messageRoutes.js';
-import { seedAdminUser } from './config/seedAdmin.js';
+import caregiverRoutes from './routes/caregiverRoutes.js';
+import notificationRoutes from './routes/notificationRoutes.js';
+import { seedData } from './config/seedData.js';
 
 dotenv.config();
 
-// Connect to MongoDB
-connectDB().then(() => {
-  seedAdminUser();
+// Connect to MongoDB and seed dataset
+connectDB().then(async () => {
+  await seedData();
 });
 
 const port = process.env.PORT || 5000;
@@ -31,8 +33,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/caregivers', caregiverRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 app.get('/', (req, res) => {
   res.send('CareConnect API is running...');

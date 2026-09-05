@@ -7,7 +7,6 @@ import {
   ArrowDownLeft,
   ArrowUpRight,
   CheckCircle2,
-  AlertCircle,
   X
 } from 'lucide-react';
 

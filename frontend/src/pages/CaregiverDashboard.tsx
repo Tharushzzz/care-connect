@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation, Outlet } from 'react-router-dom';
 import logo from '../assets/logo/Logo.svg';
-import sarahAvatar from '../assets/Caregiverprofile/Sarah.jpeg';
 import {
   LayoutDashboard,
   Calendar,
@@ -16,9 +15,10 @@ import {
   X
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import CaregiversData from '../../config/Caregivers';
 
 export const CaregiverDashboardLayout: React.FC = () => {
-  const { logout } = useAuth();
+  const { user: authUser, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const pathname = location.pathname;
@@ -26,6 +26,24 @@ export const CaregiverDashboardLayout: React.FC = () => {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isAvailable, setIsAvailable] = useState(true);
   const [unreadNotifications] = useState(2);
+  const [avatarError, setAvatarError] = useState(false);
+
+  const caregiverName = authUser?.name || 'Sarah Jenkins';
+  let caregiverPhoto = authUser?.avatar || (authUser as any)?.profileImage;
+  if (!caregiverPhoto) {
+    if (caregiverName.toLowerCase().includes('sarah') || authUser?.email === 'sarah@example.com') {
+      caregiverPhoto = 'https://res.cloudinary.com/i7mccbnx/image/upload/v1788630765/Sarah.jpg';
+    } else {
+      const matched = CaregiversData.find(
+        (c) => c.name.toLowerCase() === caregiverName.toLowerCase()
+      );
+      caregiverPhoto = matched?.profileImage || '';
+    }
+  }
+
+  useEffect(() => {
+    setAvatarError(false);
+  }, [caregiverPhoto]);
 
   // Close menus on route change
   useEffect(() => {
@@ -238,14 +256,21 @@ export const CaregiverDashboardLayout: React.FC = () => {
             {/* Caregiver Avatar */}
             <Link
               to="/caregiver/profile"
-              className="relative rounded-full ring-2 ring-slate-100 hover:ring-teal-500 transition-all overflow-hidden w-9 h-9 shrink-0"
-              title="Sarah Jenkins Profile"
+              className="relative rounded-full ring-2 ring-slate-100 hover:ring-teal-500 transition-all overflow-hidden w-9 h-9 shrink-0 flex items-center justify-center bg-teal-100 text-teal-800"
+              title={`${caregiverName} Profile`}
             >
-              <img
-                src={sarahAvatar}
-                alt="Sarah Jenkins"
-                className="w-full h-full object-cover"
-              />
+              {caregiverPhoto && !avatarError ? (
+                <img
+                  src={caregiverPhoto}
+                  alt={caregiverName}
+                  onError={() => setAvatarError(true)}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="font-bold text-xs uppercase">
+                  {caregiverName.charAt(0)}
+                </span>
+              )}
             </Link>
           </div>
         </header>

@@ -1,15 +1,51 @@
-import { ArrowLeft, MapPin, ShieldCheck, ShieldAlert, Star, BriefcaseBusiness, Clock3, MessageCircle, CircleCheckBig, Calendar } from 'lucide-react'
-import { useEffect } from 'react'
+import { ArrowLeft, MapPin, ShieldCheck, ShieldAlert, Star, BriefcaseBusiness, Clock3, MessageCircle, CircleCheckBig, Calendar, Loader2 } from 'lucide-react'
+import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import caregiversData from '../../config/Caregivers'
+import type { Caregiver } from '../../config/Caregivers'
 
 const CaregiverProfile = () => {
-  const { id } = useParams()
-  const caregiver = caregiversData.find((item) => item.id === Number(id))
+  const { id } = useParams<{ id: string }>()
+  const [caregiver, setCaregiver] = useState<Caregiver | null>(() => {
+    return caregiversData.find((item) => item.id === Number(id)) || null;
+  });
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'auto' })
-  }, [id])
+    if (!id) return;
+
+    let isMounted = true;
+    const fetchCaregiver = async () => {
+      try {
+        const res = await fetch(`/api/caregivers/${id}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (isMounted) {
+            setCaregiver(data);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching caregiver from MongoDB:', err);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    fetchCaregiver();
+    return () => {
+      isMounted = false;
+    };
+  }, [id]);
+
+  if (loading && !caregiver) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] text-center p-8">
+        <Loader2 className="w-8 h-8 animate-spin text-[#0B8BD8] mb-3" />
+        <p className="text-slate-500 font-medium text-sm">Loading caregiver profile...</p>
+      </div>
+    );
+  }
 
   if (!caregiver) {
     return (

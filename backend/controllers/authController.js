@@ -200,3 +200,68 @@ export const updateUserProfile = async (req, res) => {
     return res.status(500).json({ message: error.message || 'Server error updating profile' });
   }
 };
+
+// @desc    Get all registered users (for Admin Dashboard)
+// @route   GET /api/auth/users
+// @access  Public / Admin
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().select('-password').sort({ createdAt: -1 });
+
+    const formattedUsers = users.map((u) => ({
+      id: u._id.toString(),
+      _id: u._id.toString(),
+      name: `${u.firstName} ${u.lastName}`,
+      firstName: u.firstName,
+      lastName: u.lastName,
+      email: u.email,
+      role: u.role,
+      status: u.status || 'Active',
+      joined: u.createdAt ? new Date(u.createdAt).toISOString().split('T')[0] : '2026-08-14',
+      phone: u.phone || '',
+      avatar: u.avatar || '',
+      title: u.title || '',
+      hourlyRate: u.hourlyRate || 0,
+      experience: u.experience || 0,
+    }));
+
+    res.json(formattedUsers);
+  } catch (error) {
+    console.error('Get all users error:', error);
+    res.status(500).json({ message: 'Server error retrieving users' });
+  }
+};
+
+// @desc    Update user status (e.g. approve caregiver verification)
+// @route   PATCH /api/auth/users/:id/status
+// @access  Public / Admin
+export const updateUserStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (status) {
+      user.status = status;
+    }
+
+    await user.save();
+
+    res.json({
+      id: user._id.toString(),
+      _id: user._id.toString(),
+      name: `${user.firstName} ${user.lastName}`,
+      email: user.email,
+      role: user.role,
+      status: user.status,
+    });
+  } catch (error) {
+    console.error('Update user status error:', error);
+    res.status(500).json({ message: 'Server error updating user status' });
+  }
+};
+

@@ -6,8 +6,7 @@ import {
   MoreVertical,
   Paperclip,
   Image as ImageIcon,
-  Send,
-  CheckCheck
+  Send
 } from 'lucide-react';
 
 interface Message {
