@@ -182,6 +182,55 @@ export function useAuth() {
     }
   };
 
+  const updateProfile = async (profileData: Partial<AuthUser>): Promise<{ success: boolean; error?: string; user?: AuthUser }> => {
+    setLoading(true);
+    try {
+      const currentToken = token || localStorage.getItem('careconnect_token');
+      const res = await fetch('/api/auth/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(currentToken ? { Authorization: `Bearer ${currentToken}` } : {}),
+        },
+        body: JSON.stringify(profileData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setLoading(false);
+        return { success: false, error: data.message || 'Profile update failed' };
+      }
+
+      const updated: AuthUser = {
+        ...(user || {}),
+        id: data._id,
+        _id: data._id,
+        name: data.name,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phone: data.phone || '',
+        role: data.role,
+        avatar: data.avatar || '',
+        title: data.title || '',
+        experience: data.experience || 0,
+        hourlyRate: data.hourlyRate || 0,
+        bio: data.bio || '',
+      };
+
+      localStorage.setItem('careconnect_user', JSON.stringify(updated));
+      setUser(updated);
+      setLoading(false);
+      window.dispatchEvent(new Event('authChange'));
+      return { success: true, user: updated };
+    } catch (err: unknown) {
+      setLoading(false);
+      const message = err instanceof Error ? err.message : 'Network error';
+      return { success: false, error: message };
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem('careconnect_user');
     localStorage.removeItem('careconnect_token');
@@ -199,6 +248,7 @@ export function useAuth() {
     loading,
     login,
     signup,
+    updateProfile,
     logout,
   };
 }

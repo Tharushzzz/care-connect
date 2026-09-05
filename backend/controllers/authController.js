@@ -136,12 +136,13 @@ export const getUserProfile = async (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        phone: user.phone || '',
         role: user.role,
-        avatar: user.avatar,
-        title: user.title,
-        experience: user.experience,
-        hourlyRate: user.hourlyRate,
-        bio: user.bio,
+        avatar: user.avatar || '',
+        title: user.title || '',
+        experience: user.experience || 0,
+        hourlyRate: user.hourlyRate || 0,
+        bio: user.bio || '',
       });
     } else {
       return res.status(404).json({ message: 'User not found' });
@@ -149,5 +150,52 @@ export const getUserProfile = async (req, res) => {
   } catch (error) {
     console.error('Get profile error:', error);
     return res.status(500).json({ message: 'Server error retrieving profile' });
+  }
+};
+
+// @desc    Update user profile
+// @route   PUT /api/auth/profile
+// @access  Private
+export const updateUserProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (user) {
+      if (req.body.firstName) user.firstName = req.body.firstName.trim();
+      if (req.body.lastName) user.lastName = req.body.lastName.trim();
+      if (req.body.email) user.email = req.body.email.toLowerCase().trim();
+      if (req.body.phone !== undefined) user.phone = req.body.phone;
+      if (req.body.avatar !== undefined) user.avatar = req.body.avatar;
+      if (req.body.title !== undefined) user.title = req.body.title;
+      if (req.body.experience !== undefined) user.experience = Number(req.body.experience);
+      if (req.body.hourlyRate !== undefined) user.hourlyRate = Number(req.body.hourlyRate);
+      if (req.body.bio !== undefined) user.bio = req.body.bio;
+
+      if (req.body.password) {
+        user.password = req.body.password;
+      }
+
+      const updatedUser = await user.save();
+
+      return res.json({
+        _id: updatedUser._id,
+        name: `${updatedUser.firstName} ${updatedUser.lastName}`,
+        firstName: updatedUser.firstName,
+        lastName: updatedUser.lastName,
+        email: updatedUser.email,
+        phone: updatedUser.phone,
+        role: updatedUser.role,
+        avatar: updatedUser.avatar,
+        title: updatedUser.title,
+        experience: updatedUser.experience,
+        hourlyRate: updatedUser.hourlyRate,
+        bio: updatedUser.bio,
+      });
+    } else {
+      return res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    console.error('Update profile error:', error);
+    return res.status(500).json({ message: error.message || 'Server error updating profile' });
   }
 };

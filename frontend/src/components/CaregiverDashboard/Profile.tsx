@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import sarahAvatar from '../../assets/Caregiverprofile/Sarah.jpeg';
 import {
   Camera,
@@ -8,8 +8,10 @@ import {
   Clock,
   Check,
   CheckCircle2,
-  X
+  X,
+  Loader2,
 } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
 
 interface Certification {
   id: string;
@@ -19,18 +21,44 @@ interface Certification {
 }
 
 export const CaregiverProfile: React.FC = () => {
-  const [profilePic, setProfilePic] = useState<string>(sarahAvatar);
-  const [firstName, setFirstName] = useState('Sarah');
-  const [lastName, setLastName] = useState('Jenkins');
-  const [email, setEmail] = useState('sarah.j@example.com');
-  const [phone, setPhone] = useState('0712554568');
-  const [location, setLocation] = useState('Colombo, Sri Lanka');
-  const [title, setTitle] = useState('Registered Nurse (RN)');
-  const [hourlyRate, setHourlyRate] = useState('3500');
-  const [experience, setExperience] = useState('8');
-  const [bio, setBio] = useState(
-    'Dedicated Registered Nurse with 8 years of experience in senior care and post-operative recovery. Passionate about providing dignified, compassionate care to elderly patients.'
+  const { user, updateProfile, loading } = useAuth();
+
+  const [profilePic, setProfilePic] = useState<string>(user?.avatar || sarahAvatar);
+  const [firstName, setFirstName] = useState(
+    user?.firstName || (user?.name ? user.name.split(' ')[0] : 'Sarah')
   );
+  const [lastName, setLastName] = useState(
+    user?.lastName || (user?.name ? user.name.split(' ').slice(1).join(' ') : 'Jenkins')
+  );
+  const [email, setEmail] = useState(user?.email || 'sarah.j@example.com');
+  const [phone, setPhone] = useState(user?.phone || '0712554568');
+  const [location, setLocation] = useState('Colombo, Sri Lanka');
+  const [title, setTitle] = useState(user?.title || 'Registered Nurse (RN)');
+  const [hourlyRate, setHourlyRate] = useState(
+    user?.hourlyRate ? String(user.hourlyRate) : '3500'
+  );
+  const [experience, setExperience] = useState(
+    user?.experience ? String(user.experience) : '8'
+  );
+  const [bio, setBio] = useState(
+    user?.bio ||
+      'Dedicated Registered Nurse with experience in senior care and post-operative recovery. Passionate about providing dignified, compassionate care to elderly patients.'
+  );
+
+  // Synchronize when authenticated user changes
+  useEffect(() => {
+    if (user) {
+      if (user.firstName) setFirstName(user.firstName);
+      if (user.lastName) setLastName(user.lastName);
+      if (user.email) setEmail(user.email);
+      if (user.phone) setPhone(user.phone);
+      if (user.title) setTitle(user.title);
+      if (user.hourlyRate) setHourlyRate(String(user.hourlyRate));
+      if (user.experience) setExperience(String(user.experience));
+      if (user.bio) setBio(user.bio);
+      if (user.avatar) setProfilePic(user.avatar);
+    }
+  }, [user]);
 
   const [specialties, setSpecialties] = useState<{ [key: string]: boolean }>({
     'Senior Care': true,
@@ -93,8 +121,18 @@ export const CaregiverProfile: React.FC = () => {
     setShowAddCertModal(false);
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    await updateProfile({
+      firstName,
+      lastName,
+      email,
+      phone,
+      title,
+      hourlyRate: Number(hourlyRate) || 0,
+      experience: Number(experience) || 0,
+      bio,
+    });
     setSavedSuccess(true);
     setTimeout(() => setSavedSuccess(false), 3000);
   };

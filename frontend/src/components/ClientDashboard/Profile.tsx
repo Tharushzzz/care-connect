@@ -1,29 +1,53 @@
-import React, { useState } from 'react';
-import { Camera, User, Mail, Phone, MapPin, CheckCircle, Trash2 } from 'lucide-react';
-import UsersData from '../../../config/User';
+import React, { useState, useEffect } from 'react';
+import { Camera, User, Mail, Phone, MapPin, CheckCircle, Trash2, Loader2 } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
 
 export const Profile: React.FC = () => {
-  const defaultUser = UsersData[0]; // Eleanor Vance
+  const { user, updateProfile, loading } = useAuth();
 
-  // Form states initialized with mock data
-  const [firstName, setFirstName] = useState('Eleanor');
-  const [lastName, setLastName] = useState('Vance');
-  const [email, setEmail] = useState(defaultUser.email);
-  const [phone, setPhone] = useState(defaultUser.phone);
+  // Form states initialized with signup/authenticated user data
+  const [firstName, setFirstName] = useState(
+    user?.firstName || (user?.name ? user.name.split(' ')[0] : 'Eleanor')
+  );
+  const [lastName, setLastName] = useState(
+    user?.lastName || (user?.name ? user.name.split(' ').slice(1).join(' ') : 'Vance')
+  );
+  const [email, setEmail] = useState(user?.email || 'eleanor@example.com');
+  const [phone, setPhone] = useState(user?.phone || '0712554567');
   const [address, setAddress] = useState('123 Galle Road');
   const [city, setCity] = useState('Colombo 03');
   const [state, setState] = useState('Western Province');
   const [zipCode, setZipCode] = useState('00300');
   const [aboutMe, setAboutMe] = useState(
-    'Compassionate client looking for reliable, high-quality care for my aging parents. Appreciate clear communication and professionalism.'
+    user?.bio ||
+      'Compassionate client looking for reliable, high-quality care for my loved ones.'
   );
 
-  const [avatar, setAvatar] = useState<string | null>(defaultUser.avatar);
+  const [avatar, setAvatar] = useState<string | null>(user?.avatar || null);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
 
-  const handleSave = (e: React.FormEvent) => {
+  // Synchronize when authenticated user changes
+  useEffect(() => {
+    if (user) {
+      if (user.firstName) setFirstName(user.firstName);
+      if (user.lastName) setLastName(user.lastName);
+      if (user.email) setEmail(user.email);
+      if (user.phone) setPhone(user.phone);
+      if (user.avatar) setAvatar(user.avatar);
+      if (user.bio) setAboutMe(user.bio);
+    }
+  }, [user]);
+
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate API call
+    await updateProfile({
+      firstName,
+      lastName,
+      email,
+      phone,
+      avatar: avatar || '',
+      bio: aboutMe,
+    });
     setShowSuccessToast(true);
     setTimeout(() => {
       setShowSuccessToast(false);
