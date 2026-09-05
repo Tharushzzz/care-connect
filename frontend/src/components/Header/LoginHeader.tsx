@@ -15,6 +15,9 @@ import {
   Clock,
   CheckCircle2,
   AlertCircle,
+  LayoutDashboard,
+  DollarSign,
+  ShieldCheck,
 } from 'lucide-react';
 import UsersData from '../../../config/User';
 import type { User } from '../../../config/User';
@@ -42,6 +45,7 @@ export const LoginHeader: React.FC<LoginHeaderProps> = ({
   unreadMessagesCount = defaultUnreadMessagesCount,
   onLogout,
 }) => {
+  const isCaregiver = user.role === 'caregiver';
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [notifications, setNotifications] = useState<NotificationItem[]>(initialNotifications);
@@ -207,9 +211,20 @@ export const LoginHeader: React.FC<LoginHeaderProps> = ({
           {/* Right Action Icons & User Profile */}
           <div className="flex items-center gap-2 sm:gap-3">
             
+            {/* Caregiver Dashboard shortcut button */}
+            {isCaregiver && (
+              <Link
+                to="/caregiver"
+                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0686CD] hover:bg-[#0071A8] text-white text-xs font-semibold shadow-xs transition-all hover:shadow-md"
+              >
+                <LayoutDashboard className="w-3.5 h-3.5" />
+                <span>Caregiver Dashboard</span>
+              </Link>
+            )}
+
             {/* Quick Link: Messages */}
             <Link
-              to="/messages"
+              to={isCaregiver ? "/caregiver/messages" : "/messages"}
               className="relative p-2 rounded-xl text-[#4A5568] hover:text-[#0686CD] hover:bg-[#EAF5FC] transition-colors duration-200 flex items-center justify-center"
               aria-label="Direct Messages"
               title="Messages"
@@ -407,51 +422,130 @@ export const LoginHeader: React.FC<LoginHeaderProps> = ({
 
                   {/* Dropdown Menu Items */}
                   <div className="p-2 space-y-0.5 text-sm">
-                    <div className="px-2.5 py-1 text-[10px] font-bold tracking-wider text-gray-400 uppercase">
-                      Care Management
-                    </div>
+                    {isCaregiver ? (
+                      <>
+                        <div className="px-2.5 py-1 text-[10px] font-bold tracking-wider text-gray-400 uppercase">
+                          Caregiver Workspace
+                        </div>
 
-                    <Link
-                      to="/bookings"
-                      onClick={() => setIsUserDropdownOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:bg-[#F2F8FD] hover:text-[#0686CD] transition-colors"
-                    >
-                      <Calendar className="w-4 h-4 text-[#0686CD]" />
-                      <span>My Bookings</span>
-                    </Link>
+                        <Link
+                          to="/caregiver"
+                          onClick={() => setIsUserDropdownOpen(false)}
+                          className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:bg-[#F2F8FD] hover:text-[#0686CD] transition-colors"
+                        >
+                          <LayoutDashboard className="w-4 h-4 text-[#0686CD]" />
+                          <span className="font-semibold">Caregiver Dashboard</span>
+                        </Link>
 
-                    <Link
-                      to="/saved-caregivers"
-                      onClick={() => setIsUserDropdownOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:bg-[#F2F8FD] hover:text-[#0686CD] transition-colors"
-                    >
-                      <Heart className="w-4 h-4 text-rose-500" />
-                      <span>Saved Caregivers</span>
-                    </Link>
+                        <Link
+                          to="/caregiver/schedule"
+                          onClick={() => setIsUserDropdownOpen(false)}
+                          className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:bg-[#F2F8FD] hover:text-[#0686CD] transition-colors"
+                        >
+                          <Calendar className="w-4 h-4 text-[#0686CD]" />
+                          <span>My Schedule</span>
+                        </Link>
 
-                    <div className="my-1.5 border-t border-[#EEF4F9]" />
+                        <Link
+                          to="/caregiver/messages"
+                          onClick={() => setIsUserDropdownOpen(false)}
+                          className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:bg-[#F2F8FD] hover:text-[#0686CD] transition-colors"
+                        >
+                          <MessageSquare className="w-4 h-4 text-emerald-600" />
+                          <span>Messages</span>
+                        </Link>
 
-                    <div className="px-2.5 py-1 text-[10px] font-bold tracking-wider text-gray-400 uppercase">
-                      Preferences
-                    </div>
+                        <Link
+                          to="/caregiver/earnings"
+                          onClick={() => setIsUserDropdownOpen(false)}
+                          className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:bg-[#F2F8FD] hover:text-[#0686CD] transition-colors"
+                        >
+                          <DollarSign className="w-4 h-4 text-amber-500" />
+                          <span>Earnings & Payouts</span>
+                        </Link>
 
-                    <Link
-                      to="/profile"
-                      onClick={() => setIsUserDropdownOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:bg-[#F2F8FD] hover:text-[#0686CD] transition-colors"
-                    >
-                      <UserIcon className="w-4 h-4 text-gray-500" />
-                      <span>Personal Profile</span>
-                    </Link>
+                        <Link
+                          to="/caregiver/verification"
+                          onClick={() => setIsUserDropdownOpen(false)}
+                          className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:bg-[#F2F8FD] hover:text-[#0686CD] transition-colors"
+                        >
+                          <ShieldCheck className="w-4 h-4 text-indigo-500" />
+                          <span>Verification Status</span>
+                        </Link>
 
-                    <Link
-                      to="/settings"
-                      onClick={() => setIsUserDropdownOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:bg-[#F2F8FD] hover:text-[#0686CD] transition-colors"
-                    >
-                      <Settings className="w-4 h-4 text-gray-500" />
-                      <span>Account Settings</span>
-                    </Link>
+                        <div className="my-1.5 border-t border-[#EEF4F9]" />
+
+                        <div className="px-2.5 py-1 text-[10px] font-bold tracking-wider text-gray-400 uppercase">
+                          Preferences
+                        </div>
+
+                        <Link
+                          to="/caregiver/profile"
+                          onClick={() => setIsUserDropdownOpen(false)}
+                          className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:bg-[#F2F8FD] hover:text-[#0686CD] transition-colors"
+                        >
+                          <UserIcon className="w-4 h-4 text-gray-500" />
+                          <span>Caregiver Profile</span>
+                        </Link>
+
+                        <Link
+                          to="/caregiver/settings"
+                          onClick={() => setIsUserDropdownOpen(false)}
+                          className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:bg-[#F2F8FD] hover:text-[#0686CD] transition-colors"
+                        >
+                          <Settings className="w-4 h-4 text-gray-500" />
+                          <span>Account Settings</span>
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        <div className="px-2.5 py-1 text-[10px] font-bold tracking-wider text-gray-400 uppercase">
+                          Care Management
+                        </div>
+
+                        <Link
+                          to="/bookings"
+                          onClick={() => setIsUserDropdownOpen(false)}
+                          className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:bg-[#F2F8FD] hover:text-[#0686CD] transition-colors"
+                        >
+                          <Calendar className="w-4 h-4 text-[#0686CD]" />
+                          <span>My Bookings</span>
+                        </Link>
+
+                        <Link
+                          to="/saved-caregivers"
+                          onClick={() => setIsUserDropdownOpen(false)}
+                          className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:bg-[#F2F8FD] hover:text-[#0686CD] transition-colors"
+                        >
+                          <Heart className="w-4 h-4 text-rose-500" />
+                          <span>Saved Caregivers</span>
+                        </Link>
+
+                        <div className="my-1.5 border-t border-[#EEF4F9]" />
+
+                        <div className="px-2.5 py-1 text-[10px] font-bold tracking-wider text-gray-400 uppercase">
+                          Preferences
+                        </div>
+
+                        <Link
+                          to="/profile"
+                          onClick={() => setIsUserDropdownOpen(false)}
+                          className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:bg-[#F2F8FD] hover:text-[#0686CD] transition-colors"
+                        >
+                          <UserIcon className="w-4 h-4 text-gray-500" />
+                          <span>Personal Profile</span>
+                        </Link>
+
+                        <Link
+                          to="/settings"
+                          onClick={() => setIsUserDropdownOpen(false)}
+                          className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:bg-[#F2F8FD] hover:text-[#0686CD] transition-colors"
+                        >
+                          <Settings className="w-4 h-4 text-gray-500" />
+                          <span>Account Settings</span>
+                        </Link>
+                      </>
+                    )}
 
                     <button
                       type="button"

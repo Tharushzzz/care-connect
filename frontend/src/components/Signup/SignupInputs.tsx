@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, Eye, EyeOff, Heart, User } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff, Heart, User, AlertCircle, Loader2 } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
 
 interface SignupInputsProps {
   role?: 'family' | 'caregiver';
@@ -18,6 +19,7 @@ const SignupInputs: React.FC<SignupInputsProps> = ({ role: controlledRole, onRol
     onRoleChange?.(newRole);
   };
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   
   // Form fields
   const [firstName, setFirstName] = useState('');
@@ -31,11 +33,45 @@ const SignupInputs: React.FC<SignupInputsProps> = ({ role: controlledRole, onRol
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const navigate = useNavigate();
+  const { signup, loading } = useAuth();
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    // mock signup - navigate to home for now
-    navigate('/');
+    setError(null);
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters.');
+      return;
+    }
+
+    const payload = {
+      firstName,
+      lastName,
+      email,
+      password,
+      role,
+      title: role === 'caregiver' ? title : undefined,
+      experience: role === 'caregiver' ? experience : undefined,
+      hourlyRate: role === 'caregiver' ? hourlyRate : undefined,
+      bio: role === 'caregiver' ? bio : undefined,
+    };
+
+    const result = await signup(payload);
+
+    if (result.success && result.user) {
+      if (result.user.role === 'caregiver') {
+        navigate('/caregiver');
+      } else {
+        navigate('/');
+      }
+    } else {
+      setError(result.error || 'Registration failed. Please try again.');
+    }
   };
 
   return (
@@ -63,6 +99,14 @@ const SignupInputs: React.FC<SignupInputsProps> = ({ role: controlledRole, onRol
           </Link>
         </p>
       </div>
+
+      {/* Error Alert */}
+      {error && (
+        <div className="flex items-start gap-3 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 animate-in fade-in duration-200">
+          <AlertCircle className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
+          <div className="text-sm font-medium">{error}</div>
+        </div>
+      )}
 
       {/* Role Toggle Buttons */}
       <div className="space-y-2 pt-2">
@@ -249,9 +293,17 @@ const SignupInputs: React.FC<SignupInputsProps> = ({ role: controlledRole, onRol
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full h-11 mt-6 bg-[#0686CD] hover:bg-[#0071A8] text-white font-semibold text-sm rounded-xl shadow-sm transition-colors cursor-pointer flex items-center justify-center"
+          disabled={loading}
+          className="w-full h-11 mt-6 bg-[#0686CD] hover:bg-[#0071A8] disabled:bg-[#0686CD]/70 text-white font-semibold text-sm rounded-xl shadow-sm transition-colors cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
-          Create Account
+          {loading ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>Creating account...</span>
+            </>
+          ) : (
+            <span>Create Account</span>
+          )}
         </button>
 
         {/* Terms text */}

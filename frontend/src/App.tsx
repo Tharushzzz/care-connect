@@ -7,7 +7,7 @@ import LoginHeader from './components/Header/LoginHeader.tsx';
 import { useAuth } from './hooks/useAuth';
 
 function App() {
-  const { isLoggedIn, logout } = useAuth();
+  const { isLoggedIn, user, logout } = useAuth();
   const { pathname } = useLocation();
 
   // Scroll to top on every route change
@@ -34,10 +34,20 @@ function App() {
     return <Outlet />;
   }
 
+  const headerUser = user ? {
+    id: user.id || user._id || '',
+    name: user.name,
+    email: user.email,
+    phone: user.phone || '',
+    avatar: user.avatar || '',
+    password: '',
+    role: user.role,
+  } : undefined;
+
   return (
     <>
       {isLoggedIn ? (
-        <LoginHeader onLogout={logout} />
+        <LoginHeader user={headerUser} onLogout={logout} />
       ) : (
         <Header />
       )}

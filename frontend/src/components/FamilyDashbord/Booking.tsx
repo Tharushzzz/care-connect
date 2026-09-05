@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Search, Calendar, MessageSquare, Star, X, CheckCircle2, ChevronRight } from 'lucide-react';
+import { Search, Calendar, MessageSquare, Star, X, CheckCircle2, ChevronRight, Loader2 } from 'lucide-react';
 import CaregiversData from '../../../config/Caregivers';
 
 interface BookingItem {
   id: string;
+  _id?: string;
   caregiverId: number;
   caregiverName: string;
   caregiverRole: string;
@@ -28,54 +29,44 @@ export const Booking: React.FC = () => {
     return cg ? cg.profileImage : '';
   };
 
-  // Initial mock bookings data
-  const [bookings, setBookings] = useState<BookingItem[]>([
-    {
-      id: 'BK_001',
-      caregiverId: 1,
-      caregiverName: 'Sarah Jenkins',
-      caregiverRole: 'Registered Nurse (RN)',
-      caregiverAvatar: getCaregiverAvatar(1),
-      serviceType: 'Elderly Care',
-      startDate: 'Aug 28, 2026',
-      endDate: 'Aug 28, 2026',
-      startTime: '09:00 AM',
-      endTime: '05:00 PM',
-      status: 'Scheduled',
-      totalPrice: 280.00,
-      days: 1,
-    },
-    {
-      id: 'BK_002',
-      caregiverId: 2,
-      caregiverName: 'Michael Lee',
-      caregiverRole: 'Certified Nursing Assistant',
-      caregiverAvatar: getCaregiverAvatar(2),
-      serviceType: 'Elderly Care',
-      startDate: 'Aug 29, 2026',
-      endDate: 'Aug 29, 2026',
-      startTime: '09:00 AM',
-      endTime: '05:00 PM',
-      status: 'Pending',
-      totalPrice: 208.00,
-      days: 1,
-    },
-    {
-      id: 'BK_003',
-      caregiverId: 3,
-      caregiverName: 'Emily Davis',
-      caregiverRole: 'Licensed Practical Nurse (LPN)',
-      caregiverAvatar: getCaregiverAvatar(3),
-      serviceType: 'Elderly Care',
-      startDate: 'Aug 25, 2026',
-      endDate: 'Aug 25, 2026',
-      startTime: '09:00 AM',
-      endTime: '03:00 PM',
-      status: 'Completed',
-      totalPrice: 180.00,
-      days: 1,
-    }
-  ]);
+  const [bookings, setBookings] = useState<BookingItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  // Fetch bookings from MongoDB API
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch('/api/bookings');
+        if (res.ok) {
+          const data = await res.json();
+          const mapped: BookingItem[] = data.map((b: any) => ({
+            id: b._id || b.id || b.bookingCode,
+            _id: b._id,
+            caregiverId: b.caregiverId,
+            caregiverName: b.caregiverName,
+            caregiverRole: b.caregiverRole,
+            caregiverAvatar: b.caregiverAvatar || getCaregiverAvatar(b.caregiverId),
+            serviceType: b.serviceType,
+            startDate: b.startDate,
+            endDate: b.endDate,
+            startTime: b.startTime,
+            endTime: b.endTime,
+            status: b.status,
+            totalPrice: b.totalPrice,
+            days: b.days || 1,
+          }));
+          setBookings(mapped);
+        }
+      } catch (err) {
+        console.error('Failed to fetch bookings from API:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBookings();
+  }, []);
 
   // Tab Filtering
   const [activeTab, setActiveTab] = useState<'All' | 'Scheduled' | 'Pending' | 'Completed' | 'Cancelled'>('All');
@@ -88,11 +79,24 @@ export const Booking: React.FC = () => {
   const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState('');
 
-  const handleCancelBooking = (bookingId: string) => {
+  const handleCancelBooking = async (bookingId: string) => {
     if (window.confirm('Are you sure you want to cancel this booking?')) {
+      // Optimistic update
       setBookings(prev =>
-        prev.map(b => b.id === bookingId ? { ...b, status: 'Cancelled' } : b)
+        prev.map(b => (b.id === bookingId || b._id === bookingId) ? { ...b, status: 'Cancelled' } : b)
       );
+
+      try {
+        const booking = bookings.find(b => b.id === bookingId || b._id === bookingId);
+        const targetId = booking?._id || bookingId;
+        await fetch(`/api/bookings/${targetId}/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'Cancelled' }),
+        });
+      } catch (err) {
+        console.error('Failed to cancel booking on server:', err);
+      }
     }
   };
 
@@ -204,7 +208,12 @@ export const Booking: React.FC = () => {
 
       {/* Bookings Card List */}
       <div className="space-y-4">
-        {filteredBookings.length === 0 ? (
+        {loading ? (
+          <div className="bg-white rounded-2xl border border-[#E4EDF5] p-12 text-center flex flex-col items-center justify-center">
+            <Loader2 className="w-8 h-8 text-[#0686CD] animate-spin mb-3" />
+            <p className="text-sm font-medium text-gray-600">Loading bookings from database...</p>
+          </div>
+        ) : filteredBookings.length === 0 ? (
           <div className="bg-white rounded-2xl border border-[#E4EDF5] p-12 text-center">
             <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-3" />
             <h3 className="text-base font-bold text-[#0D182B] mb-1">No bookings found</h3>

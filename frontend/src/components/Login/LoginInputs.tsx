@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff, AlertCircle, Loader2 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
 const LoginInputs: React.FC = () => {
@@ -8,13 +8,33 @@ const LoginInputs: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, loading } = useAuth();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    login();
-    navigate('/');
+    setError(null);
+
+    if (!email || !password) {
+      setError('Please enter both email and password.');
+      return;
+    }
+
+    const result = await login(email, password);
+
+    if (result.success && result.user) {
+      // Role-based redirection
+      if (result.user.role === 'admin') {
+        navigate('/admin/dashboard');
+      } else if (result.user.role === 'caregiver') {
+        navigate('/caregiver');
+      } else {
+        navigate('/');
+      }
+    } else {
+      setError(result.error || 'Failed to sign in. Please check your credentials.');
+    }
   };
 
   return (
@@ -43,6 +63,14 @@ const LoginInputs: React.FC = () => {
         </p>
       </div>
 
+      {/* Error Message Alert */}
+      {error && (
+        <div className="flex items-start gap-3 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 animate-in fade-in duration-200">
+          <AlertCircle className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
+          <div className="text-sm font-medium">{error}</div>
+        </div>
+      )}
+
       {/* Form Fields */}
       <form onSubmit={handleLogin} className="space-y-5 pt-2">
         {/* Email */}
@@ -53,9 +81,14 @@ const LoginInputs: React.FC = () => {
           <input
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (error) setError(null);
+            }}
             placeholder="Enter your email"
-            className="w-full h-12 px-4 border border-[#D0D5DD] rounded-xl sm:rounded-2xl text-base text-[#101828] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0686CD]/30 focus:border-[#0686CD] transition-all"
+            required
+            disabled={loading}
+            className="w-full h-12 px-4 border border-[#D0D5DD] rounded-xl sm:rounded-2xl text-base text-[#101828] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0686CD]/30 focus:border-[#0686CD] transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
           />
         </div>
 
@@ -68,13 +101,19 @@ const LoginInputs: React.FC = () => {
             <input
               type={showPassword ? 'text' : 'password'}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (error) setError(null);
+              }}
               placeholder="Enter your password"
-              className="w-full h-12 pl-4 pr-11 border border-[#D0D5DD] rounded-xl sm:rounded-2xl text-base text-[#101828] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0686CD]/30 focus:border-[#0686CD] transition-all"
+              required
+              disabled={loading}
+              className="w-full h-12 pl-4 pr-11 border border-[#D0D5DD] rounded-xl sm:rounded-2xl text-base text-[#101828] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0686CD]/30 focus:border-[#0686CD] transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
+              disabled={loading}
               className="absolute right-3.5 text-gray-500 hover:text-gray-700 cursor-pointer focus:outline-none"
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
@@ -95,6 +134,7 @@ const LoginInputs: React.FC = () => {
               id="rememberMe"
               checked={rememberMe}
               onChange={(e) => setRememberMe(e.target.checked)}
+              disabled={loading}
               className="w-4 h-4 rounded border-gray-300 text-[#0686CD] focus:ring-[#0686CD] cursor-pointer"
             />
             <span className="text-sm font-medium text-[#344054]">Remember me</span>
@@ -110,9 +150,17 @@ const LoginInputs: React.FC = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full h-12 bg-[#0686CD] hover:bg-[#0071A8] text-white font-semibold text-base rounded-xl sm:rounded-2xl shadow-sm transition-colors cursor-pointer flex items-center justify-center"
+          disabled={loading}
+          className="w-full h-12 bg-[#0686CD] hover:bg-[#0071A8] disabled:bg-[#0686CD]/70 text-white font-semibold text-base rounded-xl sm:rounded-2xl shadow-sm transition-colors cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
-          Sign in
+          {loading ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              <span>Signing in...</span>
+            </>
+          ) : (
+            <span>Sign in</span>
+          )}
         </button>
 
         {/* Divider */}
