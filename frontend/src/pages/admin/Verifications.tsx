@@ -6,6 +6,8 @@ import {
   Eye,
   X,
   FileText,
+  CircleCheck,
+  CircleX,
 } from 'lucide-react';
 
 type VerificationStatus =
@@ -20,6 +22,7 @@ type VerificationType =
 
 interface VerificationItem {
   id: string;
+  time: string;
   applicant: string;
   risk: string;
   type: VerificationType;
@@ -28,33 +31,37 @@ interface VerificationItem {
 
 const verificationsData: VerificationItem[] = [
   {
-    id: 'REQ-091',
-    applicant: 'Alice Thompson',
-    risk: 'Low Risk Flag',
-    type: 'RN License',
-    status: 'Pending Review',
-  },
-  {
-    id: 'REQ-090',
-    applicant: 'Marcus Johnson',
-    risk: 'Medium Risk Flag',
-    type: 'Background Check',
-    status: 'Action Required',
-  },
-  {
-    id: 'REQ-089',
-    applicant: 'Elena Rodriguez',
-    risk: 'Low Risk Flag',
-    type: 'CNA Certification',
-    status: 'Pending Review',
-  },
-  {
-    id: 'REQ-088',
-    applicant: 'David Chen',
-    risk: 'Low Risk Flag',
-    type: 'Background Check',
-    status: 'Approved',
-  },
+  id: 'REQ-091',
+  time: '2 hours ago',
+  applicant: 'Alice Thompson',
+  risk: 'Low Risk Flag',
+  type: 'RN License',
+  status: 'Pending Review',
+},
+{
+  id: 'REQ-090',
+  time: '5 hours ago',
+  applicant: 'Marcus Johnson',
+  risk: 'Medium Risk Flag',
+  type: 'Background Check',
+  status: 'Action Required',
+},
+{
+  id: 'REQ-089',
+  time: '1 day ago',
+  applicant: 'Elena Rodriguez',
+  risk: 'Low Risk Flag',
+  type: 'CNA Certification',
+  status: 'Pending Review',
+},
+{
+  id: 'REQ-088',
+  time: '2 days ago',
+  applicant: 'David Chen',
+  risk: 'Low Risk Flag',
+  type: 'Background Check',
+  status: 'Approved',
+},
 ];
 
 export default function Verifications() {
@@ -112,9 +119,39 @@ export default function Verifications() {
       </div>
 
       {/* Verification table */}
-      <div className="admin-table-card">
+     <div className="admin-table-card">
 
-        <div className="table-wrapper">
+  {/* Filters and search */}
+  <div className="verification-toolbar">
+
+    <div className="verification-filters">
+      <button className="verification-filter active">
+        All
+      </button>
+
+      <button className="verification-filter">
+        Pending
+      </button>
+
+      <button className="verification-filter">
+        Action Required
+      </button>
+
+      <button className="verification-filter">
+        Approved
+      </button>
+    </div>
+
+    <div className="verification-search">
+      <input
+        type="text"
+        placeholder="Search ID or Name..."
+      />
+    </div>
+
+  </div>
+
+  <div className="table-wrapper">
           <table className="admin-table">
 
             <thead>
@@ -133,17 +170,25 @@ export default function Verifications() {
                 <tr key={row.id}>
 
                   <td className="request-id">
-                    {row.id}
-                  </td>
+  <div>{row.id}</div>
+  <span className="request-time">{row.time}</span>
+</td>
 
                   <td>
                     <div className="applicant-name">
                       {row.applicant}
                     </div>
 
-                    <div className="risk-text">
-                      {row.risk}
-                    </div>
+                   <div
+  className={`risk-text ${
+    row.risk === 'Low Risk Flag'
+      ? 'risk-low'
+      : 'risk-medium'
+  }`}
+>
+  <span className="risk-dot"></span>
+  {row.risk}
+</div>
                   </td>
 
                   <td>
@@ -166,13 +211,31 @@ export default function Verifications() {
 
                   <td className="verification-action">
 
-                    <button
-                      className="icon-button"
-                      onClick={() => setSelectedDoc(row)}
-                      title="View document"
-                    >
-                      <Eye size={18} />
-                    </button>
+                    <div className="verification-actions">
+
+  <button
+    className="verification-action approve"
+    title="Approve"
+  >
+    <CircleCheck size={17} />
+  </button>
+
+  <button
+    className="verification-action reject"
+    title="Reject"
+  >
+    <CircleX size={17} />
+  </button>
+
+  <button
+    className="verification-action view"
+    onClick={() => setSelectedDoc(row)}
+    title="View document"
+  >
+    <Eye size={17} />
+  </button>
+
+</div>
 
                   </td>
 
@@ -193,35 +256,60 @@ export default function Verifications() {
 
           <div className="document-modal">
 
-            <div className="document-modal-header">
+           <div className="document-modal-header">
 
-              <div>
-                <h3>Document Viewer</h3>
+  <h3>Document Viewer</h3>
 
-                <p className="document-applicant">
-                  {selectedDoc.applicant}
-                </p>
+  <button
+    className="modal-close"
+    onClick={() => setSelectedDoc(null)}
+  >
+    <X size={20} />
+  </button>
 
-                <p className="document-info">
-                  {selectedDoc.type} • {selectedDoc.id}
-                </p>
-              </div>
+</div>
 
-              <button
-                className="modal-close"
-                onClick={() => setSelectedDoc(null)}
-              >
-                <X size={20} />
-              </button>
+<div className="document-details-bar">
 
-            </div>
+  <div>
+    <p className="document-applicant">
+      {selectedDoc.applicant}
+    </p>
+
+    <p className="document-info">
+      {selectedDoc.type} • {selectedDoc.id}
+    </p>
+  </div>
+
+  <span
+    className={`status-badge ${
+      selectedDoc.status === 'Approved'
+        ? 'status-active'
+        : selectedDoc.status === 'Action Required'
+        ? 'status-suspended'
+        : 'status-pending'
+    }`}
+  >
+    {selectedDoc.status}
+  </span>
+
+</div>
+
+
 
             {/* Document placeholder */}
             <div className="document-placeholder">
 
               <FileText size={42} />
 
-              <p>Document Scan / Image Placeholder</p>
+              <p className="document-placeholder-title">
+    Document Scan / Image Placeholder
+  </p>
+
+  <span className="document-placeholder-description">
+    In a production environment, this would render the uploaded PDF
+    or photo of the applicant's credentials.
+  </span>
 
             </div>
 

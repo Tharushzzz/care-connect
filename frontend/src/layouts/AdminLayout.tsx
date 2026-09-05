@@ -80,8 +80,7 @@ export default function AdminLayout() {
       {/* Main area */}
       <div className="admin-main">
         <header className="admin-header">
-          <h1>Admin Dashboard</h1>
-
+          <div></div>
           <div className="admin-header-right">
             <button className="admin-notification">
               <Bell size={20} />

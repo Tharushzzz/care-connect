@@ -161,6 +161,16 @@ export default function Users() {
             </tbody>
 
           </table>
+               </div>
+
+        {/* Pagination */}
+        <div className="users-pagination">
+          <span>Showing 1 to 5 of 2,845 entries</span>
+
+          <div className="pagination-buttons">
+            <button>Prev</button>
+            <button>Next</button>
+          </div>
         </div>
 
       </div>

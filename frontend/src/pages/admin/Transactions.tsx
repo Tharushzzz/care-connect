@@ -1,4 +1,4 @@
-import { Download } from 'lucide-react';
+import { Download, Search, ChevronDown } from 'lucide-react';
 
 interface Transaction {
   id: string;
@@ -107,9 +107,27 @@ export default function Transactions() {
       </div>
 
       {/* Transactions table */}
-      <div className="admin-table-card">
+      {/* Transactions table */}
+<div className="admin-table-card">
 
-        <div className="table-wrapper">
+  <div className="transaction-toolbar">
+
+    <div className="transaction-search">
+      <Search size={18} />
+      <input
+        type="text"
+        placeholder="Search TRX ID or name"
+      />
+    </div>
+
+    <button className="transaction-type-button">
+      All Types
+      <ChevronDown size={16} />
+    </button>
+
+  </div>
+
+  <div className="table-wrapper">
 
           <table className="admin-table">
 

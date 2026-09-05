@@ -1,16 +1,37 @@
 import { useState } from 'react';
+import {
+  Cog,
+  CreditCard,
+  ShieldCheck,
+  WalletCards,
+  Bell,
+} from 'lucide-react';
 
 export default function Settings() {
   const [autoPayouts, setAutoPayouts] = useState(true);
 
   const tabs = [
-    'General Information',
-    'Fees & Payouts',
-    'Security & Verifications',
-    'Payment Gateways',
-    'System Notifications',
-  ];
-
+  {
+    name: 'General Information',
+    icon: Cog,
+  },
+  {
+    name: 'Fees & Payouts',
+    icon: CreditCard,
+  },
+  {
+    name: 'Security & Verifications',
+    icon: ShieldCheck,
+  },
+  {
+    name: 'Payment Gateways',
+    icon: WalletCards,
+  },
+  {
+    name: 'System Notifications',
+    icon: Bell,
+  },
+];
   return (
     <div className="admin-page settings-page">
 
@@ -27,16 +48,21 @@ export default function Settings() {
         {/* Settings navigation */}
         <div className="settings-tabs">
 
-          {tabs.map((tab, index) => (
-            <button
-              key={tab}
-              className={`settings-tab ${
-                index === 0 ? 'active' : ''
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
+          {tabs.map((tab, index) => {
+  const Icon = tab.icon;
+
+  return (
+    <button
+      key={tab.name}
+      className={`settings-tab ${
+        index === 0 ? 'active' : ''
+      }`}
+    >
+      <Icon size={18} />
+      <span>{tab.name}</span>
+    </button>
+  );
+})}
 
         </div>
 
@@ -97,24 +123,35 @@ export default function Settings() {
 
             <div className="settings-form">
 
+             <div className="form-field">
+  <label>Caregiver Platform Fee (%)</label>
+
+  <div className="input-with-suffix">
+    <input
+      type="number"
+      defaultValue="10"
+    />
+    <span>%</span>
+  </div>
+   <p className="fee-description">
+    Deducted from caregiver's hourly rate.
+  </p>
+</div>
+
               <div className="form-field">
-                <label>Caregiver Platform Fee (%)</label>
+  <label>Family Service Fee (%)</label>
 
-                <input
-                  type="number"
-                  defaultValue="10"
-                />
-              </div>
-
-              <div className="form-field">
-                <label>Family Service Fee (%)</label>
-
-                <input
-                  type="number"
-                  defaultValue="5"
-                />
-              </div>
-
+  <div className="input-with-suffix">
+    <input
+      type="number"
+      defaultValue="5"
+    />
+    <span>%</span>
+  </div>
+  <p className="fee-description">
+    Added to family's total invoice.
+  </p>
+</div>
             </div>
 
           </section>

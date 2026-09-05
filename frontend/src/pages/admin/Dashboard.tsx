@@ -152,8 +152,9 @@ export default function Dashboard() {
                 className="activity-item"
                 key={index}
               >
-                <div className="activity-dot"></div>
-
+                <div
+  className={`activity-dot activity-dot-${index}`}
+></div>
                 <div>
                   <p>{activity.text}</p>
                   <span>{activity.meta}</span>
