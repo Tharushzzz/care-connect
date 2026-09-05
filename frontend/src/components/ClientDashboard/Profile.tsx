@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Camera, User, Mail, Phone, MapPin, CheckCircle, Trash2, Loader2 } from 'lucide-react';
+import { Camera, User, Mail, Phone, MapPin, CheckCircle, Trash2, } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
 export const Profile: React.FC = () => {
-  const { user, updateProfile, loading } = useAuth();
+  const { user, updateProfile } = useAuth();
 
   // Form states initialized with signup/authenticated user data
   const [firstName, setFirstName] = useState(

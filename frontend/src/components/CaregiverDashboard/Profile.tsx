@@ -9,7 +9,6 @@ import {
   Check,
   CheckCircle2,
   X,
-  Loader2,
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -21,7 +20,7 @@ interface Certification {
 }
 
 export const CaregiverProfile: React.FC = () => {
-  const { user, updateProfile, loading } = useAuth();
+  const { user, updateProfile } = useAuth();
 
   const [profilePic, setProfilePic] = useState<string>(user?.avatar || sarahAvatar);
   const [firstName, setFirstName] = useState(
