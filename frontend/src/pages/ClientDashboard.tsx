@@ -7,6 +7,7 @@ import {
   ChevronDown,
   User as UserIcon,
   Calendar,
+  Heart,
   Settings as SettingsIcon,
   LogOut,
   CheckCheck,
@@ -124,6 +125,7 @@ export const DashboardLayout: React.FC = () => {
 
   const getPageTitle = () => {
     if (pathname.startsWith('/bookings')) return 'My Bookings';
+    if (pathname.startsWith('/saved-caregivers')) return 'Saved Caregivers';
     if (pathname.startsWith('/messages')) return 'Messages';
     if (pathname.startsWith('/profile')) return 'Profile Settings';
     if (pathname.startsWith('/settings')) return 'Account Settings';
@@ -132,6 +134,7 @@ export const DashboardLayout: React.FC = () => {
 
   const sidebarLinks = [
     { name: 'My Bookings', path: '/bookings', icon: Calendar },
+    { name: 'Saved Caregivers', path: '/saved-caregivers', icon: Heart },
     { name: 'Messages', path: '/messages', icon: MessageSquare, badge: unreadMessagesCount },
     { name: 'Profile', path: '/profile', icon: UserIcon },
     { name: 'Settings', path: '/settings', icon: SettingsIcon },
@@ -433,6 +436,13 @@ export const DashboardLayout: React.FC = () => {
                     </div>
                   </div>
                   <div className="p-1.5 space-y-0.5 text-xs">
+                    <Link
+                      to="/saved-caregivers"
+                      className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-700 hover:bg-[#F2F8FD] hover:text-[#0686CD]"
+                    >
+                      <Heart className="w-4 h-4 text-gray-500" />
+                      <span>Saved Caregivers</span>
+                    </Link>
                     <Link
                       to="/profile"
                       className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-700 hover:bg-[#F2F8FD] hover:text-[#0686CD]"
