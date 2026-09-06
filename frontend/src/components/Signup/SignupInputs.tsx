@@ -66,8 +66,11 @@ const SignupInputs: React.FC<SignupInputsProps> = ({ role: controlledRole, onRol
     const result = await signup(payload);
 
     if (result.success && result.user) {
+      const redirectTarget = (location.state as any)?.redirect || (location.state as any)?.from?.pathname;
       if (result.user.role === 'caregiver') {
         navigate('/caregiver');
+      } else if (redirectTarget && !redirectTarget.startsWith('/admin') && !redirectTarget.startsWith('/caregiver')) {
+        navigate(redirectTarget);
       } else {
         navigate('/');
       }
@@ -96,7 +99,7 @@ const SignupInputs: React.FC<SignupInputsProps> = ({ role: controlledRole, onRol
         </h1>
         <p className="text-sm sm:text-base text-[#475467]">
           Already have an account?{' '}
-          <Link to="/login" className="text-[#0686CD] hover:underline font-semibold">
+          <Link to="/login" state={location.state} className="text-[#0686CD] hover:underline font-semibold">
             Sign in instead
           </Link>
         </p>

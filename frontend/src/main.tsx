@@ -34,75 +34,95 @@ import SavedCaregivers from './components/FamilyDashbord/SavedCaregivers.tsx';
 import Signup from './pages/Signup.tsx';
 import ResetPassword from './pages/ResetPassword.tsx';
 import AdminDashboard from './pages/AdminDashboard.tsx';
+import ProtectedRoute from './components/common/ProtectedRoute.tsx';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
     children: [
+      // 1. Fully Public Pages
       { index: true, element: <Home /> },
-      { path: '/login', element: <Login /> },
       { path: '/find-caregivers', element: <FindCaregivers /> },
       { path: '/find-caregivers/:id', element: <CaregiverProfile /> },
-      { path: '/book-care', element: <BookCare /> },
-      { path: '/book-care/:id', element: <BookCare /> },
-      { path: '/signup', element: <Signup /> },
-      { path: '/forgot-password', element: <ResetPassword /> },
+
+      // 2. Public-Only Auth Pages (redirects authenticated users away from /login & /signup)
       {
-        element: <ClientDashboardLayout />,
+        element: <ProtectedRoute publicOnly />,
         children: [
-          { path: '/bookings', element: <Booking /> },
-          { path: '/saved-caregivers', element: <SavedCaregivers /> },
-          { path: '/messages', element: <Message /> },
-          { path: '/profile', element: <Profile /> },
-          { path: '/settings', element: <Settings /> },
+          { path: '/login', element: <Login /> },
+          { path: '/signup', element: <Signup /> },
+          { path: '/forgot-password', element: <ResetPassword /> },
         ],
       },
 
+      // 3. Family Booking Routes (redirects unauthenticated users directly to /signup)
       {
-        path: '/family',
-        element: <DashboardLayout />,
+        element: <ProtectedRoute allowedRoles={['family']} unauthenticatedRedirect="/signup" />,
         children: [
-          { path: 'bookings', element: <FamilyBooking /> },
-          { path: 'messages', element: <FamilyMessage /> },
-          { path: 'profile', element: <FamilyProfile /> },
-          { path: 'settings', element: <FamilySettings /> },
+          { path: '/book-care', element: <BookCare /> },
+          { path: '/book-care/:id', element: <BookCare /> },
         ],
       },
 
+      // 4. Family Dashboard Pages
       {
-        path: '/caregiver',
-        element: <CaregiverDashboardLayout />,
+        element: <ProtectedRoute allowedRoles={['family']} />,
         children: [
-          { index: true, element: <CaregiverDashboard /> },
-          { path: 'schedule', element: <CaregiverSchedule /> },
-          { path: 'earnings', element: <CaregiverEarnings /> },
-          { path: 'messages', element: <CaregiverMessages /> },
-          { path: 'profile', element: <CaregiverProfileSettings /> },
-          { path: 'verification', element: <CaregiverVerification /> },
-          { path: 'notifications', element: <CaregiverNotifications /> },
-          { path: 'settings', element: <CaregiverSettings /> },
+          {
+            element: <ClientDashboardLayout />,
+            children: [
+              { path: '/bookings', element: <Booking /> },
+              { path: '/saved-caregivers', element: <SavedCaregivers /> },
+              { path: '/messages', element: <Message /> },
+              { path: '/profile', element: <Profile /> },
+              { path: '/settings', element: <Settings /> },
+            ],
+          },
+          {
+            path: '/family',
+            element: <DashboardLayout />,
+            children: [
+              { path: 'bookings', element: <FamilyBooking /> },
+              { path: 'messages', element: <FamilyMessage /> },
+              { path: 'profile', element: <FamilyProfile /> },
+              { path: 'settings', element: <FamilySettings /> },
+            ],
+          },
         ],
       },
+
+      // 4. Caregiver-Only Protected Pages
       {
-        path: '/admin',
-        element: <AdminDashboard />,
+        element: <ProtectedRoute allowedRoles={['caregiver']} />,
+        children: [
+          {
+            path: '/caregiver',
+            element: <CaregiverDashboardLayout />,
+            children: [
+              { index: true, element: <CaregiverDashboard /> },
+              { path: 'schedule', element: <CaregiverSchedule /> },
+              { path: 'earnings', element: <CaregiverEarnings /> },
+              { path: 'messages', element: <CaregiverMessages /> },
+              { path: 'profile', element: <CaregiverProfileSettings /> },
+              { path: 'verification', element: <CaregiverVerification /> },
+              { path: 'notifications', element: <CaregiverNotifications /> },
+              { path: 'settings', element: <CaregiverSettings /> },
+            ],
+          },
+        ],
       },
+
+      // 5. Admin-Only Protected Pages
       {
-        path: '/admin/users',
-        element: <AdminDashboard />,
-      },
-      {
-        path: '/admin/verifications',
-        element: <AdminDashboard />,
-      },
-      {
-        path: '/admin/bookings',
-        element: <AdminDashboard />,
-      },
-      {
-        path: '/admin/transactions',
-        element: <AdminDashboard />,
+        element: <ProtectedRoute allowedRoles={['admin']} />,
+        children: [
+          { path: '/admin', element: <AdminDashboard /> },
+          { path: '/admin/users', element: <AdminDashboard /> },
+          { path: '/admin/verifications', element: <AdminDashboard /> },
+          { path: '/admin/bookings', element: <AdminDashboard /> },
+          { path: '/admin/transactions', element: <AdminDashboard /> },
+        ],
       },
     ],
   },

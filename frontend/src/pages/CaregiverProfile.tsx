@@ -1,15 +1,33 @@
 import { ArrowLeft, MapPin, ShieldCheck, ShieldAlert, Star, BriefcaseBusiness, Clock3, MessageCircle, CircleCheckBig, Calendar, Loader2 } from 'lucide-react'
 import { useState, useEffect } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useAuth } from '../hooks/useAuth'
 import caregiversData from '../../config/Caregivers'
 import type { Caregiver } from '../../config/Caregivers'
 
 const CaregiverProfile = () => {
   const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
+  const { isLoggedIn } = useAuth()
   const [caregiver, setCaregiver] = useState<Caregiver | null>(() => {
     return caregiversData.find((item) => item.id === Number(id)) || null;
   });
   const [loading, setLoading] = useState<boolean>(true);
+
+  const handleBookCare = () => {
+    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+    const targetCgId = caregiver?.id ?? id;
+    if (!isLoggedIn) {
+      navigate('/signup', {
+        state: {
+          role: 'family',
+          redirect: `/book-care/${targetCgId}`,
+        },
+      });
+    } else {
+      navigate(`/book-care/${targetCgId}`);
+    }
+  };
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'auto' })
@@ -314,13 +332,13 @@ const CaregiverProfile = () => {
               </div>
 
               <div className="space-y-3">
-                <Link
-                  to={`/book-care/${caregiver.id}`}
-                  onClick={() => window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior })}
+                <button
+                  type="button"
+                  onClick={handleBookCare}
                   className="block w-full text-center rounded-full bg-[#0B8BD8] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#0879B6] cursor-pointer shadow-sm"
                 >
                   Book Consultation
-                </Link>
+                </button>
                 <button className="flex w-full items-center justify-center gap-2 rounded-full border border-[#CFE3F7] bg-white px-5 py-3 text-sm font-semibold text-[#0B8BD8] transition hover:border-[#0B8BD8] hover:bg-[#F4FAFF] cursor-pointer">
                   <MessageCircle className="h-4 w-4" />
                   Message Caregiver
