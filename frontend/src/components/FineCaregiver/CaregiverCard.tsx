@@ -21,8 +21,21 @@ const CaregiverCard = ({
   availability = "Any",
   selectedSpecialty = "All",
 }: CaregiverCardProps) => {
-  const [caregivers, setCaregivers] = useState<Caregiver[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  // 1. Instant 0ms Render: Load cached/fallback caregivers immediately
+  const [caregivers, setCaregivers] = useState<Caregiver[]>(() => {
+    try {
+      const cached = sessionStorage.getItem('careconnect_caregivers_cache');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return fallbackCaregivers;
+  });
+
+  const [isFetching, setIsFetching] = useState<boolean>(false);
+  const [initialLoaded, setInitialLoaded] = useState<boolean>(false);
+
   const [savedIds, setSavedIds] = useState<(number | string)[]>(() => {
     try {
       const saved = localStorage.getItem('careconnect_saved_caregivers');
@@ -44,10 +57,12 @@ const CaregiverCard = ({
     });
   };
 
+  // 2. High-speed background fetch with 150ms debounce for search input
   useEffect(() => {
     let isMounted = true;
-    const fetchCaregivers = async () => {
-      setLoading(true);
+
+    const timer = setTimeout(async () => {
+      setIsFetching(true);
       try {
         const params = new URLSearchParams();
         if (searchQuery.trim()) params.append('search', searchQuery.trim());
@@ -61,11 +76,13 @@ const CaregiverCard = ({
         const data = await res.json();
         if (isMounted) {
           setCaregivers(data);
-          setLoading(false);
+          try {
+            sessionStorage.setItem('careconnect_caregivers_cache', JSON.stringify(data));
+          } catch {}
         }
       } catch (error) {
         console.error('Error fetching caregivers from MongoDB, using fallback:', error);
-        // Fallback filter
+        // Instant memory filter fallback
         const query = searchQuery.trim().toLowerCase();
         const filtered = fallbackCaregivers.filter((c) => {
           if (!query) return true;
@@ -77,19 +94,23 @@ const CaregiverCard = ({
         });
         if (isMounted) {
           setCaregivers(filtered);
-          setLoading(false);
+        }
+      } finally {
+        if (isMounted) {
+          setIsFetching(false);
+          setInitialLoaded(true);
         }
       }
-    };
-
-    fetchCaregivers();
+    }, searchQuery ? 150 : 0);
 
     return () => {
       isMounted = false;
+      clearTimeout(timer);
     };
   }, [searchQuery, selectedSpecialty, hourlyRate, experience, availability]);
 
-  if (loading) {
+  // Only show full loader if there are zero cards available yet
+  if (!initialLoaded && caregivers.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[300px] rounded-3xl bg-white p-8 ring-1 ring-[#E7EDF5]">
         <Loader2 className="h-8 w-8 animate-spin text-[#0B8BD8] mb-3" />
@@ -122,7 +143,7 @@ const CaregiverCard = ({
   }
 
   return (
-    <div className="space-y-4 sm:space-y-5">
+    <div className={`space-y-4 sm:space-y-5 transition-opacity duration-150 ${isFetching ? 'opacity-75' : 'opacity-100'}`}>
       {caregivers.map((caregiver) => {
         const cgId = caregiver.id || (caregiver as any)._id;
         const initials = caregiver.name

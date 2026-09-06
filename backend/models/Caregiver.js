@@ -108,6 +108,11 @@ const caregiverSchema = new mongoose.Schema(
   }
 );
 
+// Indexes for fast querying and sorting
+caregiverSchema.index({ rating: -1, id: 1 });
+caregiverSchema.index({ specialties: 1 });
+caregiverSchema.index({ availability: 1 });
+
 const Caregiver = mongoose.model('Caregiver', caregiverSchema);
 
 export default Caregiver;

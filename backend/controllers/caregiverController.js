@@ -74,9 +74,6 @@ export const syncCaregiversFromUsers = async () => {
 // @access  Public
 export const getCaregivers = async (req, res) => {
   try {
-    // Ensure any registered caregiver accounts in MongoDB are synchronized
-    await syncCaregiversFromUsers();
-
     const { search, specialty, experience, rate, availability } = req.query;
 
     const filter = {};
@@ -103,7 +100,7 @@ export const getCaregivers = async (req, res) => {
       filter.availability = new RegExp(availability, 'i');
     }
 
-    let caregivers = await Caregiver.find(filter).sort({ rating: -1, id: 1 });
+    let caregivers = await Caregiver.find(filter).sort({ rating: -1, id: 1 }).lean();
 
     // Additional memory filter for experience / rate if needed
     if (experience && experience !== 'Any') {
