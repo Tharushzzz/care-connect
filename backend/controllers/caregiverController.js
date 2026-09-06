@@ -6,6 +6,12 @@ export const syncCaregiversFromUsers = async () => {
   try {
     const caregiverUsers = await User.find({ role: 'caregiver' });
     for (const u of caregiverUsers) {
+      // Caregivers who are not verified must be marked as 'Pending Verification'
+      if (u.status === 'Active') {
+        u.status = 'Pending Verification';
+        await u.save();
+      }
+
       const fullName = `${u.firstName} ${u.lastName}`.trim();
       let cg = await Caregiver.findOne({
         $or: [
@@ -14,6 +20,8 @@ export const syncCaregiversFromUsers = async () => {
           { name: fullName },
         ],
       });
+
+      const isVerified = u.status === 'Verified';
 
       if (!cg) {
         const lastCg = await Caregiver.findOne().sort({ id: -1 });
@@ -31,8 +39,8 @@ export const syncCaregiversFromUsers = async () => {
           rating: 5.0,
           reviews: 0,
           availability: 'Available today',
-          verified: u.status === 'Verified',
-          description: u.bio || `${fullName} is a compassionate, verified caregiver providing dedicated care support.`,
+          verified: isVerified,
+          description: u.bio || `${fullName} is a compassionate caregiver providing dedicated care support.`,
           specialties: ['Senior Care', 'Mobility Support'],
           credentials: ['SLNC Registered', 'Background checked'],
           about: u.bio || `${fullName} is committed to compassionate, dignified care for all families.`,
@@ -47,7 +55,7 @@ export const syncCaregiversFromUsers = async () => {
         if (u.avatar && cg.profileImage !== u.avatar) { cg.profileImage = u.avatar; modified = true; }
         if (fullName && cg.name !== fullName) { cg.name = fullName; modified = true; }
         if (u.title && cg.role !== u.title) { cg.role = u.title; modified = true; }
-        if (u.status === 'Verified' && !cg.verified) { cg.verified = true; modified = true; }
+        if (cg.verified !== isVerified) { cg.verified = isVerified; modified = true; }
         if (u.hourlyRate) {
           const formattedRate = `Rs. ${Number(u.hourlyRate).toLocaleString()}/hr`;
           if (cg.rate !== formattedRate) { cg.rate = formattedRate; modified = true; }
@@ -74,9 +82,15 @@ export const syncCaregiversFromUsers = async () => {
 // @access  Public
 export const getCaregivers = async (req, res) => {
   try {
-    const { search, specialty, experience, rate, availability } = req.query;
+    const { search, specialty, experience, rate, availability, includeAll } = req.query;
 
     const filter = {};
+
+    // Only approved/verified caregivers are displayed for clients to book
+    // unless includeAll is specifically requested (e.g. for Admin portal)
+    if (includeAll !== 'true') {
+      filter.verified = true;
+    }
 
     // Search query on name, role, or description
     if (search && search.trim() !== '') {

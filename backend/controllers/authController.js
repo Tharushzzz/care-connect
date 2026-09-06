@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import Caregiver from '../models/Caregiver.js';
+import Notification from '../models/Notification.js';
 
 // Helper to generate JWT Token
 const generateToken = (id) => {
@@ -42,13 +43,14 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'An account with this email already exists' });
     }
 
-    // Create user
+    // Create user - new caregivers require admin approval by default
     const userData = {
       firstName: firstName.trim(),
       lastName: lastName.trim(),
       email: normalizedEmail,
       password,
       role,
+      status: role === 'caregiver' ? 'Pending Verification' : 'Active',
     };
 
     if (role === 'caregiver') {
@@ -100,6 +102,7 @@ export const registerUser = async (req, res) => {
         lastName: user.lastName,
         email: user.email,
         role: user.role,
+        status: user.status,
         avatar: user.avatar,
         title: user.title,
         experience: user.experience,
@@ -141,6 +144,7 @@ export const loginUser = async (req, res) => {
         lastName: user.lastName,
         email: user.email,
         role: user.role,
+        status: user.status,
         avatar: user.avatar,
         title: user.title,
         experience: user.experience,
@@ -172,6 +176,7 @@ export const getUserProfile = async (req, res) => {
         email: user.email,
         phone: user.phone || '',
         role: user.role,
+        status: user.status,
         avatar: user.avatar || '',
         title: user.title || '',
         experience: user.experience || 0,
@@ -273,6 +278,7 @@ export const updateUserProfile = async (req, res) => {
         email: updatedUser.email,
         phone: updatedUser.phone,
         role: updatedUser.role,
+        status: updatedUser.status,
         avatar: updatedUser.avatar,
         title: updatedUser.title,
         experience: updatedUser.experience,
@@ -319,7 +325,7 @@ export const getAllUsers = async (req, res) => {
   }
 };
 
-// @desc    Update user status (e.g. approve caregiver verification)
+// @desc    Update user status (e.g. approve caregiver verification, suspend, or reject)
 // @route   PATCH /api/auth/users/:id/status
 // @access  Public / Admin
 export const updateUserStatus = async (req, res) => {
@@ -338,6 +344,48 @@ export const updateUserStatus = async (req, res) => {
 
     await user.save();
 
+    // If this user is a caregiver, synchronize Caregiver.verified
+    if (user.role === 'caregiver') {
+      const isApproved = status === 'Verified';
+      const fullName = `${user.firstName} ${user.lastName}`.trim();
+      const caregiver = await Caregiver.findOne({
+        $or: [
+          { userId: user._id },
+          { email: user.email },
+          ...(fullName ? [{ name: fullName }] : []),
+        ],
+      });
+
+      if (caregiver) {
+        caregiver.verified = isApproved;
+        await caregiver.save();
+      }
+
+      // Create a system notification for the caregiver
+      try {
+        let notifTitle = 'Account Status Update';
+        let notifDesc = `Your account status was changed to: ${status}.`;
+
+        if (status === 'Verified') {
+          notifTitle = 'Profile Approved & Verified!';
+          notifDesc = 'Congratulations! The platform administrator has verified your credentials. Your profile is now live for family bookings.';
+        } else if (status === 'Rejected') {
+          notifTitle = 'Verification Request Declined';
+          notifDesc = 'Your caregiver verification request was declined. Please check your profile credentials or contact support.';
+        }
+
+        await Notification.create({
+          user: user._id,
+          title: notifTitle,
+          description: notifDesc,
+          type: 'system',
+          time: 'Just now',
+        });
+      } catch (notifErr) {
+        console.error('Error creating status update notification:', notifErr);
+      }
+    }
+
     res.json({
       id: user._id.toString(),
       _id: user._id.toString(),
@@ -349,6 +397,39 @@ export const updateUserStatus = async (req, res) => {
   } catch (error) {
     console.error('Update user status error:', error);
     res.status(500).json({ message: 'Server error updating user status' });
+  }
+};
+
+// @desc    Delete user and associated caregiver profile
+// @route   DELETE /api/auth/users/:id
+// @access  Public / Admin
+export const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // If caregiver, remove their profile from Caregiver collection too
+    if (user.role === 'caregiver') {
+      const fullName = `${user.firstName} ${user.lastName}`.trim();
+      await Caregiver.deleteMany({
+        $or: [
+          { userId: user._id },
+          { email: user.email },
+          ...(fullName ? [{ name: fullName }] : []),
+        ],
+      });
+    }
+
+    await User.findByIdAndDelete(id);
+
+    res.json({ message: 'User deleted successfully', id });
+  } catch (error) {
+    console.error('Delete user error:', error);
+    res.status(500).json({ message: 'Server error deleting user' });
   }
 };
 
