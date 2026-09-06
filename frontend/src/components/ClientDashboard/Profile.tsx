@@ -7,13 +7,13 @@ export const Profile: React.FC = () => {
 
   // Form states initialized with signup/authenticated user data
   const [firstName, setFirstName] = useState(
-    user?.firstName || (user?.name ? user.name.split(' ')[0] : 'Eleanor')
+    user?.firstName || (user?.name ? user.name.split(' ')[0] : '')
   );
   const [lastName, setLastName] = useState(
-    user?.lastName || (user?.name ? user.name.split(' ').slice(1).join(' ') : 'Vance')
+    user?.lastName || (user?.name ? user.name.split(' ').slice(1).join(' ') : '')
   );
-  const [email, setEmail] = useState(user?.email || 'eleanor@example.com');
-  const [phone, setPhone] = useState(user?.phone || '0712554567');
+  const [email, setEmail] = useState(user?.email || '');
+  const [phone, setPhone] = useState(user?.phone || '');
   const [address, setAddress] = useState('123 Galle Road');
   const [city, setCity] = useState('Colombo 03');
   const [state, setState] = useState('Western Province');
@@ -29,10 +29,18 @@ export const Profile: React.FC = () => {
   // Synchronize when authenticated user changes
   useEffect(() => {
     if (user) {
-      if (user.firstName) setFirstName(user.firstName);
-      if (user.lastName) setLastName(user.lastName);
+      if (user.firstName) {
+        setFirstName(user.firstName);
+      } else if (user.name) {
+        setFirstName(user.name.split(' ')[0] || '');
+      }
+      if (user.lastName) {
+        setLastName(user.lastName);
+      } else if (user.name) {
+        setLastName(user.name.split(' ').slice(1).join(' ') || '');
+      }
       if (user.email) setEmail(user.email);
-      if (user.phone) setPhone(user.phone);
+      if (user.phone !== undefined) setPhone(user.phone || '');
       if (user.avatar) setAvatar(user.avatar);
       if (user.bio) setAboutMe(user.bio);
     }
@@ -69,8 +77,25 @@ export const Profile: React.FC = () => {
     }
   };
 
+  const displayName =
+    (firstName || lastName)
+      ? `${firstName} ${lastName}`.trim()
+      : (user?.name || `${user?.firstName || ''} ${user?.lastName || ''}`.trim() || 'User Profile');
+
   const getInitials = () => {
-    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+    const f = firstName?.trim() || '';
+    const l = lastName?.trim() || '';
+    if (f && l) {
+      return `${f.charAt(0)}${l.charAt(0)}`.toUpperCase();
+    }
+    if (f) return f.slice(0, 2).toUpperCase();
+    if (user?.name) {
+      const parts = user.name.trim().split(' ');
+      return parts.length > 1
+        ? `${parts[0][0]}${parts[1][0]}`.toUpperCase()
+        : parts[0].slice(0, 2).toUpperCase();
+    }
+    return 'U';
   };
 
   return (
@@ -118,7 +143,7 @@ export const Profile: React.FC = () => {
             </div>
 
             <div className="text-center sm:text-left space-y-2.5">
-              <h3 className="text-base font-bold text-[#0D182B]">Eleanor Vance</h3>
+              <h3 className="text-base font-bold text-[#0D182B] capitalize">{displayName}</h3>
               <p className="text-xs text-gray-500">Allowed formats: JPG, PNG. Max size 2MB</p>
               <div className="flex justify-center sm:justify-start gap-2">
                 <label

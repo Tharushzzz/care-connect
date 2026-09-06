@@ -52,7 +52,7 @@ export const LoginHeader: React.FC<LoginHeaderProps> = ({
 
   const user: User = {
     id: propUser?.id || authUser?._id || authUser?.id || defaultUser.id,
-    name: authUser?.name || propUser?.name || defaultUser.name,
+    name: authUser?.name || (authUser ? `${authUser.firstName || ''} ${authUser.lastName || ''}`.trim() : '') || propUser?.name || defaultUser.name,
     email: authUser?.email || propUser?.email || defaultUser.email,
     phone: authUser?.phone || propUser?.phone || defaultUser.phone,
     role: authUser?.role || propUser?.role || defaultUser.role,
