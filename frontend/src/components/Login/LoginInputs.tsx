@@ -73,10 +73,10 @@ const LoginInputs: React.FC = () => {
 
       {/* Form Fields */}
       <form onSubmit={handleLogin} className="space-y-5 pt-2">
-        {/* Email / Username */}
+        {/* Email / Phone Number */}
         <div className="space-y-1.5">
           <label className="block text-sm font-medium text-[#344054]">
-            Email or Username
+            Email or Phone number
           </label>
           <input
             type="text"
@@ -85,7 +85,7 @@ const LoginInputs: React.FC = () => {
               setEmail(e.target.value);
               if (error) setError(null);
             }}
-            placeholder="Enter your email"
+            placeholder="Enter your email or phone number"
             required
             disabled={loading}
             className="w-full h-12 px-4 border border-[#D0D5DD] rounded-xl sm:rounded-2xl text-base text-[#101828] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0686CD]/30 focus:border-[#0686CD] transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"

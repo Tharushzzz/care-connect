@@ -23,6 +23,7 @@ export const registerUser = async (req, res) => {
       firstName,
       lastName,
       email,
+      phone,
       password,
       role = 'family',
       title,
@@ -48,6 +49,7 @@ export const registerUser = async (req, res) => {
       firstName: firstName.trim(),
       lastName: lastName.trim(),
       email: normalizedEmail,
+      phone: phone ? phone.trim() : '',
       password,
       role,
       status: role === 'caregiver' ? 'Pending Verification' : 'Active',
@@ -101,6 +103,7 @@ export const registerUser = async (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        phone: user.phone || '',
         role: user.role,
         status: user.status,
         avatar: user.avatar,
@@ -119,7 +122,7 @@ export const registerUser = async (req, res) => {
   }
 };
 
-// @desc    Authenticate user & get token (Login)
+// @desc    Authenticate user & get token (Login via Email OR Phone)
 // @route   POST /api/auth/login
 // @access  Public
 export const loginUser = async (req, res) => {
@@ -127,14 +130,21 @@ export const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: 'Please provide both email and password' });
+      return res.status(400).json({ message: 'Please provide both email/phone and password' });
     }
 
-    const normalizedEmail = email.toLowerCase().trim();
-    const searchEmail = normalizedEmail === 'admin' ? 'admin@admin.com' : normalizedEmail;
+    const rawInput = email.trim();
+    const normalizedInput = rawInput.toLowerCase();
+    const searchIdentifier = normalizedInput === 'admin' ? 'admin@admin.com' : normalizedInput;
 
-    // Find user by email
-    const user = await User.findOne({ email: searchEmail });
+    // Find user by email OR phone number
+    const user = await User.findOne({
+      $or: [
+        { email: searchIdentifier },
+        { phone: rawInput },
+        { phone: rawInput.replace(/\s+/g, '') },
+      ],
+    });
 
     if (user && (await user.matchPassword(password))) {
       return res.json({
@@ -143,6 +153,7 @@ export const loginUser = async (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        phone: user.phone || '',
         role: user.role,
         status: user.status,
         avatar: user.avatar,
@@ -153,7 +164,7 @@ export const loginUser = async (req, res) => {
         token: generateToken(user._id),
       });
     } else {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: 'Invalid email/phone or password' });
     }
   } catch (error) {
     console.error('Login error:', error);

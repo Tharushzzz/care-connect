@@ -22,6 +22,7 @@ export interface SignupData {
   firstName: string;
   lastName: string;
   email: string;
+  phone?: string;
   password: string;
   role: 'family' | 'caregiver';
   title?: string;
