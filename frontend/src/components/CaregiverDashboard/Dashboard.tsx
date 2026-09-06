@@ -12,6 +12,7 @@ import {
   Loader2,
   User
 } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
 
 interface BookingItem {
   _id: string;
@@ -34,9 +35,12 @@ interface BookingItem {
 }
 
 export const CaregiverDashboard: React.FC = () => {
+  const { user } = useAuth();
   const [bookings, setBookings] = useState<BookingItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
+
+  const isPendingVerification = user?.role === 'caregiver' && user?.status !== 'Verified';
 
   const fetchBookings = async () => {
     try {
@@ -115,6 +119,34 @@ export const CaregiverDashboard: React.FC = () => {
         </p>
       </div>
 
+      {/* Verification Notice Banner if Pending */}
+      {isPendingVerification && (
+        <div className="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border border-amber-300/80 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-in fade-in duration-200">
+          <div className="flex items-start gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0 mt-0.5">
+              <Clock className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-sm sm:text-base font-bold text-amber-900 flex items-center gap-2">
+                <span>Account Verification Under Review</span>
+                <span className="text-[10px] uppercase font-bold bg-amber-200 text-amber-800 px-2 py-0.5 rounded-full">
+                  Pending Admin Approval
+                </span>
+              </h2>
+              <p className="text-xs text-amber-800/85 mt-1 max-w-2xl leading-relaxed">
+                Your caregiver account is currently awaiting administrator review. Once verified, your profile will be published to the client directory and available for booking requests.
+              </p>
+            </div>
+          </div>
+          <Link
+            to="/caregiver/verification"
+            className="shrink-0 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold transition-colors shadow-2xs"
+          >
+            Check Status
+          </Link>
+        </div>
+      )}
+
       {/* Top 4 Stat Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         {/* Card 1: Upcoming Shifts */}
@@ -165,20 +197,26 @@ export const CaregiverDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Card 4: Profile Active */}
+        {/* Card 4: Verification / Profile Status */}
         <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-2xs flex flex-col items-center justify-center text-center hover:shadow-sm transition-shadow">
-          <div className="w-9 h-9 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500 mb-2">
-            <CheckCircle2 className="w-5 h-5" />
+          <div
+            className={`w-9 h-9 rounded-full flex items-center justify-center mb-2 ${
+              !isPendingVerification ? 'bg-emerald-50 text-emerald-500' : 'bg-amber-50 text-amber-500'
+            }`}
+          >
+            {!isPendingVerification ? <CheckCircle2 className="w-5 h-5" /> : <Clock className="w-5 h-5" />}
           </div>
-          <div className="text-base font-bold text-slate-900">Profile Active</div>
+          <div className="text-base font-bold text-slate-900">
+            {!isPendingVerification ? 'Profile Active' : 'Under Review'}
+          </div>
           <p className="text-[11px] text-slate-500 mt-0.5 mb-3 leading-snug">
-            Available for family bookings
+            {!isPendingVerification ? 'Available for family bookings' : 'Awaiting admin approval'}
           </p>
           <Link
-            to="/caregiver/profile"
+            to={!isPendingVerification ? '/caregiver/profile' : '/caregiver/verification'}
             className="w-full py-1.5 px-3 rounded-xl border border-[#0D9488] text-[#0D9488] hover:bg-teal-50 text-xs font-semibold transition-colors block text-center"
           >
-            Edit Profile
+            {!isPendingVerification ? 'Edit Profile' : 'View Verification'}
           </Link>
         </div>
       </div>

@@ -61,7 +61,7 @@ const userSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['Active', 'Pending Verification', 'Verified'],
+      enum: ['Active', 'Pending Verification', 'Verified', 'Rejected', 'Suspended'],
       default: 'Active',
     },
     savedCaregivers: {

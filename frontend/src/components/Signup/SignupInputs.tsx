@@ -25,6 +25,7 @@ const SignupInputs: React.FC<SignupInputsProps> = ({ role: controlledRole, onRol
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [title, setTitle] = useState('');
   const [experience, setExperience] = useState('');
   const [hourlyRate, setHourlyRate] = useState('');
@@ -53,6 +54,7 @@ const SignupInputs: React.FC<SignupInputsProps> = ({ role: controlledRole, onRol
       firstName,
       lastName,
       email,
+      phone: phone.trim() || undefined,
       password,
       role,
       title: role === 'caregiver' ? title : undefined,
@@ -180,6 +182,22 @@ const SignupInputs: React.FC<SignupInputsProps> = ({ role: controlledRole, onRol
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            placeholder="e.g. name@example.com"
+            className="w-full h-11 px-4 border border-[#D0D5DD] rounded-xl text-sm text-[#101828] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0686CD]/30 focus:border-[#0686CD] transition-all"
+            required
+          />
+        </div>
+
+        {/* Phone number */}
+        <div className="space-y-1.5">
+          <label className="block text-sm font-medium text-[#344054]">
+            Phone number
+          </label>
+          <input
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="e.g. 071 234 5678"
             className="w-full h-11 px-4 border border-[#D0D5DD] rounded-xl text-sm text-[#101828] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0686CD]/30 focus:border-[#0686CD] transition-all"
             required
           />

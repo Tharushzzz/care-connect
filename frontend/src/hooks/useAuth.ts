@@ -8,6 +8,7 @@ export interface AuthUser {
   lastName?: string;
   email: string;
   role: 'family' | 'caregiver' | 'admin';
+  status?: string;
   avatar?: string;
   phone?: string;
   title?: string;
@@ -21,6 +22,7 @@ export interface SignupData {
   firstName: string;
   lastName: string;
   email: string;
+  phone?: string;
   password: string;
   role: 'family' | 'caregiver';
   title?: string;
@@ -106,6 +108,7 @@ export function useAuth() {
         lastName: data.lastName,
         email: data.email,
         role: data.role,
+        status: data.status,
         avatar: data.avatar || '',
         title: data.title || '',
         experience: data.experience || 0,
@@ -157,6 +160,7 @@ export function useAuth() {
         lastName: data.lastName,
         email: data.email,
         role: data.role,
+        status: data.status,
         avatar: data.avatar || '',
         title: data.title || '',
         experience: data.experience || 0,
@@ -212,6 +216,7 @@ export function useAuth() {
         email: data.email,
         phone: data.phone || '',
         role: data.role,
+        status: data.status || (user ? user.status : undefined),
         avatar: data.avatar || '',
         title: data.title || '',
         experience: data.experience || 0,

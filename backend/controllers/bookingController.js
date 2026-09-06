@@ -268,3 +268,24 @@ export const updateBookingStatus = async (req, res) => {
     res.status(500).json({ message: 'Server error updating booking status' });
   }
 };
+
+// @desc    Delete a booking (Admin / User)
+// @route   DELETE /api/bookings/:id
+// @access  Public / Optional Auth
+export const deleteBooking = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const booking = await Booking.findById(id);
+
+    if (!booking) {
+      return res.status(404).json({ message: 'Booking not found' });
+    }
+
+    await Booking.findByIdAndDelete(id);
+
+    res.json({ message: 'Booking deleted successfully', id });
+  } catch (error) {
+    console.error('Error deleting booking:', error);
+    res.status(500).json({ message: 'Server error deleting booking' });
+  }
+};

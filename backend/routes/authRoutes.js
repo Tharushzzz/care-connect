@@ -6,6 +6,7 @@ import {
   updateUserProfile,
   getAllUsers,
   updateUserStatus,
+  deleteUser,
 } from '../controllers/authController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
@@ -15,6 +16,7 @@ router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.get('/users', getAllUsers);
 router.patch('/users/:id/status', updateUserStatus);
+router.delete('/users/:id', deleteUser);
 router
   .route('/profile')
   .get(protect, getUserProfile)
