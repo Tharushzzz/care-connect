@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Eye, EyeOff, AlertCircle, Loader2 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -10,6 +10,7 @@ const LoginInputs: React.FC = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
   const { login, loading } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -24,13 +25,15 @@ const LoginInputs: React.FC = () => {
     const result = await login(email, password);
 
     if (result.success && result.user) {
-      // Role-based redirection
+      const fromPath = (location.state as any)?.redirect || (location.state as any)?.from?.pathname;
+
+      // Role-based redirection to legitimate portal
       if (result.user.role === 'admin') {
-        navigate('/');
+        navigate(fromPath && fromPath.startsWith('/admin') ? fromPath : '/admin');
       } else if (result.user.role === 'caregiver') {
-        navigate('/caregiver');
+        navigate(fromPath && fromPath.startsWith('/caregiver') ? fromPath : '/caregiver');
       } else {
-        navigate('/');
+        navigate(fromPath && !fromPath.startsWith('/admin') && !fromPath.startsWith('/caregiver') ? fromPath : '/');
       }
     } else {
       setError(result.error || 'Failed to sign in. Please check your credentials.');
@@ -57,7 +60,7 @@ const LoginInputs: React.FC = () => {
         </h1>
         <p className="text-sm sm:text-base text-[#475467]">
           Don't have an account?{' '}
-          <Link to="/signup" className="text-[#0686CD] hover:underline font-semibold">
+          <Link to="/signup" state={location.state} className="text-[#0686CD] hover:underline font-semibold">
             Create a new account
           </Link>
         </p>
