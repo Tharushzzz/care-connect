@@ -4,11 +4,12 @@ import {
   createBooking,
   updateBookingStatus,
 } from '../controllers/bookingController.js';
+import { optionalAuth } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.get('/', getBookings);
-router.post('/', createBooking);
-router.patch('/:id/status', updateBookingStatus);
+router.get('/', optionalAuth, getBookings);
+router.post('/', optionalAuth, createBooking);
+router.patch('/:id/status', optionalAuth, updateBookingStatus);
 
 export default router;

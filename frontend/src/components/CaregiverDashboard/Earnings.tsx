@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   DollarSign,
   TrendingUp,
@@ -7,7 +7,8 @@ import {
   ArrowDownLeft,
   ArrowUpRight,
   CheckCircle2,
-  X
+  X,
+  Loader2
 } from 'lucide-react';
 
 interface Transaction {
@@ -23,45 +24,51 @@ interface Transaction {
 export const CaregiverEarnings: React.FC = () => {
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [withdrawSuccess, setWithdrawSuccess] = useState(false);
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const transactions: Transaction[] = [
-    {
-      id: 'TX-1092',
-      title: 'John Doe Family',
-      subtitle: 'Earnings • TX-1092',
-      date: 'Oct 24, 2026',
-      status: 'Pending',
-      amount: '+Rs. 14,000.00',
-      isPayout: false
-    },
-    {
-      id: 'TX-1091',
-      title: 'Alice Smith Family',
-      subtitle: 'Earnings • TX-1091',
-      date: 'Oct 22, 2026',
-      status: 'Completed',
-      amount: '+Rs. 10,500.00',
-      isPayout: false
-    },
-    {
-      id: 'TX-1090',
-      title: 'Platform Payout',
-      subtitle: 'Payout to Bank • TX-1090',
-      date: 'Oct 20, 2026',
-      status: 'Completed',
-      amount: '-Rs. 42,000.00',
-      isPayout: true
-    },
-    {
-      id: 'TX-1089',
-      title: 'Sarah Jenkins',
-      subtitle: 'Earnings • TX-1089',
-      date: 'Oct 18, 2026',
-      status: 'Completed',
-      amount: '+Rs. 17,500.00',
-      isPayout: false
-    }
-  ];
+  useEffect(() => {
+    const fetchEarningsData = async () => {
+      try {
+        setIsLoading(true);
+        const token = localStorage.getItem('careconnect_token');
+        const res = await fetch('/api/bookings', {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setBookings(data || []);
+        }
+      } catch (err) {
+        console.error('Error fetching earnings data:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchEarningsData();
+  }, []);
+
+  const completedBookings = bookings.filter((b) => b.status === 'Completed');
+  const scheduledBookings = bookings.filter(
+    (b) => b.status === 'Scheduled' || b.status === 'Accepted'
+  );
+
+  const completedTotal = completedBookings.reduce((acc, b) => acc + (b.totalPrice || 0), 0);
+  const scheduledTotal = scheduledBookings.reduce((acc, b) => acc + (b.totalPrice || 0), 0);
+  const totalEarnings = completedTotal + scheduledTotal;
+  const availablePayout = completedTotal > 0 ? completedTotal : scheduledTotal > 0 ? Math.round(scheduledTotal * 0.7) : 0;
+  const hoursWorked = bookings.length > 0 ? bookings.length * 4 : 0;
+
+  const transactions: Transaction[] = bookings.map((b) => ({
+    id: b.bookingCode || b._id,
+    title: b.userName || 'Family Client',
+    subtitle: `${b.serviceType} • ${b.bookingCode || 'BK'}`,
+    date: b.startDate,
+    status: b.status === 'Completed' ? 'Completed' : 'Pending',
+    amount: `+Rs. ${(b.totalPrice || 28000).toLocaleString()}`,
+    isPayout: false,
+  }));
 
   const handleWithdraw = (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,7 +117,7 @@ export const CaregiverEarnings: React.FC = () => {
               Available for Payout
             </span>
             <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white mt-2">
-              Rs. 24,500.00
+              {isLoading ? '...' : `Rs. ${availablePayout.toLocaleString()}`}
             </div>
           </div>
 
@@ -127,12 +134,12 @@ export const CaregiverEarnings: React.FC = () => {
               <span>Total Earnings</span>
             </div>
             <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2">
-              Rs. 324,000.00
+              {isLoading ? '...' : `Rs. ${totalEarnings.toLocaleString()}`}
             </div>
           </div>
 
           <div className="mt-4 text-xs font-semibold text-emerald-600 flex items-center gap-1">
-            <span>+12% from last month</span>
+            <span>{scheduledBookings.length} active shift{scheduledBookings.length === 1 ? '' : 's'}</span>
           </div>
         </div>
 
@@ -144,12 +151,12 @@ export const CaregiverEarnings: React.FC = () => {
               <span>Hours Worked</span>
             </div>
             <div className="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-2 flex items-baseline">
-              92 <span className="text-slate-400 font-normal text-base ml-1.5">hrs</span>
+              {isLoading ? '...' : hoursWorked} <span className="text-slate-400 font-normal text-base ml-1.5">hrs</span>
             </div>
           </div>
 
           <div className="mt-4 text-xs text-slate-400">
-            This month
+            Total recorded shifts
           </div>
         </div>
       </div>
@@ -180,61 +187,69 @@ export const CaregiverEarnings: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-sm">
-              {transactions.map((tx) => (
-                <tr key={tx.id} className="hover:bg-slate-50/50 transition-colors">
-                  {/* Transaction Info */}
-                  <td className="py-4 px-5 sm:px-6">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
-                          tx.isPayout
-                            ? 'bg-slate-100 text-slate-600'
-                            : 'bg-teal-50 text-[#0D9488]'
-                        }`}
-                      >
-                        {tx.isPayout ? (
-                          <ArrowUpRight className="w-4 h-4" />
-                        ) : (
-                          <ArrowDownLeft className="w-4 h-4" />
-                        )}
-                      </div>
-                      <div>
-                        <div className="font-bold text-slate-900 text-sm">{tx.title}</div>
-                        <div className="text-xs text-slate-400">{tx.subtitle}</div>
-                      </div>
-                    </div>
-                  </td>
-
-                  {/* Date */}
-                  <td className="py-4 px-5 text-xs text-slate-600 font-medium">
-                    {tx.date}
-                  </td>
-
-                  {/* Status */}
-                  <td className="py-4 px-5">
-                    <span
-                      className={`inline-block text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${
-                        tx.status === 'Completed'
-                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                          : 'bg-amber-50 text-amber-700 border-amber-200'
-                      }`}
-                    >
-                      {tx.status}
-                    </span>
-                  </td>
-
-                  {/* Amount */}
-                  <td className="py-4 px-5 sm:px-6 text-right">
-                    <span
-                      className={`font-bold text-sm sm:text-base ${
-                        tx.isPayout ? 'text-slate-800' : 'text-[#0D9488]'
-                      }`}
-                    >
-                      {tx.amount}
-                    </span>
+              {transactions.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="py-8 text-center text-slate-400 text-sm">
+                    {isLoading ? 'Loading transactions...' : 'No transactions recorded yet.'}
                   </td>
                 </tr>
-              ))}
+              ) : (
+                transactions.map((tx) => (
+                  <tr key={tx.id} className="hover:bg-slate-50/50 transition-colors">
+                    {/* Transaction Info */}
+                    <td className="py-4 px-5 sm:px-6">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
+                            tx.isPayout
+                              ? 'bg-slate-100 text-slate-600'
+                              : 'bg-teal-50 text-[#0D9488]'
+                          }`}
+                        >
+                          {tx.isPayout ? (
+                            <ArrowUpRight className="w-4 h-4" />
+                          ) : (
+                            <ArrowDownLeft className="w-4 h-4" />
+                          )}
+                        </div>
+                        <div>
+                          <div className="font-bold text-slate-900 text-sm">{tx.title}</div>
+                          <div className="text-xs text-slate-400">{tx.subtitle}</div>
+                        </div>
+                      </div>
+                    </td>
+
+                    {/* Date */}
+                    <td className="py-4 px-5 text-xs text-slate-600 font-medium">
+                      {tx.date}
+                    </td>
+
+                    {/* Status */}
+                    <td className="py-4 px-5">
+                      <span
+                        className={`inline-block text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${
+                          tx.status === 'Completed'
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            : 'bg-amber-50 text-amber-700 border-amber-200'
+                        }`}
+                      >
+                        {tx.status}
+                      </span>
+                    </td>
+
+                    {/* Amount */}
+                    <td className="py-4 px-5 sm:px-6 text-right">
+                      <span
+                        className={`font-bold text-sm sm:text-base ${
+                          tx.isPayout ? 'text-slate-800' : 'text-[#0D9488]'
+                        }`}
+                      >
+                        {tx.amount}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

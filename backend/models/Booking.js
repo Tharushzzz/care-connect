@@ -7,13 +7,30 @@ const bookingSchema = new mongoose.Schema(
       ref: 'User',
       required: false,
     },
+    userName: {
+      type: String,
+      default: '',
+    },
+    userEmail: {
+      type: String,
+      default: '',
+    },
+    userPhone: {
+      type: String,
+      default: '',
+    },
     bookingCode: {
       type: String,
       default: () => `BK_${Math.floor(1000 + Math.random() * 9000)}`,
     },
     caregiverId: {
-      type: Number,
+      type: mongoose.Schema.Types.Mixed,
       required: true,
+    },
+    caregiverUserId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: false,
     },
     caregiverName: {
       type: String,
@@ -48,9 +65,13 @@ const bookingSchema = new mongoose.Schema(
       type: String,
       default: '05:00 PM',
     },
+    location: {
+      type: String,
+      default: '',
+    },
     status: {
       type: String,
-      enum: ['Scheduled', 'Pending', 'Completed', 'Cancelled'],
+      enum: ['Scheduled', 'Pending', 'Completed', 'Cancelled', 'Accepted', 'Declined'],
       default: 'Pending',
     },
     totalPrice: {

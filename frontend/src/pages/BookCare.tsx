@@ -14,11 +14,12 @@ import { useAuth } from '../hooks/useAuth';
 
 export const BookCare: React.FC = () => {
   const { id } = useParams<{ id?: string }>();
-  const caregiverId = id ? parseInt(id, 10) : 1;
+  const caregiverId = id || '1';
 
   // Selected Caregiver state (initialized with fallback, synced with MongoDB)
   const [selectedCaregiver, setSelectedCaregiver] = useState<Caregiver>(() => {
-    return CaregiversData.find((c) => c.id === caregiverId) || CaregiversData[0];
+    const num = Number(caregiverId);
+    return (!isNaN(num) ? CaregiversData.find((c) => c.id === num) : null) || CaregiversData[0];
   });
 
   // Stepper state (1: Service, 2: Review, 3: Payment, 4: Finish)
@@ -118,18 +119,20 @@ export const BookCare: React.FC = () => {
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           body: JSON.stringify({
-            caregiverId: selectedCaregiver.id || caregiverId,
+            caregiverId: selectedCaregiver.id || (selectedCaregiver as any)._id || caregiverId,
+            caregiverUserId: (selectedCaregiver as any).userId,
             caregiverName: selectedCaregiver.name,
             caregiverRole: selectedCaregiver.role,
             caregiverAvatar: selectedCaregiver.profileImage,
             serviceType: mappedService,
             startDate,
-            endDate,
-            startTime,
-            endTime,
+            endDate: endDate || startDate,
+            startTime: startTime || '09:00 AM',
+            endTime: endTime || '05:00 PM',
+            location: `${streetAddress}${city ? ', ' + city : ''}${zipCode ? ' ' + zipCode : ''}`.trim(),
             totalPrice: 28000.0,
             days: 1,
-            notes: `${selectedRequirements.join(', ')} | Address: ${streetAddress}, ${city} ${additionalNotes ? '| Notes: ' + additionalNotes : ''}`,
+            notes: `${selectedRequirements.join(', ')} ${additionalNotes ? '| Notes: ' + additionalNotes : ''}`.trim(),
           }),
         });
 

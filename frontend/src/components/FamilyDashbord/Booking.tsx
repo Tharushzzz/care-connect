@@ -37,7 +37,10 @@ export const Booking: React.FC = () => {
     const fetchBookings = async () => {
       try {
         setLoading(true);
-        const res = await fetch('/api/bookings');
+        const token = localStorage.getItem('careconnect_token');
+        const res = await fetch('/api/bookings', {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
         if (res.ok) {
           const data = await res.json();
           const mapped: BookingItem[] = data.map((b: any) => ({

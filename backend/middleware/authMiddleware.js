@@ -41,3 +41,22 @@ export const admin = (req, res, next) => {
     res.status(403).json({ message: 'Access denied: Admin rights required' });
   }
 };
+
+export const optionalAuth = async (req, res, next) => {
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    try {
+      const token = req.headers.authorization.split(' ')[1];
+      const decoded = jwt.verify(
+        token,
+        process.env.JWT_SECRET || 'careconnect_super_secret_jwt_key_2026_production'
+      );
+      req.user = await User.findById(decoded.id).select('-password');
+    } catch (error) {
+      // Ignore token errors and continue as unauthenticated
+    }
+  }
+  next();
+};
