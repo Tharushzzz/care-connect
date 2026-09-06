@@ -1,10 +1,82 @@
 import Caregiver from '../models/Caregiver.js';
+import User from '../models/User.js';
+
+// Sync caregiver accounts from User collection to Caregiver collection
+export const syncCaregiversFromUsers = async () => {
+  try {
+    const caregiverUsers = await User.find({ role: 'caregiver' });
+    for (const u of caregiverUsers) {
+      const fullName = `${u.firstName} ${u.lastName}`.trim();
+      let cg = await Caregiver.findOne({
+        $or: [
+          { userId: u._id },
+          { email: u.email },
+          { name: fullName },
+        ],
+      });
+
+      if (!cg) {
+        const lastCg = await Caregiver.findOne().sort({ id: -1 });
+        const nextId = (lastCg && lastCg.id ? lastCg.id : 0) + 1;
+        await Caregiver.create({
+          id: nextId,
+          userId: u._id,
+          email: u.email,
+          name: fullName || 'Caregiver Professional',
+          role: u.title || 'Certified Caregiver',
+          profileImage: u.avatar || '',
+          location: 'Colombo, Sri Lanka',
+          experience: u.experience ? `${u.experience} years experience` : '1 year experience',
+          rate: u.hourlyRate ? `Rs. ${Number(u.hourlyRate).toLocaleString()}/hr` : 'Rs. 2,500/hr',
+          rating: 5.0,
+          reviews: 0,
+          availability: 'Available today',
+          verified: u.status === 'Verified',
+          description: u.bio || `${fullName} is a compassionate, verified caregiver providing dedicated care support.`,
+          specialties: ['Senior Care', 'Mobility Support'],
+          credentials: ['SLNC Registered', 'Background checked'],
+          about: u.bio || `${fullName} is committed to compassionate, dignified care for all families.`,
+          freetime: 'Enjoys reading and community volunteering.',
+          reviewText: 'Warm, reliable, and attentive to family needs.',
+          reviewsData: [],
+        });
+      } else {
+        let modified = false;
+        if (!cg.userId) { cg.userId = u._id; modified = true; }
+        if (!cg.email) { cg.email = u.email; modified = true; }
+        if (u.avatar && cg.profileImage !== u.avatar) { cg.profileImage = u.avatar; modified = true; }
+        if (fullName && cg.name !== fullName) { cg.name = fullName; modified = true; }
+        if (u.title && cg.role !== u.title) { cg.role = u.title; modified = true; }
+        if (u.status === 'Verified' && !cg.verified) { cg.verified = true; modified = true; }
+        if (u.hourlyRate) {
+          const formattedRate = `Rs. ${Number(u.hourlyRate).toLocaleString()}/hr`;
+          if (cg.rate !== formattedRate) { cg.rate = formattedRate; modified = true; }
+        }
+        if (u.experience) {
+          const formattedExp = `${u.experience} years experience`;
+          if (cg.experience !== formattedExp) { cg.experience = formattedExp; modified = true; }
+        }
+        if (u.bio && cg.description !== u.bio) {
+          cg.description = u.bio;
+          cg.about = u.bio;
+          modified = true;
+        }
+        if (modified) await cg.save();
+      }
+    }
+  } catch (err) {
+    console.error('Error syncing caregivers from users:', err);
+  }
+};
 
 // @desc    Get all caregivers with optional filtering
 // @route   GET /api/caregivers
 // @access  Public
 export const getCaregivers = async (req, res) => {
   try {
+    // Ensure any registered caregiver accounts in MongoDB are synchronized
+    await syncCaregiversFromUsers();
+
     const { search, specialty, experience, rate, availability } = req.query;
 
     const filter = {};

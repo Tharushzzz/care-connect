@@ -19,6 +19,15 @@ const caregiverSchema = new mongoose.Schema(
       unique: true,
       index: true,
     },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    email: {
+      type: String,
+      lowercase: true,
+      trim: true,
+    },
     name: {
       type: String,
       required: [true, 'Caregiver name is required'],

@@ -9,7 +9,7 @@ export type Review = {
 }
 
 export type Caregiver = {
-  id: number
+  id: number | string
   _id?: string
   profileImage: string
   name: string

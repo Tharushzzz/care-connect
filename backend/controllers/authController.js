@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import Caregiver from '../models/Caregiver.js';
 
 // Helper to generate JWT Token
 const generateToken = (id) => {
@@ -60,6 +61,38 @@ export const registerUser = async (req, res) => {
     const user = await User.create(userData);
 
     if (user) {
+      // If new user is a caregiver, create their profile in the Caregiver collection
+      if (user.role === 'caregiver') {
+        try {
+          const lastCaregiver = await Caregiver.findOne().sort({ id: -1 });
+          const nextId = (lastCaregiver && lastCaregiver.id ? lastCaregiver.id : 0) + 1;
+          await Caregiver.create({
+            id: nextId,
+            userId: user._id,
+            email: user.email,
+            name: `${user.firstName} ${user.lastName}`,
+            role: user.title || 'Professional Caregiver',
+            profileImage: user.avatar || '',
+            location: req.body.location || 'Colombo, Sri Lanka',
+            experience: user.experience ? `${user.experience} years experience` : '1 year experience',
+            rate: user.hourlyRate ? `Rs. ${Number(user.hourlyRate).toLocaleString()}/hr` : 'Rs. 2,500/hr',
+            rating: 5.0,
+            reviews: 0,
+            availability: 'Available today',
+            verified: false,
+            description: user.bio || `${user.firstName} is a certified, compassionate caregiver dedicated to delivering dignified, high-quality care.`,
+            specialties: req.body.specialties || ['Senior Care', 'Mobility Support'],
+            credentials: ['SLNC Registered', 'Background checked'],
+            about: user.bio || `${user.firstName} is committed to providing patient-centered care.`,
+            freetime: 'Enjoys reading and community activities.',
+            reviewText: 'Warm, reliable, and attentive to family needs.',
+            reviewsData: [],
+          });
+        } catch (cgErr) {
+          console.error('Error creating caregiver profile on register:', cgErr);
+        }
+      }
+
       return res.status(201).json({
         _id: user._id,
         name: `${user.firstName} ${user.lastName}`,
@@ -177,6 +210,60 @@ export const updateUserProfile = async (req, res) => {
       }
 
       const updatedUser = await user.save();
+
+      // If user is a caregiver, update their corresponding Caregiver card
+      if (updatedUser.role === 'caregiver') {
+        try {
+          const fullName = `${updatedUser.firstName} ${updatedUser.lastName}`.trim();
+          let caregiver = await Caregiver.findOne({
+            $or: [
+              { userId: updatedUser._id },
+              { email: updatedUser.email },
+              { name: fullName },
+            ],
+          });
+
+          if (caregiver) {
+            caregiver.name = fullName;
+            if (updatedUser.title) caregiver.role = updatedUser.title;
+            if (updatedUser.avatar !== undefined) caregiver.profileImage = updatedUser.avatar;
+            if (updatedUser.experience) caregiver.experience = `${updatedUser.experience} years experience`;
+            if (updatedUser.hourlyRate) caregiver.rate = `Rs. ${Number(updatedUser.hourlyRate).toLocaleString()}/hr`;
+            if (updatedUser.bio) {
+              caregiver.description = updatedUser.bio;
+              caregiver.about = updatedUser.bio;
+            }
+            if (req.body.location) caregiver.location = req.body.location;
+            if (req.body.specialties && Array.isArray(req.body.specialties)) caregiver.specialties = req.body.specialties;
+            await caregiver.save();
+          } else {
+            const lastCg = await Caregiver.findOne().sort({ id: -1 });
+            const nextId = (lastCg && lastCg.id ? lastCg.id : 0) + 1;
+            await Caregiver.create({
+              id: nextId,
+              userId: updatedUser._id,
+              email: updatedUser.email,
+              name: fullName,
+              role: updatedUser.title || 'Professional Caregiver',
+              profileImage: updatedUser.avatar || '',
+              location: req.body.location || 'Colombo, Sri Lanka',
+              experience: updatedUser.experience ? `${updatedUser.experience} years experience` : '1 year experience',
+              rate: updatedUser.hourlyRate ? `Rs. ${Number(updatedUser.hourlyRate).toLocaleString()}/hr` : 'Rs. 2,500/hr',
+              rating: 5.0,
+              reviews: 0,
+              availability: 'Available today',
+              verified: updatedUser.status === 'Verified',
+              description: updatedUser.bio || `${fullName} is a dedicated caregiver.`,
+              specialties: req.body.specialties || ['Senior Care', 'Mobility Support'],
+              credentials: ['SLNC Registered', 'Background checked'],
+              about: updatedUser.bio || '',
+              reviewsData: [],
+            });
+          }
+        } catch (cgUpdateErr) {
+          console.error('Error updating Caregiver document:', cgUpdateErr);
+        }
+      }
 
       return res.json({
         _id: updatedUser._id,
