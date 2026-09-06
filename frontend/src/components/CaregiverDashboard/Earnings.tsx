@@ -7,8 +7,7 @@ import {
   ArrowDownLeft,
   ArrowUpRight,
   CheckCircle2,
-  X,
-  Loader2
+  X
 } from 'lucide-react';
 
 interface Transaction {

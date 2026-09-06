@@ -10,7 +10,6 @@ import {
   Check,
   X,
   Loader2,
-  AlertCircle,
   User
 } from 'lucide-react';
 
@@ -95,7 +94,6 @@ export const CaregiverDashboard: React.FC = () => {
   // Compute metrics
   const totalEarnings = completedShifts.reduce((acc, b) => acc + (b.totalPrice || 0), 0) +
     scheduledShifts.reduce((acc, b) => acc + (b.totalPrice || 0), 0);
-  const scheduledHours = scheduledShifts.length * 4;
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6">
