@@ -64,6 +64,10 @@ const userSchema = new mongoose.Schema(
       enum: ['Active', 'Pending Verification', 'Verified'],
       default: 'Active',
     },
+    savedCaregivers: {
+      type: [String],
+      default: [],
+    },
   },
   {
     timestamps: true,

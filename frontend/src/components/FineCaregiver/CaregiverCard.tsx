@@ -45,16 +45,57 @@ const CaregiverCard = ({
     }
   });
 
-  const toggleSave = (id: number | string) => {
-    setSavedIds((prev) => {
-      const updated = prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id];
+  // Fetch and synchronize saved caregivers from MongoDB on mount
+  useEffect(() => {
+    const token = localStorage.getItem('careconnect_token');
+    if (token) {
+      fetch('/api/caregivers/saved', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data && Array.isArray(data.savedIds)) {
+            setSavedIds(data.savedIds);
+            localStorage.setItem('careconnect_saved_caregivers', JSON.stringify(data.savedIds));
+          }
+        })
+        .catch((err) => console.log('Could not fetch saved caregivers:', err));
+    }
+  }, []);
+
+  const toggleSave = async (id: number | string) => {
+    const stringId = String(id);
+    const isCurrentlySaved = savedIds.map(String).includes(stringId);
+
+    const updated = isCurrentlySaved
+      ? savedIds.filter((item) => String(item) !== stringId)
+      : [...savedIds, id];
+
+    setSavedIds(updated);
+    try {
+      localStorage.setItem('careconnect_saved_caregivers', JSON.stringify(updated));
+    } catch (err) {
+      console.error(err);
+    }
+
+    const token = localStorage.getItem('careconnect_token');
+    if (token) {
       try {
-        localStorage.setItem('careconnect_saved_caregivers', JSON.stringify(updated));
+        if (isCurrentlySaved) {
+          await fetch(`/api/caregivers/saved/${encodeURIComponent(stringId)}`, {
+            method: 'DELETE',
+            headers: { Authorization: `Bearer ${token}` },
+          });
+        } else {
+          await fetch(`/api/caregivers/saved/${encodeURIComponent(stringId)}`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${token}` },
+          });
+        }
       } catch (err) {
-        console.error(err);
+        console.error('Error syncing saved caregiver to MongoDB:', err);
       }
-      return updated;
-    });
+    }
   };
 
   // 2. High-speed background fetch with 150ms debounce for search input
@@ -204,23 +245,28 @@ const CaregiverCard = ({
               </div>
 
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
-                <button
-                  type="button"
-                  onClick={() => toggleSave(cgId)}
-                  className={`inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-semibold transition cursor-pointer border ${
-                    savedIds.includes(cgId)
-                      ? 'border-[#0B8BD8] bg-[#F0F8FF] text-[#0B8BD8]'
-                      : 'border-[#E2E8F0] bg-white text-[#4B5563] hover:border-[#0B8BD8] hover:text-[#0B8BD8]'
-                  }`}
-                  title={savedIds.includes(cgId) ? 'Remove from saved' : 'Save caregiver'}
-                >
-                  <Bookmark
-                    className={`h-4 w-4 transition-transform ${
-                      savedIds.includes(cgId) ? 'fill-[#0B8BD8] text-[#0B8BD8] scale-110' : ''
-                    }`}
-                  />
-                  <span>{savedIds.includes(cgId) ? 'Saved' : 'Save'}</span>
-                </button>
+                {(() => {
+                  const isSaved = savedIds.map(String).includes(String(cgId));
+                  return (
+                    <button
+                      type="button"
+                      onClick={() => toggleSave(cgId)}
+                      className={`inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-semibold transition cursor-pointer border ${
+                        isSaved
+                          ? 'border-[#0B8BD8] bg-[#F0F8FF] text-[#0B8BD8]'
+                          : 'border-[#E2E8F0] bg-white text-[#4B5563] hover:border-[#0B8BD8] hover:text-[#0B8BD8]'
+                      }`}
+                      title={isSaved ? 'Remove from saved' : 'Save caregiver'}
+                    >
+                      <Bookmark
+                        className={`h-4 w-4 transition-transform ${
+                          isSaved ? 'fill-[#0B8BD8] text-[#0B8BD8] scale-110' : ''
+                        }`}
+                      />
+                      <span>{isSaved ? 'Saved' : 'Save'}</span>
+                    </button>
+                  );
+                })()}
 
                 <Link
                   to={`/find-caregivers/${cgId}`}

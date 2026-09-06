@@ -234,3 +234,105 @@ export const addCaregiverReview = async (req, res) => {
     res.status(500).json({ message: 'Server error adding review' });
   }
 };
+
+// @desc    Get user's saved caregivers
+// @route   GET /api/caregivers/saved
+// @access  Private
+export const getSavedCaregivers = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select('savedCaregivers');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const savedIds = (user.savedCaregivers || []).map(String);
+    if (savedIds.length === 0) {
+      return res.json({ savedIds: [], caregivers: [] });
+    }
+
+    const numericIds = savedIds.map((id) => Number(id)).filter((n) => !isNaN(n));
+    const objectIds = savedIds.filter((id) => id.match(/^[0-9a-fA-F]{24}$/));
+
+    const orClauses = [];
+    if (numericIds.length > 0) orClauses.push({ id: { $in: numericIds } });
+    if (objectIds.length > 0) orClauses.push({ _id: { $in: objectIds } });
+
+    const caregivers = orClauses.length > 0
+      ? await Caregiver.find({ $or: orClauses }).lean()
+      : [];
+
+    res.json({ savedIds, caregivers });
+  } catch (error) {
+    console.error('Error fetching saved caregivers:', error);
+    res.status(500).json({ message: 'Server error retrieving saved caregivers' });
+  }
+};
+
+// @desc    Save/bookmark a caregiver for the user
+// @route   POST /api/caregivers/saved/:id
+// @access  Private
+export const saveCaregiver = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const stringId = String(id);
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { $addToSet: { savedCaregivers: stringId } },
+      { new: true }
+    ).select('savedCaregivers');
+
+    res.json({
+      message: 'Caregiver saved successfully',
+      savedIds: user ? user.savedCaregivers : [],
+    });
+  } catch (error) {
+    console.error('Error saving caregiver:', error);
+    res.status(500).json({ message: 'Server error saving caregiver' });
+  }
+};
+
+// @desc    Remove a saved caregiver
+// @route   DELETE /api/caregivers/saved/:id
+// @access  Private
+export const removeSavedCaregiver = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const stringId = String(id);
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { $pull: { savedCaregivers: { $in: [stringId, !isNaN(Number(id)) ? Number(id) : stringId] } } },
+      { new: true }
+    ).select('savedCaregivers');
+
+    res.json({
+      message: 'Caregiver removed from saved',
+      savedIds: user ? user.savedCaregivers : [],
+    });
+  } catch (error) {
+    console.error('Error removing saved caregiver:', error);
+    res.status(500).json({ message: 'Server error removing saved caregiver' });
+  }
+};
+
+// @desc    Clear all saved caregivers
+// @route   DELETE /api/caregivers/saved
+// @access  Private
+export const clearSavedCaregivers = async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { $set: { savedCaregivers: [] } },
+      { new: true }
+    ).select('savedCaregivers');
+
+    res.json({
+      message: 'All saved caregivers cleared',
+      savedIds: [],
+    });
+  } catch (error) {
+    console.error('Error clearing saved caregivers:', error);
+    res.status(500).json({ message: 'Server error clearing saved caregivers' });
+  }
+};
