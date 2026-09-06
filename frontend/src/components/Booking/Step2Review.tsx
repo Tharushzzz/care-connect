@@ -4,7 +4,7 @@ import type { Caregiver } from '../../../config/Caregivers';
 
 export interface Step2ReviewProps {
   selectedCaregiver: Caregiver;
-  serviceType: 'elderly' | 'child' | 'special';
+  serviceType: 'elderly' | 'child' | 'special' | '';
   startDate: string;
   endDate: string;
   startTime: string;
@@ -50,7 +50,7 @@ export const Step2Review: React.FC<Step2ReviewProps> = ({
               Service Selected
             </span>
             <p className="text-sm font-bold text-[#0D182B] capitalize">
-              {serviceType} Care
+              {serviceType ? `${serviceType} Care` : 'Care Service'}
             </p>
           </div>
 
@@ -59,11 +59,13 @@ export const Step2Review: React.FC<Step2ReviewProps> = ({
               Dates & Time
             </span>
             <p className="text-sm font-medium text-[#0D182B]">
-              {startDate} to {endDate || startDate}
+              {startDate ? `${startDate} to ${endDate || startDate}` : 'Dates not selected'}
             </p>
-            <p className="text-xs text-gray-500">
-              {startTime} - {endTime}
-            </p>
+            {startTime && endTime && (
+              <p className="text-xs text-gray-500">
+                {startTime} - {endTime}
+              </p>
+            )}
           </div>
 
           <div className="space-y-1">
@@ -71,7 +73,7 @@ export const Step2Review: React.FC<Step2ReviewProps> = ({
               Location
             </span>
             <p className="text-sm font-medium text-[#0D182B]">
-              {streetAddress}, {city} {zipCode}
+              {streetAddress || city ? `${streetAddress ? streetAddress + ', ' : ''}${city} ${zipCode}`.trim() : 'Location not provided'}
             </p>
           </div>
 

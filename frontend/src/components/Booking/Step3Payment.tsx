@@ -47,7 +47,7 @@ export const Step3Payment: React.FC<Step3PaymentProps> = ({
             type="text"
             value={cardName}
             onChange={(e) => setCardName(e.target.value)}
-            placeholder="Eleanor Vance"
+            placeholder="Cardholder Name"
             className="w-full h-11 px-4 rounded-xl border border-[#D5E3EF] text-sm text-[#0D182B] focus:outline-none focus:ring-2 focus:ring-[#0B8BD8]/30 focus:border-[#0B8BD8] transition-all bg-white"
           />
         </div>
@@ -58,9 +58,29 @@ export const Step3Payment: React.FC<Step3PaymentProps> = ({
           </label>
           <input
             type="text"
+            inputMode="numeric"
+            autoComplete="cc-number"
             value={cardNumber}
-            onChange={(e) => setCardNumber(e.target.value)}
+            onChange={(e) => {
+              const digits = e.target.value.replace(/\D/g, '').slice(0, 16);
+              const formatted = digits.match(/.{1,4}/g)?.join(' ') || '';
+              setCardNumber(formatted);
+            }}
+            onKeyDown={(e) => {
+              // Allow control keys: backspace, delete, tab, escape, enter, arrows
+              if (
+                ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key) ||
+                (e.ctrlKey || e.metaKey)
+              ) {
+                return;
+              }
+              // Prevent non-numeric keys
+              if (!/^[0-9]$/.test(e.key)) {
+                e.preventDefault();
+              }
+            }}
             placeholder="•••• •••• •••• 4242"
+            maxLength={19}
             className="w-full h-11 px-4 rounded-xl border border-[#D5E3EF] text-sm text-[#0D182B] focus:outline-none focus:ring-2 focus:ring-[#0B8BD8]/30 focus:border-[#0B8BD8] transition-all bg-white"
           />
         </div>
@@ -72,9 +92,30 @@ export const Step3Payment: React.FC<Step3PaymentProps> = ({
             </label>
             <input
               type="text"
+              inputMode="numeric"
+              autoComplete="cc-exp"
               value={cardExpiry}
-              onChange={(e) => setCardExpiry(e.target.value)}
+              onChange={(e) => {
+                const digits = e.target.value.replace(/\D/g, '').slice(0, 4);
+                if (digits.length > 2) {
+                  setCardExpiry(`${digits.slice(0, 2)}/${digits.slice(2)}`);
+                } else {
+                  setCardExpiry(digits);
+                }
+              }}
+              onKeyDown={(e) => {
+                if (
+                  ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key) ||
+                  (e.ctrlKey || e.metaKey)
+                ) {
+                  return;
+                }
+                if (!/^[0-9]$/.test(e.key)) {
+                  e.preventDefault();
+                }
+              }}
               placeholder="MM/YY"
+              maxLength={5}
               className="w-full h-11 px-4 rounded-xl border border-[#D5E3EF] text-sm text-[#0D182B] focus:outline-none focus:ring-2 focus:ring-[#0B8BD8]/30 focus:border-[#0B8BD8] transition-all bg-white"
             />
           </div>
@@ -85,9 +126,26 @@ export const Step3Payment: React.FC<Step3PaymentProps> = ({
             </label>
             <input
               type="text"
+              inputMode="numeric"
+              autoComplete="cc-csc"
               value={cardCvc}
-              onChange={(e) => setCardCvc(e.target.value)}
+              onChange={(e) => {
+                const digits = e.target.value.replace(/\D/g, '').slice(0, 4);
+                setCardCvc(digits);
+              }}
+              onKeyDown={(e) => {
+                if (
+                  ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key) ||
+                  (e.ctrlKey || e.metaKey)
+                ) {
+                  return;
+                }
+                if (!/^[0-9]$/.test(e.key)) {
+                  e.preventDefault();
+                }
+              }}
               placeholder="123"
+              maxLength={4}
               className="w-full h-11 px-4 rounded-xl border border-[#D5E3EF] text-sm text-[#0D182B] focus:outline-none focus:ring-2 focus:ring-[#0B8BD8]/30 focus:border-[#0B8BD8] transition-all bg-white"
             />
           </div>

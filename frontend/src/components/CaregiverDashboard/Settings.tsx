@@ -304,7 +304,17 @@ export const CaregiverSettings: React.FC = () => {
                 <label className="block text-xs font-semibold text-slate-700 mb-1">Card Number</label>
                 <input
                   type="text"
+                  inputMode="numeric"
                   placeholder="4000 1234 5678 9010"
+                  maxLength={19}
+                  onChange={(e) => {
+                    const digits = e.target.value.replace(/\D/g, '').slice(0, 16);
+                    e.target.value = digits.match(/.{1,4}/g)?.join(' ') || '';
+                  }}
+                  onKeyDown={(e) => {
+                    if (['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key) || e.ctrlKey || e.metaKey) return;
+                    if (!/^[0-9]$/.test(e.key)) e.preventDefault();
+                  }}
                   className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs sm:text-sm focus:outline-none focus:border-teal-500"
                   required
                 />
@@ -314,7 +324,17 @@ export const CaregiverSettings: React.FC = () => {
                   <label className="block text-xs font-semibold text-slate-700 mb-1">Expiry</label>
                   <input
                     type="text"
+                    inputMode="numeric"
                     placeholder="MM/YY"
+                    maxLength={5}
+                    onChange={(e) => {
+                      const digits = e.target.value.replace(/\D/g, '').slice(0, 4);
+                      e.target.value = digits.length > 2 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits;
+                    }}
+                    onKeyDown={(e) => {
+                      if (['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key) || e.ctrlKey || e.metaKey) return;
+                      if (!/^[0-9]$/.test(e.key)) e.preventDefault();
+                    }}
                     className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs sm:text-sm focus:outline-none focus:border-teal-500"
                     required
                   />
@@ -323,7 +343,16 @@ export const CaregiverSettings: React.FC = () => {
                   <label className="block text-xs font-semibold text-slate-700 mb-1">CVC</label>
                   <input
                     type="text"
+                    inputMode="numeric"
                     placeholder="123"
+                    maxLength={4}
+                    onChange={(e) => {
+                      e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
+                    }}
+                    onKeyDown={(e) => {
+                      if (['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key) || e.ctrlKey || e.metaKey) return;
+                      if (!/^[0-9]$/.test(e.key)) e.preventDefault();
+                    }}
                     className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs sm:text-sm focus:outline-none focus:border-teal-500"
                     required
                   />

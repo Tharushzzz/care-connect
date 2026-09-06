@@ -15,8 +15,8 @@ import {
 import { CareRequirementsData } from '../../../config/Booking';
 
 export interface Step1ServiceProps {
-  serviceType: 'elderly' | 'child' | 'special';
-  setServiceType: (type: 'elderly' | 'child' | 'special') => void;
+  serviceType: 'elderly' | 'child' | 'special' | '';
+  setServiceType: (type: 'elderly' | 'child' | 'special' | '') => void;
   startDate: string;
   setStartDate: (date: string) => void;
   endDate: string;

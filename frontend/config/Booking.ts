@@ -10,7 +10,7 @@ export interface CareRequirementOption {
 }
 
 export interface BookingDetails {
-  serviceType: 'elderly' | 'child' | 'special'
+  serviceType: 'elderly' | 'child' | 'special' | ''
   startDate: string
   endDate: string
   startTime: string
@@ -49,15 +49,15 @@ export const CareRequirementsData: CareRequirementOption[] = [
 ]
 
 export const defaultBookingData: BookingDetails = {
-  serviceType: 'elderly',
-  startDate: '2026-08-28',
-  endDate: '2026-08-30',
-  startTime: '09:00',
-  endTime: '17:00',
-  selectedRequirements: ['Medication Administration', 'Mobility Assistance'],
-  streetAddress: '123 Galle Road',
-  city: 'Colombo 03',
-  zipCode: '00300',
+  serviceType: '',
+  startDate: '',
+  endDate: '',
+  startTime: '',
+  endTime: '',
+  selectedRequirements: [],
+  streetAddress: '',
+  city: '',
+  zipCode: '',
   additionalNotes: '',
 }
 

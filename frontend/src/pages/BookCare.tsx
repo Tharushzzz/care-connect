@@ -10,6 +10,7 @@ import Step1Service from '../components/Booking/Step1Service';
 import Step2Review from '../components/Booking/Step2Review';
 import Step3Payment from '../components/Booking/Step3Payment';
 import Step4Finish from '../components/Booking/Step4Finish';
+import { useAuth } from '../hooks/useAuth';
 
 export const BookCare: React.FC = () => {
   const { id } = useParams<{ id?: string }>();
@@ -35,26 +36,39 @@ export const BookCare: React.FC = () => {
       .catch((err) => console.log('Using local caregiver fallback:', err));
   }, [caregiverId]);
 
-  // Form State initialized from config/Booking.ts
-  const [serviceType, setServiceType] = useState(defaultBookingData.serviceType);
-  const [startDate, setStartDate] = useState<string>(defaultBookingData.startDate);
-  const [endDate, setEndDate] = useState<string>(defaultBookingData.endDate);
-  const [startTime, setStartTime] = useState<string>(defaultBookingData.startTime);
-  const [endTime, setEndTime] = useState<string>(defaultBookingData.endTime);
+  const { user } = useAuth();
+
+  // Form State initialized to empty (no default selections)
+  const [serviceType, setServiceType] = useState<'elderly' | 'child' | 'special' | ''>(
+    defaultBookingData.serviceType || ''
+  );
+  const [startDate, setStartDate] = useState<string>(defaultBookingData.startDate || '');
+  const [endDate, setEndDate] = useState<string>(defaultBookingData.endDate || '');
+  const [startTime, setStartTime] = useState<string>(defaultBookingData.startTime || '');
+  const [endTime, setEndTime] = useState<string>(defaultBookingData.endTime || '');
   const [selectedRequirements, setSelectedRequirements] = useState<string[]>(
-    defaultBookingData.selectedRequirements
+    defaultBookingData.selectedRequirements || []
   );
 
-  const [streetAddress, setStreetAddress] = useState<string>(defaultBookingData.streetAddress);
-  const [city, setCity] = useState<string>(defaultBookingData.city);
-  const [zipCode, setZipCode] = useState<string>(defaultBookingData.zipCode);
-  const [additionalNotes, setAdditionalNotes] = useState<string>(defaultBookingData.additionalNotes);
+  const [streetAddress, setStreetAddress] = useState<string>(defaultBookingData.streetAddress || '');
+  const [city, setCity] = useState<string>(defaultBookingData.city || '');
+  const [zipCode, setZipCode] = useState<string>(defaultBookingData.zipCode || '');
+  const [additionalNotes, setAdditionalNotes] = useState<string>(defaultBookingData.additionalNotes || '');
 
   // Payment Form State
-  const [cardNumber, setCardNumber] = useState<string>('•••• •••• •••• 4242');
-  const [cardExpiry, setCardExpiry] = useState<string>('12/28');
-  const [cardCvc, setCardCvc] = useState<string>('123');
-  const [cardName, setCardName] = useState<string>('Eleanor Vance');
+  const [cardNumber, setCardNumber] = useState<string>('');
+  const [cardExpiry, setCardExpiry] = useState<string>('');
+  const [cardCvc, setCardCvc] = useState<string>('');
+  const [cardName, setCardName] = useState<string>(
+    user?.name || (user?.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : '')
+  );
+
+  useEffect(() => {
+    if (user && !cardName) {
+      const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.name || '';
+      if (fullName) setCardName(fullName);
+    }
+  }, [user]);
 
   const [bookingRef, setBookingRef] = useState<string>('');
 
@@ -74,6 +88,17 @@ export const BookCare: React.FC = () => {
   };
 
   const handleNextStep = async () => {
+    if (currentStep === 1) {
+      if (!serviceType) {
+        alert('Please select a service type before continuing.');
+        return;
+      }
+      if (!startDate) {
+        alert('Please select a start date.');
+        return;
+      }
+    }
+
     if (currentStep === 3) {
       try {
         const token = localStorage.getItem('careconnect_token');
@@ -82,7 +107,9 @@ export const BookCare: React.FC = () => {
             ? 'Elderly Care'
             : serviceType === 'child'
             ? 'Child Care'
-            : 'Special Needs Care';
+            : serviceType === 'special'
+            ? 'Special Needs Care'
+            : 'General Care';
 
         const res = await fetch('/api/bookings', {
           method: 'POST',
