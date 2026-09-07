@@ -119,6 +119,7 @@ export function useAuth() {
       localStorage.setItem('careconnect_user', JSON.stringify(authenticatedUser));
       localStorage.setItem('careconnect_token', data.token);
       localStorage.setItem('isLoggedIn', 'true');
+      sessionStorage.removeItem('careconnect_caregivers_cache');
 
       setUser(authenticatedUser);
       setToken(data.token);
@@ -171,6 +172,7 @@ export function useAuth() {
       localStorage.setItem('careconnect_user', JSON.stringify(newUser));
       localStorage.setItem('careconnect_token', data.token);
       localStorage.setItem('isLoggedIn', 'true');
+      sessionStorage.removeItem('careconnect_caregivers_cache');
 
       setUser(newUser);
       setToken(data.token);

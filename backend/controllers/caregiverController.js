@@ -6,18 +6,17 @@ export const syncCaregiversFromUsers = async () => {
   try {
     const caregiverUsers = await User.find({ role: 'caregiver' });
     for (const u of caregiverUsers) {
-      // Caregivers who are not verified must be marked as 'Pending Verification'
-      if (u.status === 'Active') {
+      if (!u.status) {
         u.status = 'Pending Verification';
         await u.save();
       }
 
-      const fullName = `${u.firstName} ${u.lastName}`.trim();
+      const fullName = `${u.firstName || ''} ${u.lastName || ''}`.trim();
       let cg = await Caregiver.findOne({
         $or: [
           { userId: u._id },
-          { email: u.email },
-          { name: fullName },
+          ...(u.email ? [{ email: u.email }] : []),
+          ...(fullName ? [{ name: fullName }] : []),
         ],
       });
 
@@ -51,7 +50,7 @@ export const syncCaregiversFromUsers = async () => {
       } else {
         let modified = false;
         if (!cg.userId) { cg.userId = u._id; modified = true; }
-        if (!cg.email) { cg.email = u.email; modified = true; }
+        if (!cg.email && u.email) { cg.email = u.email; modified = true; }
         if (u.avatar && cg.profileImage !== u.avatar) { cg.profileImage = u.avatar; modified = true; }
         if (fullName && cg.name !== fullName) { cg.name = fullName; modified = true; }
         if (u.title && cg.role !== u.title) { cg.role = u.title; modified = true; }
@@ -82,14 +81,18 @@ export const syncCaregiversFromUsers = async () => {
 // @access  Public
 export const getCaregivers = async (req, res) => {
   try {
-    const { search, specialty, experience, rate, availability, includeAll } = req.query;
+    // Keep caregivers synchronized with any newly registered user accounts
+    await syncCaregiversFromUsers();
+
+    const { search, specialty, experience, rate, availability, verified } = req.query;
 
     const filter = {};
 
-    // Only approved/verified caregivers are displayed for clients to book
-    // unless includeAll is specifically requested (e.g. for Admin portal)
-    if (includeAll !== 'true') {
+    // Filter by verification status only if explicitly specified
+    if (verified === 'true') {
       filter.verified = true;
+    } else if (verified === 'false') {
+      filter.verified = false;
     }
 
     // Search query on name, role, or description
