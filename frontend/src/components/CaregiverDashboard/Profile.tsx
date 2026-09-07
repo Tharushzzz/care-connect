@@ -8,8 +8,11 @@ import {
   Check,
   CheckCircle2,
   X,
+  Loader2,
+  AlertCircle,
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
+import { uploadToCloudinary } from '../../utils/cloudinary';
 
 interface Certification {
   id: string;
@@ -25,6 +28,8 @@ export const CaregiverProfile: React.FC = () => {
   const [profilePic, setProfilePic] = useState<string>(
     user?.avatar || (isSarah ? 'https://res.cloudinary.com/i7mccbnx/image/upload/v1788630765/Sarah.jpg' : '')
   );
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [photoError, setPhotoError] = useState<string | null>(null);
   const [firstName, setFirstName] = useState(
     user?.firstName || (user?.name ? user.name.split(' ')[0] : (isSarah ? 'Sarah' : 'Caregiver'))
   );
@@ -141,6 +146,28 @@ export const CaregiverProfile: React.FC = () => {
     setTimeout(() => setSavedSuccess(false), 3000);
   };
 
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const localPreview = URL.createObjectURL(file);
+    setProfilePic(localPreview);
+    setIsUploadingPhoto(true);
+    setPhotoError(null);
+
+    try {
+      const uploadedUrl = await uploadToCloudinary(file);
+      setProfilePic(uploadedUrl);
+    } catch (err: unknown) {
+      console.error('Cloudinary upload error:', err);
+      const errMsg = err instanceof Error ? err.message : 'Photo upload failed';
+      setPhotoError(errMsg);
+      setProfilePic(user?.avatar || (isSarah ? 'https://res.cloudinary.com/i7mccbnx/image/upload/v1788630765/Sarah.jpg' : ''));
+    } finally {
+      setIsUploadingPhoto(false);
+    }
+  };
+
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto space-y-6">
       {/* Header */}
@@ -178,25 +205,29 @@ export const CaregiverProfile: React.FC = () => {
                 {firstName ? firstName.charAt(0) : 'C'}
               </span>
             )}
+
+            {/* Uploading Spinner Overlay */}
+            {isUploadingPhoto && (
+              <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-white backdrop-blur-[1px] z-10">
+                <Loader2 className="w-5 h-5 animate-spin" />
+                <span className="text-[9px] font-semibold mt-0.5">Uploading...</span>
+              </div>
+            )}
+
             <label
               htmlFor="caregiver-avatar-upload"
-              className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer"
+              className={`absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer ${
+                isUploadingPhoto ? 'pointer-events-none' : ''
+              }`}
             >
               <Camera className="w-5 h-5 text-white" />
               <input
                 id="caregiver-avatar-upload"
                 type="file"
                 accept="image/*"
+                disabled={isUploadingPhoto}
                 className="hidden"
-                onChange={(e) => {
-                  if (e.target.files && e.target.files[0]) {
-                    const reader = new FileReader();
-                    reader.onloadend = () => {
-                      setProfilePic(reader.result as string);
-                    };
-                    reader.readAsDataURL(e.target.files[0]);
-                  }
-                }}
+                onChange={handleAvatarChange}
               />
             </label>
           </div>
@@ -204,27 +235,39 @@ export const CaregiverProfile: React.FC = () => {
           <div className="space-y-1.5 flex-1">
             <h3 className="text-sm font-bold text-slate-900">Profile Picture</h3>
             <p className="text-xs text-slate-500">
-              A clear, professional headshot builds trust with families. If no photo is uploaded, your name initial will be shown.
+              A clear, professional headshot builds trust with families. Allowed formats: JPG, PNG, WebP (Max 10MB).
             </p>
+
+            {photoError && (
+              <div className="flex items-center gap-1.5 text-xs font-medium text-rose-600 bg-rose-50 border border-rose-100 px-2.5 py-1 rounded-lg">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                <span>{photoError}</span>
+              </div>
+            )}
+
             <div className="flex items-center gap-2.5 pt-1.5">
-              <label className="px-3.5 py-1.5 rounded-xl border border-teal-600 text-teal-700 hover:bg-teal-50 text-xs font-semibold cursor-pointer transition-colors">
-                Upload New
+              <label
+                className={`px-3.5 py-1.5 rounded-xl border border-teal-600 text-teal-700 hover:bg-teal-50 text-xs font-semibold cursor-pointer transition-colors inline-flex items-center gap-1.5 ${
+                  isUploadingPhoto ? 'opacity-60 pointer-events-none' : ''
+                }`}
+              >
+                {isUploadingPhoto ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Uploading...</span>
+                  </>
+                ) : (
+                  'Upload New'
+                )}
                 <input
                   type="file"
                   accept="image/*"
+                  disabled={isUploadingPhoto}
                   className="hidden"
-                  onChange={(e) => {
-                    if (e.target.files && e.target.files[0]) {
-                      const reader = new FileReader();
-                      reader.onloadend = () => {
-                        setProfilePic(reader.result as string);
-                      };
-                      reader.readAsDataURL(e.target.files[0]);
-                    }
-                  }}
+                  onChange={handleAvatarChange}
                 />
               </label>
-              {profilePic && (
+              {profilePic && !isUploadingPhoto && (
                 <button
                   type="button"
                   onClick={() => setProfilePic('')}
@@ -461,9 +504,17 @@ export const CaregiverProfile: React.FC = () => {
           </button>
           <button
             type="submit"
-            className="px-6 py-2.5 rounded-full bg-[#0D9488] hover:bg-[#0b7970] text-white text-xs sm:text-sm font-semibold transition-all shadow-xs cursor-pointer"
+            disabled={isUploadingPhoto}
+            className="px-6 py-2.5 rounded-full bg-[#0D9488] hover:bg-[#0b7970] disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs sm:text-sm font-semibold transition-all shadow-xs cursor-pointer flex items-center gap-2"
           >
-            Save Profile
+            {isUploadingPhoto ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Uploading Photo...</span>
+              </>
+            ) : (
+              'Save Profile'
+            )}
           </button>
         </div>
       </form>
