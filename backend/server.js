@@ -11,14 +11,12 @@ import bookingRoutes from './routes/bookingRoutes.js';
 import messageRoutes from './routes/messageRoutes.js';
 import caregiverRoutes from './routes/caregiverRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
-import { seedData } from './config/seedData.js';
 import { syncCaregiversFromUsers } from './controllers/caregiverController.js';
 
 dotenv.config();
 
-// Connect to MongoDB and seed dataset
+// Connect to MongoDB
 connectDB().then(async () => {
-  await seedData();
   await syncCaregiversFromUsers();
 });
 
