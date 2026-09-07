@@ -140,17 +140,17 @@ const CaregiverProfile = () => {
                   </div>
                 </div>
 
-                <p className="mt-1 text-sm sm:text-base leading-relaxed text-[#41474E]">{caregiver.description}</p>
+                <p className="mt-1 text-sm sm:text-base leading-relaxed text-[#41474E] break-words [overflow-wrap:anywhere]">{caregiver.description}</p>
               </div>
             </div>
           </div>
 
           {/* About Section */}
-          <div className="rounded-2xl bg-white p-5 sm:p-8 shadow-md">
-            <div className="flex flex-col gap-3 sm:gap-4 w-full">
-              <h2 className="text-xl sm:text-2xl font-bold text-[#111827]">About {caregiver.name}</h2>
-              <p className="text-sm sm:text-base leading-relaxed text-[#41474E]">{caregiver.about}</p>
-              <p className="text-sm sm:text-base leading-relaxed text-[#41474E]">{caregiver.freetime}</p>
+          <div className="rounded-2xl bg-white p-5 sm:p-8 shadow-md min-w-0 overflow-hidden">
+            <div className="flex flex-col gap-3 sm:gap-4 w-full min-w-0">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#111827] break-words [overflow-wrap:anywhere]">About {caregiver.name}</h2>
+              <p className="text-sm sm:text-base leading-relaxed text-[#41474E] break-words [overflow-wrap:anywhere]">{caregiver.about}</p>
+              <p className="text-sm sm:text-base leading-relaxed text-[#41474E] break-words [overflow-wrap:anywhere]">{caregiver.freetime}</p>
             </div>
           </div>
 

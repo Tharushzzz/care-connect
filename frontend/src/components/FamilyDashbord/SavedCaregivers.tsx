@@ -443,7 +443,7 @@ export const SavedCaregivers: React.FC = () => {
                 </div>
 
               {/* Description */}
-              <p className="mt-4 text-xs sm:text-sm text-gray-600 leading-relaxed max-w-4xl">
+              <p className="mt-4 text-xs sm:text-sm text-gray-600 leading-relaxed max-w-4xl break-words [overflow-wrap:anywhere]">
                 {caregiver.description}
               </p>
 
