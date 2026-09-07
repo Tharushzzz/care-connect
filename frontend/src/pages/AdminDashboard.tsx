@@ -1277,4 +1277,6 @@ export const AdminDashboard: React.FC = () => {
   );
 };
 
+// export admin dashbord
+
 export default AdminDashboard;
