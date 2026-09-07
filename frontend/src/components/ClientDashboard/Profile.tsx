@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Camera, User, Mail, Phone, MapPin, CheckCircle, Trash2, } from 'lucide-react';
+import { Camera, User, Mail, Phone, MapPin, CheckCircle, Trash2, Loader2, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
+import { uploadToCloudinary } from '../../utils/cloudinary';
 
 export const Profile: React.FC = () => {
   const { user, updateProfile } = useAuth();
@@ -24,6 +25,8 @@ export const Profile: React.FC = () => {
   );
 
   const [avatar, setAvatar] = useState<string | null>(user?.avatar || null);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const [avatarError, setAvatarError] = useState<string | null>(null);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
 
   // Synchronize when authenticated user changes
@@ -64,16 +67,29 @@ export const Profile: React.FC = () => {
 
   const handleRemoveAvatar = () => {
     setAvatar(null);
+    setAvatarError(null);
   };
 
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setAvatar(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    // Immediate preview
+    const localPreview = URL.createObjectURL(file);
+    setAvatar(localPreview);
+    setIsUploadingAvatar(true);
+    setAvatarError(null);
+
+    try {
+      const uploadedUrl = await uploadToCloudinary(file);
+      setAvatar(uploadedUrl);
+    } catch (err: unknown) {
+      console.error('Cloudinary upload error:', err);
+      const errMsg = err instanceof Error ? err.message : 'Photo upload failed';
+      setAvatarError(errMsg);
+      setAvatar(user?.avatar || null);
+    } finally {
+      setIsUploadingAvatar(false);
     }
   };
 
@@ -126,9 +142,18 @@ export const Profile: React.FC = () => {
                   {getInitials()}
                 </div>
               )}
+
+              {/* Uploading Spinner Overlay */}
+              {isUploadingAvatar && (
+                <div className="absolute inset-0 bg-black/40 rounded-full flex flex-col items-center justify-center text-white backdrop-blur-[1px]">
+                  <Loader2 className="w-6 h-6 animate-spin" />
+                  <span className="text-[10px] font-semibold mt-1">Uploading...</span>
+                </div>
+              )}
+
               <label
                 htmlFor="avatar-upload"
-                className="absolute bottom-0 right-0 p-2 bg-[#0686CD] hover:bg-[#0071A8] text-white rounded-full cursor-pointer shadow-md transition-colors"
+                className="absolute bottom-0 right-0 p-2 bg-[#0686CD] hover:bg-[#0071A8] text-white rounded-full cursor-pointer shadow-md transition-colors disabled:pointer-events-none"
                 title="Upload Photo"
               >
                 <Camera className="w-4 h-4" />
@@ -136,6 +161,7 @@ export const Profile: React.FC = () => {
                   type="file"
                   id="avatar-upload"
                   accept="image/*"
+                  disabled={isUploadingAvatar}
                   onChange={handleAvatarChange}
                   className="hidden"
                 />
@@ -144,22 +170,40 @@ export const Profile: React.FC = () => {
 
             <div className="text-center sm:text-left space-y-2.5">
               <h3 className="text-base font-bold text-[#0D182B] capitalize">{displayName}</h3>
-              <p className="text-xs text-gray-500">Allowed formats: JPG, PNG. Max size 2MB</p>
+              <p className="text-xs text-gray-500">Allowed formats: JPG, PNG, WebP. Max size 10MB</p>
+              
+              {avatarError && (
+                <div className="flex items-center gap-1.5 text-xs font-medium text-rose-600 bg-rose-50 border border-rose-100 px-2.5 py-1 rounded-lg">
+                  <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                  <span>{avatarError}</span>
+                </div>
+              )}
+
               <div className="flex justify-center sm:justify-start gap-2">
                 <label
                   htmlFor="avatar-upload-btn"
-                  className="px-4 py-2 bg-[#EAF5FC] hover:bg-[#D4EAFA] text-[#0686CD] text-xs font-semibold rounded-xl transition-all cursor-pointer inline-block"
+                  className={`px-4 py-2 bg-[#EAF5FC] hover:bg-[#D4EAFA] text-[#0686CD] text-xs font-semibold rounded-xl transition-all cursor-pointer inline-flex items-center gap-1.5 ${
+                    isUploadingAvatar ? 'opacity-60 pointer-events-none' : ''
+                  }`}
                 >
-                  Upload New
+                  {isUploadingAvatar ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Uploading...</span>
+                    </>
+                  ) : (
+                    'Upload New'
+                  )}
                   <input
                     type="file"
                     id="avatar-upload-btn"
                     accept="image/*"
+                    disabled={isUploadingAvatar}
                     onChange={handleAvatarChange}
                     className="hidden"
                   />
                 </label>
-                {avatar && (
+                {avatar && !isUploadingAvatar && (
                   <button
                     type="button"
                     onClick={handleRemoveAvatar}
@@ -311,9 +355,17 @@ export const Profile: React.FC = () => {
           <div className="flex justify-end pt-4 border-t border-gray-100">
             <button
               type="submit"
-              className="px-6 py-3 bg-[#0686CD] hover:bg-[#0071A8] text-white text-sm font-semibold rounded-xl shadow-md transition-all cursor-pointer text-center"
+              disabled={isUploadingAvatar}
+              className="px-6 py-3 bg-[#0686CD] hover:bg-[#0071A8] disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-xl shadow-md transition-all cursor-pointer text-center flex items-center gap-2"
             >
-              Save Changes
+              {isUploadingAvatar ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Uploading photo...</span>
+                </>
+              ) : (
+                'Save Changes'
+              )}
             </button>
           </div>
         </form>
