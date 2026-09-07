@@ -76,6 +76,15 @@ const CaregiverProfile = () => {
     )
   }
 
+  const initials = caregiver?.name
+    ? caregiver.name
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2)
+    : 'CG';
+
   return (
     <div className="bg-[#F3F5F8] px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
       {/* Back button */}
@@ -91,39 +100,53 @@ const CaregiverProfile = () => {
 
       <div className="mx-auto flex max-w-7xl flex-col gap-6 sm:gap-8 lg:flex-row lg:items-start">
         {/* Left side */}
-        <div className="w-full lg:flex-1 space-y-6 sm:space-y-8">
+        <div className="w-full min-w-0 lg:flex-1 space-y-6 sm:space-y-8">
           
           {/* Hero Section */}
-          <div className="rounded-2xl bg-white p-5 sm:p-8 shadow-md">
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-8">
+          <div className="rounded-2xl bg-white p-5 sm:p-8 shadow-md min-w-0 overflow-hidden">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-8 min-w-0">
               <div className="flex justify-center shrink-0">
-                <img
-                  src={caregiver.profileImage}
-                  alt={caregiver.name}
-                  className="h-28 w-28 sm:h-36 sm:w-36 rounded-full object-cover shadow-sm ring-4 ring-[#EAF6FF]"
-                />
+                {caregiver.profileImage ? (
+                  <img
+                    src={caregiver.profileImage}
+                    alt={caregiver.name}
+                    className="h-28 w-28 sm:h-36 sm:w-36 rounded-full object-cover shadow-sm ring-4 ring-[#EAF6FF]"
+                    onError={(e) => {
+                      (e.target as HTMLElement).style.display = 'none';
+                      const fallback = document.getElementById('profile-avatar-fallback');
+                      if (fallback) fallback.style.display = 'flex';
+                    }}
+                  />
+                ) : null}
+                <div
+                  id="profile-avatar-fallback"
+                  style={{ display: caregiver.profileImage ? 'none' : 'flex' }}
+                  className="h-28 w-28 sm:h-36 sm:w-36 rounded-full bg-[#EAF5FC] text-[#0686CD] text-3xl sm:text-4xl font-bold shadow-sm ring-4 ring-[#EAF6FF] items-center justify-center"
+                >
+                  <span>{initials}</span>
+                </div>
               </div>
 
-              <div className="flex flex-col w-full text-center sm:text-left gap-3">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#111827]">
+              <div className="flex flex-col w-full min-w-0 text-center sm:text-left gap-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 min-w-0">
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#111827] break-words [overflow-wrap:anywhere]">
                     {caregiver.name}
                   </h1>
 
                   {caregiver.verified ? (
-                    <div className="inline-flex items-center justify-center gap-2 rounded-full bg-[#8EF4E9]/30 px-3.5 py-1.5 text-xs font-semibold text-[#006F67] self-center sm:self-start">
+                    <div className="inline-flex items-center justify-center gap-2 rounded-full bg-[#8EF4E9]/30 px-3.5 py-1.5 text-xs font-semibold text-[#006F67] self-center sm:self-start shrink-0">
                       <ShieldCheck className="h-4 w-4 text-[#006F67]" />
                       <span>Background Checked</span>
                     </div>
                   ) : (
-                    <div className="inline-flex items-center justify-center gap-2 rounded-full bg-[#FEF3C7] px-3.5 py-1.5 text-xs font-semibold text-[#92400E] self-center sm:self-start">
+                    <div className="inline-flex items-center justify-center gap-2 rounded-full bg-[#FEF3C7] px-3.5 py-1.5 text-xs font-semibold text-[#92400E] self-center sm:self-start shrink-0">
                       <ShieldAlert className="h-4 w-4 text-[#D97706]" />
                       <span>Verification Pending</span>
                     </div>
                   )}
                 </div>
 
-                <p className="text-base sm:text-lg font-medium text-[#41474E]">{caregiver.role}</p>
+                <p className="text-base sm:text-lg font-medium text-[#41474E] break-words [overflow-wrap:anywhere]">{caregiver.role}</p>
 
                 <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-5 text-xs sm:text-sm text-[#6B7280]">
                   <div className="flex items-center gap-1.5 text-[#41474E] font-medium">
@@ -279,7 +302,7 @@ const CaregiverProfile = () => {
         </div>
 
         {/* Right side */}
-        <div className="w-full lg:sticky lg:top-24 lg:w-85">
+        <div className="w-full shrink-0 lg:sticky lg:top-24 lg:w-85">
           <aside className="overflow-hidden rounded-2xl bg-white shadow-[0_24px_48px_rgba(15,23,42,0.08)] ring-1 ring-[#E4ECF6]">
             <div className="bg-linear-to-r from-[#0B8BD8] to-[#00A7D6] p-5 sm:p-6 text-white">
               <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#DFF5FF]">Starting at</p>
