@@ -56,11 +56,11 @@ const viewData = async () => {
     console.log(`========================================`);
     console.table(
       bookings.map(b => ({
-        BookingID: b.bookingId || b.id || b._id.toString().substring(0, 8),
+        BookingID: b.bookingCode || b.bookingId || b._id.toString().substring(0, 8),
         Caregiver: b.caregiverName,
-        Client: b.clientName,
-        Date: b.date,
-        Total: b.total,
+        Client: b.userName || b.clientName || 'N/A',
+        Date: b.startDate || b.date,
+        Total: b.totalPrice !== undefined ? `Rs. ${b.totalPrice}` : b.total,
         Status: b.status
       }))
     );
